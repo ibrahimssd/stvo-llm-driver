@@ -1,0 +1,1 @@
+This project explores the capability of Large Language Models (LLMs) to understand and apply traffic regulations effectively. By using driving license theoretical questions as test sets, we assess the extent to which LLMs can successfully pass a driving theory exam.
