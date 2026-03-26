@@ -1,0 +1,214 @@
+#!/bin/bash
+#ultimate job
+#SBATCH --job-name=legal_kge  # Job name
+#SBATCH --output=out/ultimate-legal_kge-train-JOB-%j.out
+#SBATCH --error=err/ultimate-legal_kge-train-JOB-%j.err
+#SBATCH --nodes=1 # As we have single node it should be always set as 1
+#SBATCH --cpus-per-task=40 # Number of CPUs # max = 80
+#SBATCH --gres=gpu:7g.79gb:1  # Allocate 1 GPU resources with specified configurations
+#SBATCH --mem=300G  # Specify the total amount of memory # max = 300G
+#SBATCH --time=96:00:00  # Set the time limit to 1 minute
+#SBATCH --partition=ultimate
+#SBATCH --qos=ultimate
+#SBATCH --account=ultimate
+
+ 
+# Save echo device info into CSV file
+mkdir -p ./MIG-IDs
+echo $SLURM_JOB_ID, $CUDA_VISIBLE_DEVICES > ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi -L >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+
+
+# Paths and parameters
+ROOT_DIR="/fast_storage/siddig/"
+DATA_DIR="$ROOT_DIR/driving-license"
+OUT_DIR="$ROOT_DIR/driving-license/multitask_models"
+HF_DIR="$ROOT_DIR/driving-license/HF_models"
+
+mkdir -p $DATA_DIR
+
+
+# Set Hugging Face cache directories
+export HF_HOME=$HF_DIR
+export TRANSFORMERS_CACHE=$HF_DIR
+export HF_DATASETS_CACHE=$HF_DIR
+# Matplotlib
+export MPLCONFIGDIR="/fast_storage/siddig/driving-license/.matplotlib"
+# Wandb
+export WANDB_DIR="/fast_storage/siddig/driving-license/wandb_logs"
+export WANDB_CACHE_DIR="/fast_storage/siddig/driving-license/wandb_cache"
+export WANDB_DATA_DIR="/fast_storage/siddig/driving-license/wandb_data"
+
+
+
+# Create and activate the virtual environment if it doesn't already exist
+if [ ! -d "$DATA_DIR/driving-env" ]; then
+    python3 -m venv $DATA_DIR/driving-env
+    source $DATA_DIR/driving-env/bin/activate
+    bash ./install.sh
+fi 
+
+source $DATA_DIR/driving-env/bin/activate
+# bash ./install.sh
+
+python ../legal-KGE/train_legal_kge.py \
+    --model_type rotate \
+    --delimiter "<tr>" \
+    --data_path ../data/stvo/m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph_triples.txt \
+    --embedding_dim 100 \
+    --epochs 75 \
+    --batch_size 256 \
+    --learning_rate 0.0001 \
+    --margin 6.0\
+    --l2_reg 0.0001 \
+    --dropout 0.1 \
+    --scheduler cosine \
+    --output_dir ../legal-KGE/embeddings/rotate/m2m100_418M_STvO \
+    --use_wandb \
+    --wandb_project legal-kge-stvo
+
+
+python ../legal-KGE/train_legal_kge.py \
+    --model_type complex \
+    --delimiter "<tr>" \
+    --data_path ../data/stvo/m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph_triples.txt \
+    --embedding_dim 100 \
+    --epochs 50 \
+    --batch_size 256 \
+    --learning_rate 0.001 \
+    --l2_reg 0.001 \
+    --dropout 0.1 \
+    --scheduler plateau \
+    --output_dir ../legal-KGE/embeddings/complex/m2m100_418M_STvO \
+    --use_wandb \
+    --wandb_project legal-kge-stvo
+
+
+
+python ../legal-KGE/train_legal_kge.py \
+    --model_type  distmult \
+    --delimiter "<tr>" \
+    --data_path ../data/stvo/m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph_triples.txt \
+    --embedding_dim 200 \
+    --epochs 50 \
+    --batch_size 256 \
+    --learning_rate 0.001 \
+    --l2_reg 0.01 \
+    --dropout 0.1 \
+    --scheduler plateau \
+    --output_dir ../legal-KGE/embeddings/distmult/m2m100_418M_STvO \
+    --use_wandb \
+    --wandb_project legal-kge-stvo
+
+
+
+python ../legal-KGE/train_legal_kge.py \
+    --model_type transe \
+    --delimiter "<tr>" \
+    --data_path ../data/stvo/m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph_triples.txt \
+    --embedding_dim 200 \
+    --epochs 50 \
+    --batch_size 256 \
+    --learning_rate 0.001 \
+    --margin 1.0\
+    --l2_reg 0.01 \
+    --dropout 0.1 \
+    --scheduler plateau \
+    --output_dir ../legal-KGE/embeddings/transe/m2m100_418M_STvO \
+    --use_wandb \
+    --wandb_project legal-kge-stvo
+
+
+python ../legal-KGE/compare_kge_models.py
+
+
+
+
+
+# # m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph_triples
+# python ../train_transE.py \
+#     --data_path ../data/stvo/m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph_triples.txt \
+#     --embedding_dim 500\
+#     --epochs 200 \
+#     --batch_size 32 \
+#     --learning_rate 5e-5 \
+#     --l2_reg 0.01 \
+#     --dropout 0.1 \
+#     --save_paragraph_embeddings \
+#     --paragraph_extraction_method regex\
+#     --paragraph_prefixes '§'\
+#     --paragraph_pattern '^§§?\s*\d+(?:\s*to\s*\d+)?[\s\S]*?(?=\n§|\Z)'\
+#     --delimiter "<tr>" \
+#     --scheduler cosine \
+#     --negative_sampling uniform \
+#     --validation_split 0.15 \
+#     --early_stopping_patience 15 \
+#     --output_dir ../transE_embeddings/m2m100_418M_STvO \
+
+
+
+# opus-mt-de-en_translated_integrated_Straßenverkehrs_Ordnung_graph_triples
+# python ../train_transE.py \
+#     --data_path ../data/stvo/opus-mt-de-en_translated_integrated_Straßenverkehrs_Ordnung_graph_triples.txt \
+#     --embedding_dim 500\
+#     --epochs 200 \
+#     --batch_size 32 \
+#     --learning_rate 5e-5 \
+#     --l2_reg 0.01 \
+#     --dropout 0.1 \
+#     --save_paragraph_embeddings \
+#     --paragraph_extraction_method regex\
+#     --paragraph_prefixes '§'\
+#     --paragraph_pattern '^§§?\s*\d+(?:\s*to\s*\d+)?[\s\S]*?(?=\n§|\Z)'\
+#     --delimiter "<tr>" \
+#     --scheduler cosine \
+#     --negative_sampling uniform \
+#     --validation_split 0.15 \
+#     --early_stopping_patience 15 \
+#     --output_dir ../transE_embeddings/opus-mt-de-en_STvO \
+
+
+
+
+
+    
+# # m2m100_418M_translated_BGB_graph_triples
+# python ../train_transE.py \
+#     --data_path ../data/BGB/m2m100_418M_translated_BGB_graph_triples.txt \
+#     --embedding_dim 500\
+#     --epochs 200 \
+#     --batch_size 32 \
+#     --learning_rate 5e-5 \
+#     --l2_reg 0.01 \
+#     --dropout 0.1 \
+#     --save_paragraph_embeddings \
+#     --paragraph_extraction_method regex\
+#     --paragraph_prefixes '§'\
+#     --paragraph_pattern '^§§?\s*\d+(?:\s*to\s*\d+)?[\s\S]*?(?=\n§|\Z)'\
+#     --delimiter "<tr>" \
+#     --scheduler cosine \
+#     --negative_sampling uniform \
+#     --validation_split 0.15 \
+#     --early_stopping_patience 15 \
+#     --output_dir ../transE_embeddings/m2m100_418M_BGB \
+
+# # opus-mt-de-en_translated_integrated_BGB_graph_triples
+# python ../train_transE.py \
+#     --data_path ../data/BGB/opus-mt-de-en_translated_integrated_BGB_graph_triples.txt \
+#     --embedding_dim 500\
+#     --epochs 200 \
+#     --batch_size 32 \
+#     --learning_rate 5e-5 \
+#     --l2_reg 0.01 \
+#     --dropout 0.1 \
+#     --save_paragraph_embeddings \
+#     --paragraph_extraction_method regex\
+#     --paragraph_prefixes '§'\
+#     --paragraph_pattern '^§§?\s*\d+(?:\s*to\s*\d+)?[\s\S]*?(?=\n§|\Z)'\
+#     --delimiter "<tr>" \
+#     --scheduler cosine \
+#     --negative_sampling uniform \
+#     --validation_split 0.15 \
+#     --early_stopping_patience 15 \
+#     --output_dir ../transE_embeddings/opus-mt-de-en_BGB \

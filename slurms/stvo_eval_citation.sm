@@ -1,0 +1,236 @@
+#!/bin/bash
+#ultimate job
+#SBATCH --job-name=STvO_citation
+#SBATCH --output=out/ultimate-STvO-citation-JOB-%j.out
+#SBATCH --error=err/ultimate-STvO-citation-JOB-%j.err
+#SBATCH --nodes=1 # As we have single node it should be always set as 1
+#SBATCH --cpus-per-task=40 # Number of CPUs # max = 80
+#SBATCH --gres=gpu:7g.79gb:1  # Allocate 1 GPU resources with specified configurations
+#SBATCH --mem=300G  # Specify the total amount of memory # max = 300G
+#SBATCH --time=96:00:00  # Set the time limit to 1 minute
+#SBATCH --partition=ultimate
+#SBATCH --qos=ultimate
+#SBATCH --account=ultimate
+
+
+
+# Save echo device info into CSV file
+mkdir -p ./MIG-IDs
+echo $SLURM_JOB_ID, $CUDA_VISIBLE_DEVICES > ./MIG-IDs/STvO-citation-ultimate-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi -L >> ./MIG-IDs/STvO-citation-ultimate-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi >> ./MIG-IDs/STvO-citation-ultimate-monitor-JOBID-$SLURM_JOB_ID.csv
+
+
+    
+STATS_DIR="../stats/STvO-citation"
+ROOT_DIR_SUPER_FAST="/super_fast_storage/siddig"
+# Paths and parameters
+ROOT_DIR_FAST="/fast_storage/siddig"
+DATA_DIR="$ROOT_DIR_FAST/driving-license"
+HF_DIR="$ROOT_DIR_FAST/driving-license/HUG_models"
+
+mkdir -p $STATS_DIR
+mkdir -p $DATA_DIR
+mkdir -p $HF_DIR
+
+
+# Create and activate the virtual environment if it doesn't already exist
+if [ ! -d "$DATA_DIR/driving-env" ]; then
+    python3 -m venv $DATA_DIR/driving-env
+    source $DATA_DIR/driving-env/bin/activate
+    bash ./install.sh
+fi 
+
+source $DATA_DIR/driving-env/bin/activate
+# bash ./install.sh
+
+# =====================================================================================
+# MODEL_CHECKPOINT_DIR="$DATA_DIR/multitask_models"
+MODEL_CHECKPOINT_DIR="$ROOT_DIR_FAST/driving-license/STVo_PRLM_PY_hierarchical_models_final"
+mkdir -p $MODEL_CHECKPOINT_DIR
+
+
+
+MASKED_MODELS=(
+    casehold/custom-legalbert
+    google-bert/bert-base-uncased
+    nlpaueb/legal-bert-base-uncased
+    nlpaueb/legal-bert-small-uncased
+    avichr/Legal-heBERT
+    dlicari/Italian-Legal-BERT
+    
+    
+)
+
+CAUSAL_MODELS=(
+    Qwen/Qwen3-Embedding-0.6B
+    google/gemma-3-270m
+    google/gemma-3-270m-it
+    openai-community/gpt2
+
+)
+CLM_MLM_LAMBDAS=(0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9)
+CLS_LAMBDAS=(0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9)
+
+
+TRANSLATORS=(
+    m2m100_418M
+    opus-mt-de-en
+)
+
+SIMILARITY_THRESHOLD_VALUES=(0.5 0.6 0.7 0.8 0.9)
+SIMILARITY_THRESHOLD=${SIMILARITY_THRESHOLD_VALUES[1]}
+
+
+
+
+###############################################  MASKED MODELS  #####################################################
+    # Iterate over each base model
+    for BASE_MODEL_NAME in "${MASKED_MODELS[@]}"; do
+        for TRANSLATOR in "${TRANSLATORS[@]}"; do
+                echo "==================================================================="
+                echo "--- 1.EVALUATING BASELINE: ${BASE_MODEL_NAME} ---"
+                echo "==================================================================="
+
+                python ../eval_citation.py --qa_data_path "../data/synthetic-data/stvo/citation_qa_${TRANSLATOR}_mistral.jsonl"\
+                            --paragraph_embeddings_file "../transE_embeddings/${TRANSLATOR}_STvO/paragraph_embeddings_lists.json"\
+                            --baseline_model $BASE_MODEL_NAME \
+                            --cache_dir $HF_DIR \
+                            --stats_dir $STATS_DIR \
+                            --max_seq_length_clu 128\
+                            --max_segments 5\
+                            --eval_base \
+                            --modeling_type "masked"\
+                            --top_k 5\
+                            --seed 42
+
+            echo "==================================================================="
+            echo "--- Finished EVALUATING BASELINE: ${BASE_MODEL_NAME} ---"
+            echo "==================================================================="
+
+            # Iterate over each combination of lambda weights
+            for CLM_MLM_LAMBDA in "${CLM_MLM_LAMBDAS[@]}"; do
+                for CLS_LAMBDA in "${CLS_LAMBDAS[@]}"; do
+                        # Skip if the sum of CLM and clu lambda is greater than or equal to 1.0
+                        # Calculate the sum of CLM and clu lambdas
+                        
+                        # calculate triplet the format is 1 - (CLM + clu) with 2 decimal places
+                        clu_LAMBDA=$(echo "scale=1; 1 - ($CLM_MLM_LAMBDA + $CLS_LAMBDA)" | bc)
+                        if (( $(echo "$clu_LAMBDA < 0" | bc -l) )); then
+                            echo "Skipping combination: CLM=${CLM_MLM_LAMBDA}, cls=${CLS_LAMBDA}, clu would be negative."
+                            continue
+                        fi
+                        # make sure the value is approximated to .2 decimal places
+                        CLM_MLM_LAMBDA=$(printf "%.1f" $CLM_MLM_LAMBDA)
+                        clu_LAMBDA=$(printf "%.1f" $clu_LAMBDA)
+                        CLS_LAMBDA=$(printf "%.1f" $CLS_LAMBDA)
+
+
+                        MODEL_CHECKPOINT="${TRANSLATOR}_clm_mlm_${CLM_MLM_LAMBDA}_clu_${clu_LAMBDA}_cls_${CLS_LAMBDA}_final.pt"
+                        echo "-------------------------------------------------------------------"
+                        echo "--- Starting EVALUATING TUNED MODEL: ${MODEL_CHECKPOINT} ---"
+                        echo "--- Base Model: ${BASE_MODEL_NAME}"
+                        echo "--- Lambdas: CLM=${CLM_MLM_LAMBDA}, clu=${clu_LAMBDA}, cls=${CLS_LAMBDA}"
+                        echo "-------------------------------------------------------------------"
+
+                        python ../eval_citation.py --qa_data_path "../data/synthetic-data/stvo/citation_qa_${TRANSLATOR}_mistral.jsonl"\
+                                    --paragraph_embeddings_file "../transE_embeddings/${TRANSLATOR}_STvO/paragraph_embeddings_lists.json"\
+                                    --baseline_model $BASE_MODEL_NAME \
+                                    --cache_dir $HF_DIR \
+                                    --stats_dir $STATS_DIR \
+                                    --model_checkpoint_dir $MODEL_CHECKPOINT_DIR\
+                                    --model_checkpoint $MODEL_CHECKPOINT\
+                                    --max_seq_length_clu 128\
+                                    --max_segments 5\
+                                    --modeling_type "masked"\
+                                    --top_k 5\
+                                    --seed 42
+                                    
+                                    
+
+                        echo "-------------------------------------------------------------------"
+                        echo "--- Finished EVALUATING TUNED MODEL: ${MODEL_CHECKPOINT} ---"
+                        echo "-------------------------------------------------------------------"
+                    done
+            done
+        done
+done    
+
+
+
+#####################################  CAUSAL MODELS  #####################################################
+
+    # Iterate over each base model
+    for BASE_MODEL_NAME in "${CAUSAL_MODELS[@]}"; do
+        for TRANSLATOR in "${TRANSLATORS[@]}"; do
+                echo "==================================================================="
+                echo "--- 1.EVALUATING BASELINE: ${BASE_MODEL_NAME} ---"
+                echo "==================================================================="
+
+                python ../eval_citation.py --qa_data_path "../data/synthetic-data/stvo/citation_qa_${TRANSLATOR}_mistral.jsonl"\
+                            --paragraph_embeddings_file "../transE_embeddings/${TRANSLATOR}_STvO/paragraph_embeddings_lists.json"\
+                            --baseline_model $BASE_MODEL_NAME \
+                            --cache_dir $HF_DIR \
+                            --stats_dir $STATS_DIR \
+                            --max_seq_length_clu 128\
+                            --max_segments 5\
+                            --eval_base \
+                            --modeling_type "causal"\
+                            --top_k 5\
+                            --seed 42
+
+            echo "==================================================================="
+            echo "--- Finished EVALUATING BASELINE: ${BASE_MODEL_NAME} ---"
+            echo "==================================================================="
+
+            # Iterate over each combination of lambda weights
+            for CLM_MLM_LAMBDA in "${CLM_MLM_LAMBDAS[@]}"; do
+                for CLS_LAMBDA in "${CLS_LAMBDAS[@]}"; do
+                        # Skip if the sum of CLM and clu lambda is greater than or equal to 1.0
+                        # Calculate the sum of CLM and clu lambdas
+                        
+                        # calculate triplet the format is 1 - (CLM + clu) with 2 decimal places
+                        clu_LAMBDA=$(echo "scale=1; 1 - ($CLM_MLM_LAMBDA + $CLS_LAMBDA)" | bc)
+                        if (( $(echo "$clu_LAMBDA < 0" | bc -l) )); then
+                            echo "Skipping combination: CLM=${CLM_MLM_LAMBDA}, cls=${CLS_LAMBDA}, clu would be negative."
+                            continue
+                        fi
+                        # make sure the value is approximated to .2 decimal places
+                        CLM_MLM_LAMBDA=$(printf "%.1f" $CLM_MLM_LAMBDA)
+                        clu_LAMBDA=$(printf "%.1f" $clu_LAMBDA)
+                        CLS_LAMBDA=$(printf "%.1f" $CLS_LAMBDA)
+
+
+                        MODEL_CHECKPOINT="${TRANSLATOR}_clm_mlm_${CLM_MLM_LAMBDA}_clu_${clu_LAMBDA}_cls_${CLS_LAMBDA}_final.pt"
+                        echo "-------------------------------------------------------------------"
+                        echo "--- Starting EVALUATING TUNED MODEL: ${MODEL_CHECKPOINT} ---"
+                        echo "--- Base Model: ${BASE_MODEL_NAME}"
+                        echo "--- Lambdas: CLM=${CLM_MLM_LAMBDA}, clu=${clu_LAMBDA}, cls=${CLS_LAMBDA}"
+                        echo "-------------------------------------------------------------------"
+
+                        python ../eval_citation.py --qa_data_path "../data/synthetic-data/stvo/citation_qa_${TRANSLATOR}_mistral.jsonl"\
+                                    --paragraph_embeddings_file "../transE_embeddings/${TRANSLATOR}_STvO/paragraph_embeddings_lists.json"\
+                                    --baseline_model $BASE_MODEL_NAME \
+                                    --cache_dir $HF_DIR \
+                                    --stats_dir $STATS_DIR \
+                                    --model_checkpoint_dir $MODEL_CHECKPOINT_DIR\
+                                    --model_checkpoint $MODEL_CHECKPOINT\
+                                    --max_seq_length_clu 128\
+                                    --max_segments 5\
+                                    --modeling_type "causal"\
+                                    --top_k 5\
+                                    --seed 42
+                                    
+                                    
+
+                        echo "-------------------------------------------------------------------"
+                        echo "--- Finished EVALUATING TUNED MODEL: ${MODEL_CHECKPOINT} ---"
+                        echo "-------------------------------------------------------------------"
+                    done
+            done
+        done
+done    
+
+
+
+# =====================================================================================

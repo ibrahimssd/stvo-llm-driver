@@ -1,0 +1,120 @@
+#!/bin/bash
+#ultimate job
+#SBATCH --job-name=german-eval
+#SBATCH --output=out/ultimate-eval-JOB-%j.out
+#SBATCH --error=err/ultimate-eval-JOB-%j.err
+#SBATCH --nodes=1 # As we have single node it should be always set as 1
+#SBATCH --cpus-per-task=80 # Number of CPUs # max = 80
+#SBATCH --gres=gpu:7g.79gb:1  # Allocate 1 GPU resources with specified configurations
+#SBATCH --mem=600G  # Specify the total amount of memory # max = 300G
+#SBATCH --time=96:00:00  # Set the time limit to 1 minute
+#SBATCH --partition=ultimate
+#SBATCH --qos=ultimate
+#SBATCH --account=ultimate
+
+
+# Save echo device info into CSV file
+mkdir -p ./MIG-IDs
+echo $SLURM_JOB_ID, $CUDA_VISIBLE_DEVICES > ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi -L >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+
+
+
+# Paths and parameters
+ROOT_DIR="/fast_storage/siddig/"
+DATA_DIR="$ROOT_DIR/driving-license"
+OUT_DIR="$ROOT_DIR/driving-license/multitask_models"
+HF_DIR="$ROOT_DIR/driving-license/HF_models"
+
+mkdir -p $DATA_DIR
+
+# Create and activate the virtual environment if it doesn't already exist
+if [ ! -d "$DATA_DIR/driving-env" ]; then
+    python3 -m venv $DATA_DIR/driving-env
+    source $DATA_DIR/driving-env/bin/activate
+    bash ./install.sh
+fi 
+
+source $DATA_DIR/driving-env/bin/activate
+# bash ./install.sh
+
+
+BASE_MODEL_DIR="dbmdz/german-gpt2"
+MODEL_CHECKPOINT_DIR="$DATA_DIR/multitask_models"
+mkdir -p $MODEL_CHECKPOINT_DIR
+# iterate over all combinations of CLM and CLS loss weights , skip if the triplet loss weight is negative , triplet loss weight is 1 - (CLM + CLS)
+# example :
+MODEL_CHECKPOINT="clm_0.2_cls_0.2_triplet_0.6_final"
+clm_lambdas = 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9
+cls_lambdas = 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9
+
+# Base models 
+#dbmdz/german-gpt2
+# Gensyn/Qwen2.5-0.5B-Instruct
+# Qwen/Qwen3-Embedding-0.6B
+# meta-llama/Llama-3.2-1B
+# deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B
+# Qwen/Qwen2.5-Math-1.5B
+
+
+
+python ../eval.py --data_path "../data/test-sets/german-driving-license.json"\
+            --cls_data_path "../data/graph_sentence_classification_dataset.json"\
+            --triplet_data_path "../data/graph_triplets.txt"\
+            --data_name "german"\
+            --baseline_model $BASE_MODEL_DIR \
+            --seed 42\
+            --decoding "combine"\
+            --batch_samples 20\
+            --prompt_versions 4\
+            --skip_images \
+            --skip_category "direct_answer" \
+            --eval_base \
+            --task_type "clm"\
+            --max_seq_length_clm 512\
+            --max_seq_length_cls 128\
+            --max_seq_length_triplet 512\
+            --max_seq_length 2048\
+            --max_new_tokens 100\
+            --top_p 1\
+            --top_k 40\
+            --temperature 0.2\
+            --prompt_version 4\
+            --temperatures 0.2\
+            --repetition_penalty 1.1\
+            --skip_images \
+            --results_file "../results/baseline-model-performance-full-precision-batch-non-positive-no-multitask-$SLURM_JOB_ID.csv"
+
+
+
+BASE_MODEL_DIR="dbmdz/german-gpt2"
+python ../eval.py --data_path "../data/test-sets/german-driving-license.json"\
+            --cls_data_path "../data/graph_sentence_classification_dataset.json"\
+            --triplet_data_path "../data/graph_triplets.txt"\
+            --data_name "german"\
+            --baseline_model $BASE_MODEL_DIR \
+            --model_checkpoint_dir $MODEL_CHECKPOINT_DIR\
+            --model_checkpoint $MODEL_CHECKPOINT\
+            --seed 42\
+            --decoding "combine"\
+            --batch_samples 20\
+            --prompt_versions 4\
+            --skip_images \
+            --task_type "clm"\
+            --max_seq_length_clm 512\
+            --max_seq_length_cls 128\
+            --max_seq_length_triplet 512\
+            --max_seq_length 2048\
+            --max_new_tokens 100\
+            --top_p 1\
+            --top_k 40\
+            --temperature 0.2\
+            --prompt_version 4\
+            --temperatures 0.2\
+            --repetition_penalty 1.1\
+            --skip_images \
+            --results_file "../results/baseline-model-performance-full-precision-batch-non-positive-no-multitask-$SLURM_JOB_ID.csv"
+
+
+

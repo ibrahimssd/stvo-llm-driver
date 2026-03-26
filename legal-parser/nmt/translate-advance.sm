@@ -1,0 +1,80 @@
+#!/bin/bash
+#advance job
+#SBATCH --job-name=translate
+#SBATCH --output=out/advance-IT-eval-JOB-%j.out
+#SBATCH --error=err/advance-IT-eval-JOB-%j.err
+#SBATCH --nodes=1 # As we have single node it should be always set as 1
+#SBATCH --cpus-per-task=40 # Number of CPUs # max = 40
+#SBATCH --gres=gpu:nvidia_a100_80gb_pcie_3g.39gb:1  # Allocate 1 GPU resources with specified configurations
+#SBATCH --mem=100G  # Specify the total amount of memory # max = 300G
+#SBATCH --time=30:00:00  # Set the time limit to 1 minute
+#SBATCH --partition=advance
+#SBATCH --qos=advance
+#SBATCH --account=advance
+ 
+     
+ 
+# Save echo device info into CSV file
+mkdir -p ./MIG-IDs
+echo $SLURM_JOB_ID, $CUDA_VISIBLE_DEVICES > ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi -L >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+
+
+# Paths and parameters
+DATA_DIR="/fast_storage/siddig/driving-license"
+ENV_DIR="$DATA_DIR/driving-env"
+mkdir -p $DATA_DIR
+
+# Create and activate the virtual environment if it doesn't already exist
+if [ ! -d "$ENV_DIR" ]; then
+    python3 -m venv $ENV_DIR
+    source $ENV_DIR/bin/activate
+    bash ./install.sh
+fi 
+
+source $ENV_DIR/bin/activate
+# bash ./install.sh
+
+
+export HF_HOME="/fast_storage/siddig/driving-license/HF_models"
+
+
+
+# # parsed_main_content_BGB
+# python translate-de-en-seq2seq.py   --model_name 'facebook/m2m100_418M' \
+#                             --parsed_main "parsed_main_content_BGB.json" \
+#                             --translated_main "translated_main_content_BGB.json" \
+#                             --translated_table "translated_table_content_BGB.json" \
+#                             --out_dir '../../data/BGB' \
+#                             --max_length 400 \
+                            
+
+# python translate-de-en-seq2seq.py   --model_name 'Helsinki-NLP/opus-mt-de-en' \
+#                             --parsed_main "parsed_main_content_BGB.json" \
+#                             --translated_main "translated_main_content_BGB.json" \
+#                             --translated_table "translated_table_content_BGB.json" \
+#                             --out_dir '../../data/BGB' \
+#                             --max_length 400 \
+
+
+# verified (final)
+# Stvo
+python translate_de_en_robust.py   --model_name 'facebook/m2m100_418M' \
+                            --parsed_main "parsed_main_content_Straßenverkehrs_Ordnung.json" \
+                            --parsed_table "parsed_table_content_Straßenverkehrs_Ordnung.json" \
+                            --translated_main "translated_main_content_Straßenverkehrs_Ordnung.json" \
+                            --translated_table "translated_table_content_Straßenverkehrs_Ordnung.json" \
+                            --out_dir './' \
+                            --max_length 1000 \
+
+# Helsinki-NLP/opus-mt-fr-en
+python translate_de_en_robust.py   --model_name 'Helsinki-NLP/opus-mt-de-en' \
+                            --parsed_main "parsed_main_content_Straßenverkehrs_Ordnung.json" \
+                            --parsed_table "parsed_table_content_Straßenverkehrs_Ordnung.json" \
+                            --translated_main "translated_main_content_Straßenverkehrs_Ordnung.json" \
+                            --translated_table "translated_table_content_Straßenverkehrs_Ordnung.json" \
+                            --out_dir './' \
+                            --max_length 1000 \
+                            
+

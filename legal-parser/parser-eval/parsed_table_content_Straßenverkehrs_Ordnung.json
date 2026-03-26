@@ -1,0 +1,1854 @@
+[
+    {
+        "table_name": "Anlage 1(zu § 40 Absatz 6 und 7)Allgemeine und Besondere Gefahrzeichen",
+        "table_id": "1",
+        "table_data": [
+            {
+                "Section": "Abschnitt 1 Allgemeine Gefahrzeichen (zu § 40 Absatz 6)",
+                "Section_Id": "1",
+                "Content": [
+                    {
+                        "Sign_id": "1",
+                        "Sign_number": "101",
+                        "Sign_name": "Zeichen 101",
+                        "image": "<img>j0367-1_0280.jpg</img>",
+                        "description": " : Gefahrstelle Ein Zusatzzeichen kann die Gefahr näher bezeichnen."
+                    },
+                    {
+                        "Sign_id": "2",
+                        "Sign_number": "102",
+                        "Sign_name": "Zeichen 102",
+                        "image": "<img>j0367-1_0290.jpg</img>",
+                        "description": " : Kreuzung oder Einmündung Kreuzung oder Einmündung mit Vorfahrt von rechts"
+                    },
+                    {
+                        "Sign_id": "3",
+                        "Sign_number": "103",
+                        "Sign_name": "Zeichen 103",
+                        "image": "<img>j0367-1_0300.jpg</img>",
+                        "description": " : Kurve"
+                    },
+                    {
+                        "Sign_id": "4",
+                        "Sign_number": "105",
+                        "Sign_name": "Zeichen 105",
+                        "image": "<img>j0367-1_0310.jpg</img>",
+                        "description": " : Doppelkurve"
+                    },
+                    {
+                        "Sign_id": "5",
+                        "Sign_number": "108",
+                        "Sign_name": "Zeichen 108",
+                        "image": "<img>j0367-1_0320.jpg</img>",
+                        "description": " : Gefälle"
+                    },
+                    {
+                        "Sign_id": "6",
+                        "Sign_number": "110",
+                        "Sign_name": "Zeichen 110",
+                        "image": "<img>j0367-1_0330.jpg</img>",
+                        "description": " : Steigung"
+                    },
+                    {
+                        "Sign_id": "7",
+                        "Sign_number": "112",
+                        "Sign_name": "Zeichen 112",
+                        "image": "<img>j0367-1_0340.jpg</img>",
+                        "description": " : Unebene Fahrbahn"
+                    },
+                    {
+                        "Sign_id": "8",
+                        "Sign_number": "114",
+                        "Sign_name": "Zeichen 114",
+                        "image": "<img>j0367-1_0350.jpg</img>",
+                        "description": " : Schleuder- oder Rutschgefahr Schleuder- oder Rutschgefahr bei Nässe oder Schmutz"
+                    },
+                    {
+                        "Sign_id": "9",
+                        "Sign_number": "117",
+                        "Sign_name": "Zeichen 117",
+                        "image": "<img>j0367-1_0360.jpg</img>",
+                        "description": " : Seitenwind"
+                    },
+                    {
+                        "Sign_id": "10",
+                        "Sign_number": "120",
+                        "Sign_name": "Zeichen 120",
+                        "image": "<img>j0367-1_0370.jpg</img>",
+                        "description": " : Verengte Fahrbahn"
+                    },
+                    {
+                        "Sign_id": "11",
+                        "Sign_number": "121",
+                        "Sign_name": "Zeichen 121",
+                        "image": "<img>j0367-1_0380.jpg</img>",
+                        "description": " : Einseitig verengte Fahrbahn"
+                    },
+                    {
+                        "Sign_id": "12",
+                        "Sign_number": "123",
+                        "Sign_name": "Zeichen 123",
+                        "image": "<img>j0367-1_0390.jpg</img>",
+                        "description": " : Arbeitsstelle"
+                    },
+                    {
+                        "Sign_id": "13",
+                        "Sign_number": "124",
+                        "Sign_name": "Zeichen 124",
+                        "image": "<img>j0367-1_0400.jpg</img>",
+                        "description": " : Stau"
+                    },
+                    {
+                        "Sign_id": "14",
+                        "Sign_number": "125",
+                        "Sign_name": "Zeichen 125",
+                        "image": "<img>j0367-1_0410.jpg</img>",
+                        "description": " : Gegenverkehr"
+                    },
+                    {
+                        "Sign_id": "15",
+                        "Sign_number": "131",
+                        "Sign_name": "Zeichen 131",
+                        "image": "<img>j0367-1_0420.jpg</img>",
+                        "description": " : Lichtzeichenanlage"
+                    },
+                    {
+                        "Sign_id": "16",
+                        "Sign_number": "133",
+                        "Sign_name": "Zeichen 133",
+                        "image": "<img>j0367-1_0430.jpg</img>",
+                        "description": " : Fußgänger"
+                    },
+                    {
+                        "Sign_id": "17",
+                        "Sign_number": "136",
+                        "Sign_name": "Zeichen 136",
+                        "image": "<img>j0367-1_0440.jpg</img>",
+                        "description": " : Kinder"
+                    },
+                    {
+                        "Sign_id": "18",
+                        "Sign_number": "138",
+                        "Sign_name": "Zeichen 138",
+                        "image": "<img>j0367-1_0450.jpg</img>",
+                        "description": " : Radverkehr"
+                    },
+                    {
+                        "Sign_id": "19",
+                        "Sign_number": "142",
+                        "Sign_name": "Zeichen 142",
+                        "image": "<img>j0367-1_0460.jpg</img>",
+                        "description": " : Wildwechsel"
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 2 Besondere Gefahrzeichen vor Übergängen von Schienenbahnen mit Vorrang (zu § 40 Absatz 7)",
+                "Section_Id": "2",
+                "Content": [
+                    {
+                        "Sign_id": "20",
+                        "Sign_number": "151",
+                        "Sign_name": "Zeichen 151",
+                        "image": "<img>j0367-1_0470.jpg</img>",
+                        "description": " : Bahnübergang"
+                    },
+                    {
+                        "Sign_id": "21",
+                        "Sign_number": "156",
+                        "Sign_name": "Zeichen 156",
+                        "image": "<img>j0367-1_0480.jpg</img>",
+                        "description": " : dreistreifiger Bake Bahnübergang mit dreistreifiger Bake etwa 240 m vor dem Bahnübergang. Die Angabe erheblich abweichender Abstände kann an der dreistreifigen, zweistreifigen und einstreifigen Bake oberhalb der Schrägstreifen in schwarzen Ziffern erfolgen."
+                    },
+                    {
+                        "Sign_id": "22",
+                        "Sign_number": "159",
+                        "Sign_name": "Zeichen 159",
+                        "image": "<img>j0367-1_0490.jpg</img>",
+                        "description": " : Zweistreifige Bake Zweistreifige Bake etwa 160 m vor dem Bahnübergang"
+                    },
+                    {
+                        "Sign_id": "23",
+                        "Sign_number": "162",
+                        "Sign_name": "Zeichen 162",
+                        "image": "<img>j0367-1_0500.jpg</img>",
+                        "description": " : Einstreifige Bake Einstreifige Bake etwa 80 m vor dem Bahnübergang"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "table_name": "Anlage 2(zu § 41 Absatz 1)Vorschriftzeichen",
+        "table_id": "2",
+        "table_data": [
+            {
+                "Section": "Abschnitt 1 Wartegebote und Haltgebote",
+                "Section_Id": "1",
+                "Content": [
+                    {
+                        "Sign_id": "1",
+                        "Sign_number": "201",
+                        "Sign_name": "Zeichen 201",
+                        "image": "<img>j0367-1_0510.jpg</img>",
+                        "description": " : Andreaskreuz Ge- oder Verbot 1. Wer ein Fahrzeug führt, muss dem Schienenverkehr Vorrang gewähren. 2. Wer ein Fahrzeug führt, darf bis zu 10 m vor diesem Zeichen nicht halten, wenn es dadurch verdeckt wird. 3. Wer ein Fahrzeug führt, darf vor und hinter diesem Zeichen a) innerhalb geschlossener Ortschaften (Zeichen 310 und 311) bis zu je 5 m, b) außerhalb geschlossener Ortschaften bis zu je 50 m nicht parken. 4. Ein Zusatzzeichen mit schwarzem Pfeil zeigt an, dass das Andreaskreuz nur für den Straßenverkehr in Richtung dieses Pfeils gilt. Erläuterung Das Zeichen (auch liegend) befindet sich vor dem Bahnübergang, in der Regel unmittelbar davor. Ein Blitzpfeil in der Mitte des Andreaskreuzes zeigt an, dass die Bahnstrecke eine Spannung führende Fahrleitung hat."
+                    },
+                    {
+                        "Sign_id": "2",
+                        "Sign_number": "205",
+                        "Sign_name": "Zeichen 205",
+                        "image": "<img>j0367-1_0520.jpg</img>",
+                        "description": " : Vorfahrt gewähren. Ge- oder Verbot 1. Wer ein Fahrzeug führt, muss Vorfahrt gewähren. 2. Wer ein Fahrzeug führt, darf bis zu 10 m vor diesem Zeichen nicht halten, wenn es dadurch verdeckt wird. Erläuterung Das Zeichen steht unmittelbar vor der Kreuzung oder Einmündung. Es kann durch dasselbe Zeichen mit Zusatzzeichen, das die Entfernung angibt, angekündigt sein."
+                    },
+                    {
+                        "Sign_id": "2.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0530.jpg</img>",
+                        "description": " :  Ge- oder Verbot Ist das Zusatzzeichen zusammen mit dem Zeichen 205 angeordnet, bedeutet es: Wer ein Fahrzeug führt, muss Vorfahrt gewähren und dabei auf Radverkehr und Elektrokleinstfahrzeuge im Sinne der eKFV von links und rechts achten. Erläuterung Das Zusatzzeichen steht über dem Zeichen 205."
+                    },
+                    {
+                        "Sign_id": "2.2",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0540.jpg</img>",
+                        "description": " :  Ge- oder Verbot Ist das Zusatzzeichen zusammen mit dem Zeichen 205 angeordnet, bedeutet es: Wer ein Fahrzeug führt, muss der Straßenbahn Vorfahrt gewähren. Erläuterung Das Zusatzzeichen steht über dem Zeichen 205."
+                    },
+                    {
+                        "Sign_id": "3",
+                        "Sign_number": "206",
+                        "Sign_name": "Zeichen 206",
+                        "image": "<img>j0367-1_0550.jpg</img>",
+                        "description": " : Halt. Vorfahrt gewähren. Ge- oder Verbot 1. Wer ein Fahrzeug führt, muss anhalten und Vorfahrt gewähren. 2. Wer ein Fahrzeug führt, darf bis zu 10 m vor diesem Zeichen nicht halten, wenn es dadurch verdeckt wird. 3. Ist keine Haltlinie (Zeichen 294) vorhanden, ist dort anzuhalten, wo die andere Straße zu übersehen ist."
+                    },
+                    {
+                        "Sign_id": "3.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0560.jpg</img>",
+                        "description": " :  Erläuterung Das Zusatzzeichen kündigt zusammen mit dem Zeichen 205 das Haltgebot in der angegebenen Entfernung an."
+                    },
+                    {
+                        "Sign_id": "3.2",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0570.jpg</img>",
+                        "description": " :  Ge- oder Verbot Ist das Zusatzzeichen zusammen mit dem Zeichen 206 angeordnet, bedeutet es: Wer ein Fahrzeug führt, muss anhalten und Vorfahrt gewähren und dabei auf Radverkehr und Elektrokleinstfahrzeuge im Sinne der eKFV von links und rechts achten. Erläuterung Das Zusatzzeichen steht über dem Zeichen 206."
+                    },
+                    {
+                        "Sign_id": "Zu 2 und 3",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0580.jpg</img>",
+                        "description": " :  Erläuterung Das Zusatzzeichen gibt zusammen mit den Zeichen 205 oder 206 den Verlauf der Vorfahrtstraße (abknickende Vorfahrt) bekannt."
+                    },
+                    {
+                        "Sign_id": "4",
+                        "Sign_number": "208",
+                        "Sign_name": "Zeichen 208",
+                        "image": "<img>j0367-1_0590.jpg</img>",
+                        "description": " : Gegenverkehrs Ge- oder Verbot Wer ein Fahrzeug führt, hat dem Gegenverkehr Vorrang zu gewähren."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 2 Vorgeschriebene Fahrtrichtungen",
+                "Section_Id": "2",
+                "Content": [
+                    {
+                        "Sign_id": "zu 5 bis 7",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0590.jpg</img>",
+                        "description": " Ge- oder Verbot Wer ein Fahrzeug führt, muss der vorgeschriebenen Fahrtrichtung folgen. Erläuterung Andere als die dargestellten Fahrtrichtungen werden entsprechend vorgeschrieben. Auf Anlage 2 laufende Nummer 70 wird hingewiesen."
+                    },
+                    {
+                        "Sign_id": "5",
+                        "Sign_number": "209",
+                        "Sign_name": "Zeichen 209",
+                        "image": "<img>j0367-1_0600.jpg</img>",
+                        "description": " : Rechts"
+                    },
+                    {
+                        "Sign_id": "6",
+                        "Sign_number": "211",
+                        "Sign_name": "Zeichen 211",
+                        "image": "<img>j0367-1_0610.jpg</img>",
+                        "description": " : Hier rechts"
+                    },
+                    {
+                        "Sign_id": "7",
+                        "Sign_number": "214",
+                        "Sign_name": "Zeichen 214",
+                        "image": "<img>j0367-1_0620.jpg</img>",
+                        "description": " : Geradeaus oder rechts"
+                    },
+                    {
+                        "Sign_id": "8",
+                        "Sign_number": "215",
+                        "Sign_name": "Zeichen 215",
+                        "image": "<img>j0367-1_0630.jpg</img>",
+                        "description": " : Kreisverkehr Ge- oder Verbot 1. Wer ein Fahrzeug führt, muss der vorgeschriebenen Fahrtrichtung im Kreisverkehr rechts folgen. 2. Wer ein Fahrzeug führt, darf die Mittelinsel des Kreisverkehrs nicht überfahren. Ausgenommen von diesem Verbot sind nur Fahrzeuge, denen wegen ihrer Abmessungen das Befahren sonst nicht möglich wäre. Mit ihnen darf die Mittelinsel und Fahrbahnbegrenzung überfahren werden, wenn eine Gefährdung anderer am Verkehr Teilnehmenden ausgeschlossen ist. 3. Es darf innerhalb des Kreisverkehrs auf der Fahrbahn nicht gehalten werden."
+                    },
+                    {
+                        "Sign_id": "9",
+                        "Sign_number": "220",
+                        "Sign_name": "Zeichen 220",
+                        "image": "<img>j0367-1_0640.jpg</img>",
+                        "description": " : Einbahnstraße Ge- oder Verbot Wer ein Fahrzeug führt, darf die Einbahnstraße nur in Richtung des Pfeils befahren. Erläuterung Das Zeichen schreibt für den Fahrzeugverkehr auf der Fahrbahn die Fahrtrichtung vor."
+                    },
+                    {
+                        "Sign_id": "9.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0650.jpg</img>",
+                        "description": " :  Ge- oder Verbot Ist Zeichen 220 mit diesem Zusatzzeichen angeordnet, bedeutet dies: Wer ein Fahrzeug führt, muss beim Einbiegen und im Verlauf einer Einbahnstraße auf Radverkehr und Elektrokleinstfahrzeuge im Sinne der eKFV entgegen der Fahrtrichtung achten. Erläuterung Das Zusatzzeichen zeigt an, dass Radverkehr in der Gegenrichtung zugelassen ist. Beim Vorbeifahren an einer für den gegenläufigen Radverkehr freigegebenen Einbahnstraße bleibt gegenüber dem ausfahrenden Radfahrer der Grundsatz, dass Vorfahrt hat, wer von rechts kommt (§ 8 Absatz 1 Satz 1) unberührt. Dies gilt auch für den ausfahrenden Radverkehr. Mündet eine Einbahnstraße für den gegenläufig zugelassenen Radverkehr in eine Vorfahrtstraße, steht für den aus der Einbahnstraße ausfahrenden Radverkehr das Zeichen 205."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 3 Vorgeschriebene Vorbeifahrt",
+                "Section_Id": "3",
+                "Content": [
+                    {
+                        "Sign_id": "10",
+                        "Sign_number": "222",
+                        "Sign_name": "Zeichen 222",
+                        "image": "<img>j0367-1_0660.jpg</img>",
+                        "description": " : Rechts vorbei Ge- oder Verbot Wer ein Fahrzeug führt, muss der vorgeschriebenen Vorbeifahrt folgen. Erläuterung „Links vorbei“ wird entsprechend vorgeschrieben."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 4 Seitenstreifen als Fahrstreifen, Haltestellen und Taxenstände",
+                "Section_Id": "4",
+                "Content": [
+                    {
+                        "Sign_id": "Zu 11 bis 13",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0660.jpg</img>",
+                        "description": " Erläuterung Wird das Zeichen 223.1, 223.2 oder 223.3 für eine Fahrbahn mit mehr als zwei Fahrstreifen angeordnet, zeigen die Zeichen die entsprechende Anzahl der Pfeile."
+                    },
+                    {
+                        "Sign_id": "11",
+                        "Sign_number": "223.1",
+                        "Sign_name": "Zeichen 223.1",
+                        "image": "<img>j0367-1_0670.jpg</img>",
+                        "description": " : Seitenstreifen befahren Ge- oder Verbot Das Zeichen gibt den Seitenstreifen als Fahrstreifen frei; dieser ist wie ein rechter Fahrstreifen zu befahren."
+                    },
+                    {
+                        "Sign_id": "11.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0680.jpg</img>",
+                        "description": " :  Erläuterung Das Zeichen 223.1 mit dem Zusatzzeichen kündigt die Aufhebung der Anordnung an."
+                    },
+                    {
+                        "Sign_id": "12",
+                        "Sign_number": "223.2",
+                        "Sign_name": "Zeichen 223.2",
+                        "image": "<img>j0367-1_0690.jpg</img>",
+                        "description": " : Seitenstreifen nicht mehr befahren Ge- oder Verbot Das Zeichen hebt die Freigabe des Seitenstreifens als Fahrstreifen auf."
+                    },
+                    {
+                        "Sign_id": "13",
+                        "Sign_number": "223.3",
+                        "Sign_name": "Zeichen 223.3",
+                        "image": "<img>j0367-1_0700.jpg</img>",
+                        "description": " : Seitenstreifen räumen Ge- oder Verbot Das Zeichen ordnet die Räumung des Seitenstreifens an."
+                    },
+                    {
+                        "Sign_id": "14",
+                        "Sign_number": "224",
+                        "Sign_name": "Zeichen 224",
+                        "image": "<img>j0367-1_0710.jpg</img>",
+                        "description": " : Haltestelle Ge- oder Verbot Wer ein Fahrzeug führt, darf bis zu 15 m vor und hinter dem Zeichen nicht parken. Erläuterung Das Zeichen kennzeichnet eine Haltestelle des Linienverkehrs und für Schulbusse. Das Zeichen mit dem Zusatzzeichen „Schulbus“ (Angabe der tageszeitlichen Benutzung) auf einer gemeinsamen weißen Trägerfläche kennzeichnet eine Haltestelle nur für Schulbusse."
+                    },
+                    {
+                        "Sign_id": "15",
+                        "Sign_number": "229",
+                        "Sign_name": "Zeichen 229",
+                        "image": "<img>j0367-1_0720.jpg</img>",
+                        "description": " : Taxenstand Ge- oder Verbot Wer ein Fahrzeug führt, darf an Taxenständen nicht halten, ausgenommen sind für die Fahrgastbeförderung bereitgehaltene Taxen. Erläuterung Die Länge des Taxenstandes wird durch die Angabe der Zahl der vorgesehenen Taxen oder das am Anfang der Strecke aufgestellte Zeichen mit einem zur Fahrbahn weisenden waagerechten weißen Pfeil und durch ein am Ende aufgestelltes Zeichen mit einem solchen von der Fahrbahn wegweisenden Pfeil oder durch eine Grenzmarkierung für Halt- und Parkverbote (Zeichen 299) gekennzeichnet."
+                    },
+                    {
+                        "Sign_id": "15.1",
+                        "Sign_number": "230",
+                        "Sign_name": "Zeichen 230",
+                        "image": "<img>j02990_0010.jpg</img>",
+                        "description": " : Ladebereich Ge- oder Verbot 1. Das Halten und Parken ist nur zum Be- und Entladen von Fahrzeugen zulässig. 2. Das Be- und Entladen muss ohne Verzögerung durchgeführt werden. Erläuterung Die Länge des Ladebereichs wird durch das am Anfang der Strecke aufgestellte Zeichen mit einem zur Fahrbahn weisenden waagerechten weißen Pfeil und durch ein am Ende aufgestelltes Zeichen mit einem solchen von der Fahrbahn wegweisenden Pfeil oder durch Markierung gekennzeichnet."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 5 Sonderwege",
+                "Section_Id": "5",
+                "Content": [
+                    {
+                        "Sign_id": "16",
+                        "Sign_number": "237",
+                        "Sign_name": "Zeichen 237",
+                        "image": "<img>j0367-1_0730.jpg</img>",
+                        "description": " : Radweg Ge- oder Verbot 1. Der Radverkehr darf nicht die Fahrbahn, sondern muss den Radweg benutzen (Radwegbenutzungspflicht). 2. Anderer Verkehr darf ihn nicht benutzen. 3. Ist durch Zusatzzeichen die Benutzung eines Radwegs für eine andere Verkehrsart erlaubt, muss diese auf den Radverkehr Rücksicht nehmen und der andere Fahrzeugverkehr muss erforderlichenfalls die Geschwindigkeit an den Radverkehr anpassen. 4. § 2 Absatz 4 Satz 6 bleibt unberührt."
+                    },
+                    {
+                        "Sign_id": "17",
+                        "Sign_number": "238",
+                        "Sign_name": "Zeichen 238",
+                        "image": "<img>j0367-1_0740.jpg</img>",
+                        "description": " : Reitweg Ge- oder Verbot 1. Wer reitet, darf nicht die Fahrbahn, sondern muss den Reitweg benutzen. Dies gilt auch für das Führen von Pferden (Reitwegbenutzungspflicht). 2. Anderer Verkehr darf ihn nicht benutzen. 3. Ist durch Zusatzzeichen die Benutzung eines Reitwegs für eine andere Verkehrsart erlaubt, muss diese auf den Reitverkehr Rücksicht nehmen und der Fahrzeugverkehr muss erforderlichenfalls die Geschwindigkeit an den Reitverkehr anpassen."
+                    },
+                    {
+                        "Sign_id": "18",
+                        "Sign_number": "239",
+                        "Sign_name": "Zeichen 239",
+                        "image": "<img>j0367-1_0750.jpg</img>",
+                        "description": " : Gehweg Ge- oder Verbot 1. Anderer als Fußgängerverkehr darf den Gehweg nicht nutzen. 2. Ist durch Zusatzzeichen die Benutzung eines Gehwegs für eine andere Verkehrsart erlaubt, muss diese auf den Fußgängerverkehr Rücksicht nehmen. Der Fußgängerverkehr darf weder gefährdet noch behindert werden. Wenn nötig, muss der Fahrverkehr warten; er darf nur mit Schrittgeschwindigkeit fahren. Erläuterung Das Zeichen kennzeichnet einen Gehweg (§ 25 Absatz 1 Satz 1), wo eine Klarstellung notwendig ist."
+                    },
+                    {
+                        "Sign_id": "19",
+                        "Sign_number": "240",
+                        "Sign_name": "Zeichen 240",
+                        "image": "<img>j0367-1_0760.jpg</img>",
+                        "description": " : Gemeinsamer Geh- und Radweg Ge- oder Verbot 1. Der Radverkehr darf nicht die Fahrbahn, sondern muss den gemeinsamen Geh- und Radweg benutzen (Radwegbenutzungspflicht). Dabei ist auf den Fußverkehr Rücksicht zu nehmen. Der Fußverkehr darf weder gefährdet noch behindert werden. Erforderlichenfalls ist die Geschwindigkeit an den Fußverkehr anzupassen. 2. Anderer Verkehr darf ihn nicht benutzen. 3. Ist durch Zusatzzeichen die Benutzung eines gemeinsamen Geh- und Radwegs für eine andere Verkehrsart erlaubt, muss diese auf den Fußgänger- und Radverkehr Rücksicht nehmen. Erforderlichenfalls muss der Fahrverkehr die Geschwindigkeit an den Fußgängerverkehr anpassen. 4. § 2 Absatz 4 Satz 6 bleibt unberührt. Erläuterung Das Zeichen kennzeichnet auch den Gehweg (§ 25 Absatz 1 Satz 1)."
+                    },
+                    {
+                        "Sign_id": "20",
+                        "Sign_number": "241",
+                        "Sign_name": "Zeichen 241",
+                        "image": "<img>j0367-1_0770.jpg</img>",
+                        "description": " : Getrennter Rad- und Gehweg Ge- oder Verbot 1. Der Radverkehr darf nicht die Fahrbahn, sondern muss den Radweg des getrennten Rad- und Gehwegs benutzen (Radwegbenutzungspflicht). 2. Anderer Verkehr darf ihn nicht benutzen. 3. Ist durch Zusatzzeichen die Benutzung eines getrennten Geh- und Radwegs für eine andere Verkehrsart erlaubt, darf diese nur den für den Radverkehr bestimmten Teil des getrennten Geh- und Radwegs befahren. 4. Die andere Verkehrsart muss auf den Radverkehr Rücksicht nehmen. Erforderlichenfalls muss anderer Fahrzeugverkehr die Geschwindigkeit an den Radverkehr anpassen. 5. § 2 Absatz 4 Satz 6 bleibt unberührt. Erläuterung Das Zeichen kennzeichnet auch den Gehweg (§ 25 Absatz 1 Satz 1)."
+                    },
+                    {
+                        "Sign_id": "21",
+                        "Sign_number": "242.1",
+                        "Sign_name": "Zeichen 242.1",
+                        "image": "<img>j0367-1_0780.jpg</img>",
+                        "description": " : Beginn einer Fußgängerzone Ge- oder Verbot 1. Anderer als Fußgängerverkehr darf die Fußgängerzone nicht benutzen. 2. Ist durch Zusatzzeichen die Benutzung einer Fußgängerzone für eine andere Verkehrsart erlaubt, dann gilt für den Fahrverkehr Nummer 2 zu Zeichen 239 entsprechend."
+                    },
+                    {
+                        "Sign_id": "22",
+                        "Sign_number": "242.2",
+                        "Sign_name": "Zeichen 242.2",
+                        "image": "<img>j0367-1_0790.jpg</img>",
+                        "description": " : Ende einer Fußgängerzone"
+                    },
+                    {
+                        "Sign_id": "23",
+                        "Sign_number": "244.1",
+                        "Sign_name": "Zeichen 244.1",
+                        "image": "<img>j0367-1_0800.jpg</img>",
+                        "description": " : Beginn einer Fahrradstraße Ge- oder Verbot 1. Anderer Fahrzeugverkehr als Radverkehr sowie Elektrokleinstfahrzeuge im Sinne der eKFV darf Fahrradstraßen nicht benutzen, es sei denn, dies ist durch Zusatzzeichen erlaubt. Die freigegebenen Verkehrsarten können auch gemeinsam auf einem Zusatzzeichen abgebildet sein. Das Überqueren einer Fahrradstraße durch anderen Fahrzeugverkehr an einer Kreuzung zum Erreichen der weiterführenden Straße ist gestattet. 2. Für den Fahrverkehr gilt eine Höchstgeschwindigkeit von 30 km/h. Der Radverkehr darf weder gefährdet noch behindert werden. Wenn nötig, muss der Kraftfahrzeugverkehr die Geschwindigkeit weiter verringern. 3. Das Nebeneinanderfahren mit Fahrrädern ist erlaubt. 4. Im Übrigen gelten die Vorschriften über die Fahrbahnbenutzung und über die Vorfahrt."
+                    },
+                    {
+                        "Sign_id": "24",
+                        "Sign_number": "244.2",
+                        "Sign_name": "Zeichen 244.2",
+                        "image": "<img>j0367-1_0810.jpg</img>",
+                        "description": " : Ende einer Fahrradstraße"
+                    },
+                    {
+                        "Sign_id": "24.1",
+                        "Sign_number": "244.3",
+                        "Sign_name": "Zeichen 244.3",
+                        "image": "<img>j0814-1_0080.jpg</img>",
+                        "description": " : Beginn einer Fahrradzone Ge- oder Verbot 1. Anderer Fahrzeugverkehr als Radverkehr sowie Elektrokleinstfahrzeuge im Sinne der eKFV darf Fahrradzonen nicht benutzen, es sei denn, dies ist durch Zusatzzeichen erlaubt. Die freigegebenen Verkehrsarten können auch gemeinsam auf einem Zusatzzeichen abgebildet sein. 2. Für den Fahrverkehr gilt eine Höchstgeschwindigkeit von 30 km/h. Der Radverkehr darf weder gefährdet noch behindert werden. Wenn nötig, muss der Kraftfahrzeugverkehr die Geschwindigkeit weiter verringern. 3. Das Nebeneinanderfahren mit Fahrrädern und Elektrokleinstfahrzeugen im Sinne der eKFV ist erlaubt. 4. Im Übrigen gelten die Vorschriften über die Fahrbahnbenutzung und über die Vorfahrt."
+                    },
+                    {
+                        "Sign_id": "24.2",
+                        "Sign_number": "244.4",
+                        "Sign_name": "Zeichen 244.4",
+                        "image": "<img>j0814-1_0090.jpg</img>",
+                        "description": " : Ende einer Fahrradzone"
+                    },
+                    {
+                        "Sign_id": "25",
+                        "Sign_number": "245",
+                        "Sign_name": "Zeichen 245",
+                        "image": "<img>j0367-1_0820.jpg</img>",
+                        "description": " : Bussonderfahrstreifen Ge- oder Verbot 1. Anderer Fahrverkehr als Omnibusse des Linienverkehrs sowie nach dem Personenbeförderungsrecht mit dem Schulbus-Schild zu kennzeichnende Fahrzeuge des Schüler- und Behindertenverkehrs dürfen Bussonderfahrstreifen nicht benutzen. 2. Mit Krankenfahrzeugen, Taxen, Fahrrädern und Bussen im Gelegenheitsverkehr darf der Sonderfahrstreifen nur benutzt werden, wenn dies durch Zusatzzeichen angezeigt ist. 3. Taxen dürfen an Bushaltestellen (Zeichen 224) zum sofortigen Ein- und Aussteigen von Fahrgästen halten. 4. Mit elektrisch betriebenen Fahrzeugen darf der Bussonderfahrstreifen nur benutzt werden, wenn dies durch Zusatzzeichen angezeigt ist. 5. Zur Erprobung unterschiedlicher Mobilitätsformen (§ 45 Absatz 9 Satz 4 Nummer 7a) darf der Bussonderfahrstreifen nur benutzt werden, wenn dies durch Zusatzzeichen, welches die besondere Mobilitätsform näher bezeichnet, angezeigt ist."
+                    },
+                    {
+                        "Sign_id": "25.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j1573-1_0030.jpg</img>",
+                        "description": " :  Ge- oder Verbot"
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 6 Verkehrsverbote",
+                "Section_Id": "6",
+                "Content": [
+                    {
+                        "Sign_id": "26",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j1573-1_0030.jpg</img>",
+                        "description": " Ge- oder Verbot Die nachfolgenden Zeichen 250 bis 261 (Verkehrsverbote) untersagen die Verkehrsteilnahme ganz oder teilweise mit dem angegebenen Inhalt."
+                    },
+                    {
+                        "Sign_id": "27",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0830.jpg</img>",
+                        "description": " :  Ge- oder Verbot Ist auf einem Zusatzzeichen eine Masse, wie „7,5 t“, angegeben, gilt das Verbot nur, soweit die zulässige Gesamtmasse dieser Verkehrsmittel einschließlich ihrer Anhänger die angegebene Grenze überschreitet."
+                    },
+                    {
+                        "Sign_id": "27.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j1573-1_0040.jpg</img>",
+                        "description": " :  Ge- oder Verbot"
+                    },
+                    {
+                        "Sign_id": "28",
+                        "Sign_number": "250",
+                        "Sign_name": "Zeichen 250",
+                        "image": "<img>j0367-1_0840.jpg</img>",
+                        "description": " : Verbot für Fahrzeuge aller Art Ge- oder Verbot 1. Verbot für Fahrzeuge aller Art. Das Zeichen gilt nicht für Handfahrzeuge, abweichend von § 28 Absatz 2 auch nicht für Reiter, Führer von Pferden sowie Treiber und Führer von Vieh. 2. Krafträder und Fahrräder dürfen geschoben werden. 3. Durch Zusatzzeichen können besondere Mobilitätsformen zu Erprobungszwecken (§ 45 Absatz 9 Satz 4 Nummer 7a) befristet bis zum 31. Dezember 2028 vom Verkehrsverbot ausgenommen werden."
+                    },
+                    {
+                        "Sign_id": "29",
+                        "Sign_number": "251",
+                        "Sign_name": "Zeichen 251",
+                        "image": "<img>j0367-1_0850.jpg</img>",
+                        "description": " : Verbot für Kraftwagen Ge- oder Verbot Verbot für Kraftwagen und sonstige mehrspurige Kraftfahrzeuge"
+                    },
+                    {
+                        "Sign_id": "30",
+                        "Sign_number": "253",
+                        "Sign_name": "Zeichen 253",
+                        "image": "<img>j0367-1_0860.jpg</img>",
+                        "description": " : Verbot für Kraftfahrzeuge über 3,5 t Ge- oder Verbot Verbot für Kraftfahrzeuge mit einer zulässigen Gesamtmasse über 3,5 t, einschließlich ihrer Anhänger, und für Zugmaschinen. Ausgenommen sind Personenkraftwagen und Kraftomnibusse. Erläuterung Das Zeichen kann in einer Überleitungstafel oder in einer Verschwenkungstafel oder in einer Fahrstreifentafel integriert sein. Dann bezieht sich das Verbot nur auf den jeweiligen Fahrstreifen, für den das Verbot angeordnet ist."
+                    },
+                    {
+                        "Sign_id": "30.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0870.jpg</img>",
+                        "description": " :  Ge- oder Verbot Wird Zeichen 253 mit diesen Zusatzzeichen angeordnet, bedeutet dies: 1. Das Verbot ist auf den Durchgangsverkehr mit Nutzfahrzeugen, einschließlich ihrer Anhänger, mit einer zulässigen Gesamtmasse ab 7,5 t beschränkt. 2. Durchgangsverkehr liegt nicht vor, soweit die jeweilige Fahrt a) dazu dient, ein Grundstück an der vom Verkehrsverbot betroffenen Straße oder an einer Straße, die durch die vom Verkehrsverbot betroffene Straße erschlossen wird, zu erreichen oder zu verlassen, b) dem Güterverkehr im Sinne des § 1 Absatz 1 des Güterkraftverkehrsgesetzes in einem Gebiet innerhalb eines Umkreise von 75 km, gerechnet in der Luftlinie vom Mittelpunkt des zu Beginn einer Fahrt ersten Beladeorts des jeweiligen Fahrzeugs (Ortsmittelpunkt), dient; dabei gehören alle Gemeinden, deren Ortsmittelpunkt innerhalb des Gebietes liegt, zu dem Gebiet, oder c) mit im Bundesfernstraßenmautgesetz bezeichneten Fahrzeugen, die nicht der Mautpflicht unterliegen, durchgeführt wird."
+                    },
+                    {
+                        "Sign_id": "31",
+                        "Sign_number": "254",
+                        "Sign_name": "Zeichen 254",
+                        "image": "<img>j0367-1_0890.jpg</img>",
+                        "description": " : Verbot für Radverkehr Ge- oder Verbot Verbot für den Radverkehr und den Verkehr mit Elektrokleinstfahrzeugen im Sinne der eKFV"
+                    },
+                    {
+                        "Sign_id": "32",
+                        "Sign_number": "255",
+                        "Sign_name": "Zeichen 255",
+                        "image": "<img>j0367-1_0900.jpg</img>",
+                        "description": " : Verbot für Krafträder Ge- oder Verbot Verbot für Krafträder, auch mit Beiwagen, Kleinkrafträder und Mofas"
+                    },
+                    {
+                        "Sign_id": "33",
+                        "Sign_number": "259",
+                        "Sign_name": "Zeichen 259",
+                        "image": "<img>j0367-1_0910.jpg</img>",
+                        "description": " : Verbot für Fußgänger Ge- oder Verbot Verbot für den Fußgängerverkehr"
+                    },
+                    {
+                        "Sign_id": "34",
+                        "Sign_number": "260",
+                        "Sign_name": "Zeichen 260",
+                        "image": "<img>j0367-1_0920.jpg</img>",
+                        "description": " : Verbot für Kraftfahrzeuge Ge- oder Verbot Verbot für Krafträder, auch mit Beiwagen, Kleinkrafträder und Mofas sowie für Kraftwagen und sonstige mehrspurige Kraftfahrzeuge"
+                    },
+                    {
+                        "Sign_id": "35",
+                        "Sign_number": "261",
+                        "Sign_name": "Zeichen 261",
+                        "image": "<img>j0367-1_0930.jpg</img>",
+                        "description": " : Kraftfahrzeuge mit gefährlichen Gütern Ge- oder Verbot Verbot für kennzeichnungspflichtige Kraftfahrzeuge mit gefährlichen Gütern"
+                    },
+                    {
+                        "Sign_id": "zu 36 bis 40",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_0930.jpg</img>",
+                        "description": " Ge- oder Verbot Die nachfolgenden Zeichen 262 bis 266 verbieten die Verkehrsteilnahme für Fahrzeuge, deren Maße oder Massen, einschließlich Ladung, eine auf dem jeweiligen Zeichen angegebene tatsächliche Grenze überschreiten. Erläuterung Die angegebenen Grenzen stellen nur Beispiele dar."
+                    },
+                    {
+                        "Sign_id": "36",
+                        "Sign_number": "262",
+                        "Sign_name": "Zeichen 262",
+                        "image": "<img>j0367-1_0940.jpg</img>",
+                        "description": " : Tatsächliche Masse Ge- oder Verbot Die Beschränkung durch Zeichen 262 gilt bei Fahrzeugkombinationen für das einzelne Fahrzeug, bei Sattelkraftfahrzeugen gesondert für die Sattelzugmaschine einschließlich Sattellast und für die tatsächlich vorhandenen Achslasten des Sattelanhängers. Erläuterung Das Zeichen kann in einer Überleitungstafel oder in einer Verschwenkungstafel oder in einer Fahrstreifentafel integriert sein. Dann bezieht sich das Verbot nur auf den jeweiligen Fahrstreifen, für den das Verbot angeordnet ist."
+                    },
+                    {
+                        "Sign_id": "37",
+                        "Sign_number": "263",
+                        "Sign_name": "Zeichen 263",
+                        "image": "<img>j0367-1_0950.jpg</img>",
+                        "description": " : Tatsächliche Achslast Erläuterung Das Zeichen kann in einer Überleitungstafel oder in einer Verschwenkungstafel oder in einer Fahrstreifentafel integriert sein. Dann bezieht sich das Verbot nur auf den jeweiligen Fahrstreifen, für den das Verbot angeordnet ist."
+                    },
+                    {
+                        "Sign_id": "38",
+                        "Sign_number": "264",
+                        "Sign_name": "Zeichen 264",
+                        "image": "<img>j0367-1_0960.jpg</img>",
+                        "description": " : Tatsächliche Breite Erläuterung Die tatsächliche Breite gibt das Maß einschließlich der Fahrzeugaußenspiegel an. Das Zeichen kann in einer Überleitungstafel oder in einer Verschwenkungstafel oder in einer Fahrstreifentafel integriert sein. Dann bezieht sich das Verbot nur auf den jeweiligen Fahrstreifen, für den das Verbot angeordnet ist."
+                    },
+                    {
+                        "Sign_id": "39",
+                        "Sign_number": "265",
+                        "Sign_name": "Zeichen 265",
+                        "image": "<img>j0367-1_0970.jpg</img>",
+                        "description": " : Tatsächliche Höhe Erläuterung Das Zeichen kann in einer Überleitungstafel oder in einer Verschwenkungstafel oder in einer Fahrstreifentafel integriert sein. Dann bezieht sich das Verbot nur auf den jeweiligen Fahrstreifen, für den das Verbot angeordnet ist."
+                    },
+                    {
+                        "Sign_id": "40",
+                        "Sign_number": "266",
+                        "Sign_name": "Zeichen 266",
+                        "image": "<img>j0367-1_0980.jpg</img>",
+                        "description": " : Tatsächliche Länge Ge- oder Verbot Das Verbot gilt bei Fahrzeugkombinationen für die Gesamtlänge."
+                    },
+                    {
+                        "Sign_id": "41",
+                        "Sign_number": "267",
+                        "Sign_name": "Zeichen 267",
+                        "image": "<img>j0367-1_0990.jpg</img>",
+                        "description": " : Verbot der Einfahrt Ge- oder Verbot Wer ein Fahrzeug führt, darf nicht in die Fahrbahn einfahren, für die das Zeichen angeordnet ist. Erläuterung Das Zeichen steht auf der rechten Seite der Fahrbahn, für die es gilt, oder auf beiden Seiten dieser Fahrbahn."
+                    },
+                    {
+                        "Sign_id": "41.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1000.jpg</img>",
+                        "description": " :  Ge- oder Verbot Durch das Zusatzzeichen zu dem Zeichen 267 ist die Einfahrt für den Radverkehr und Elektrokleinstfahrzeuge im Sinne der eKFV zugelassen."
+                    },
+                    {
+                        "Sign_id": "42",
+                        "Sign_number": "268",
+                        "Sign_name": "Zeichen 268",
+                        "image": "<img>j0367-1_1010.jpg</img>",
+                        "description": " : Schneeketten vorgeschrieben Ge- oder Verbot Wer ein Fahrzeug führt, darf die Straße nur mit Schneeketten befahren."
+                    },
+                    {
+                        "Sign_id": "43",
+                        "Sign_number": "269",
+                        "Sign_name": "Zeichen 269",
+                        "image": "<img>j0367-1_1020.jpg</img>",
+                        "description": " : wassergefährdender Ladung Ge- oder Verbot Wer ein Fahrzeug führt, darf die Straße mit mehr als 20 l wassergefährdender Ladung nicht benutzen."
+                    },
+                    {
+                        "Sign_id": "44",
+                        "Sign_number": "270.1",
+                        "Sign_name": "Zeichen 270.1",
+                        "image": "<img>j0367-1_1030.jpg</img>",
+                        "description": " : Luftverunreinigungen in einer Zone Ge- oder Verbot 1. Die Teilnahme am Verkehr mit einem Kraftfahrzeug innerhalb einer so gekennzeichneten Zone ist verboten. 2. § 1 Absatz 2 sowie § 2 Absatz 3 in Verbindung mit Anhang 3 der Verordnung zur Kennzeichnung der Kraftfahrzeuge mit geringem Beitrag zur Schadstoffbelastung vom 10. Oktober 2006 (BGBl. I S. 2218), die durch Artikel 1 der Verordnung vom 5. Dezember 2007 (BGBl. I S. 2793) geändert worden ist, bleiben unberührt. Die Ausnahmen können im Einzelfall oder allgemein durch Zusatzzeichen oder Allgemeinverfügung zugelassen sein. 3. Von dem Verbot der Verkehrsteilnahme sind zudem Kraftfahrzeuge zur Beförderung schwerbehinderter Menschen mit außergewöhnlicher Gehbehinderung, beidseitiger Amelie oder Phokomelie oder mit vergleichbaren Funktionseinschränkungen sowie blinde Menschen ausgenommen. Erläuterung Die Umweltzone ist zur Vermeidung von schädlichen Umwelteinwirkungen durch Luftverunreinigungen in einem Luftreinhalteplan oder einem Plan für kurzfristig zu ergreifende Maßnahmen nach § 47 Absatz 1 oder 2 des Bundes-Immissionsschutzgesetzes festgesetzt und auf Grund des § 40 Absatz 1 des Bundes-Immissionsschutzgesetzes angeordnet. Die Kennzeichnung der Umweltzone erfolgt auf Grund von § 45 Absatz 1f."
+                    },
+                    {
+                        "Sign_id": "45",
+                        "Sign_number": "270.2",
+                        "Sign_name": "Zeichen 270.2",
+                        "image": "<img>j0367-1_1040.jpg</img>",
+                        "description": " : Luftverunreinigungen in einer Zone"
+                    },
+                    {
+                        "Sign_id": "46",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1050.jpg</img>",
+                        "description": " Freistellung vom : Bundes-Immissionsschutzgesetzes Ge- oder Verbot Das Zusatzzeichen zum Zeichen 270.1 nimmt Kraftfahrzeuge vom Verkehrsverbot aus, die mit einer auf dem Zusatzzeichen in der jeweiligen Farbe angezeigten Plakette nach § 3 der Verordnung zur Kennzeichnung der Kraftfahrzeuge mit geringem Beitrag zur Schadstoffbelastung ausgestattet sind."
+                    },
+                    {
+                        "Sign_id": "47",
+                        "Sign_number": "272",
+                        "Sign_name": "Zeichen 272",
+                        "image": "<img>j0367-1_1060.jpg</img>",
+                        "description": " : Verbot des Wendens Ge- oder Verbot Wer ein Fahrzeug führt, darf hier nicht wenden."
+                    },
+                    {
+                        "Sign_id": "48",
+                        "Sign_number": "273",
+                        "Sign_name": "Zeichen 273",
+                        "image": "<img>j0367-1_1070.jpg</img>",
+                        "description": " : des angegebenen Mindestabstandes Ge- oder Verbot Wer ein Kraftfahrzeug mit einer zulässigen Gesamtmasse über 3,5 t oder eine Zugmaschine führt, darf den angegebenen Mindestabstand zu einem vorausfahrenden Kraftfahrzeug gleicher Art nicht unterschreiten. Personenkraftwagen und Kraftomnibusse sind ausgenommen."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 7 Geschwindigkeitsbeschränkungen und Überholverbote",
+                "Section_Id": "7",
+                "Content": [
+                    {
+                        "Sign_id": "49",
+                        "Sign_number": "274",
+                        "Sign_name": "Zeichen 274",
+                        "image": "<img>j0367-1_1080.jpg</img>",
+                        "description": " : Höchstgeschwindigkeit Ge- oder Verbot 1. Wer ein Fahrzeug führt, darf nicht schneller als mit der jeweils angegebenen Höchstgeschwindigkeit fahren. 2. Sind durch das Zeichen innerhalb geschlossener Ortschaften bestimmte Geschwindigkeiten über 50 km/h zugelassen, gilt das für Fahrzeuge aller Art. 3. Außerhalb geschlossener Ortschaften bleiben die für bestimmte Fahrzeugarten geltenden Höchstgeschwindigkeiten (§ 3 Absatz 3 Nummer 2 Buchstabe a und b und § 18 Absatz 5) unberührt, wenn durch das Zeichen eine höhere Geschwindigkeit zugelassen ist. Erläuterung Das Zeichen kann in einer Fahrstreifentafel oder einer Einengungstafel oder einer Aufweitungstafel integriert sein. Dann bezieht sich die zulässige Höchstgeschwindigkeit nur auf den jeweiligen Fahrstreifen, für den die Höchstgeschwindigkeit angeordnet ist."
+                    },
+                    {
+                        "Sign_id": "49.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1090.jpg</img>",
+                        "description": " :  Ge- oder Verbot Das Zusatzzeichen zu dem Zeichen 274 verbietet Fahrzeugführenden, bei nasser Fahrbahn die angegebene Geschwindigkeit zu überschreiten."
+                    },
+                    {
+                        "Sign_id": "50",
+                        "Sign_number": "274.1",
+                        "Sign_name": "Zeichen 274.1",
+                        "image": "<img>j0367-1_1100.jpg</img>",
+                        "description": " : Beginn einer Tempo 30-Zone Ge- oder Verbot Wer ein Fahrzeug führt, darf innerhalb dieser Zone nicht schneller als mit der angegebenen Höchstgeschwindigkeit fahren. Erläuterung Mit dem Zeichen können in verkehrsberuhigten Geschäftsbereichen auch Zonengeschwindigkeitsbeschränkungen von weniger als 30 km/h angeordnet sein."
+                    },
+                    {
+                        "Sign_id": "51",
+                        "Sign_number": "274.2",
+                        "Sign_name": "Zeichen 274.2",
+                        "image": "<img>j0367-1_1110.jpg</img>",
+                        "description": " : Ende einer Tempo 30-Zone"
+                    },
+                    {
+                        "Sign_id": "52",
+                        "Sign_number": "275",
+                        "Sign_name": "Zeichen 275",
+                        "image": "<img>j0367-1_1120.jpg</img>",
+                        "description": " : Mindestgeschwindigkeit Ge- oder Verbot Wer ein Fahrzeug führt, darf nicht langsamer als mit der angegebenen Mindestgeschwindigkeit fahren, sofern nicht Straßen-, Verkehrs-, Sicht- oder Wetterverhältnisse dazu verpflichten. Es verbietet, mit Fahrzeugen, die nicht so schnell fahren können oder dürfen, einen so gekennzeichneten Fahrstreifen zu benutzen. Erläuterung Das Zeichen kann in einer Fahrstreifentafel oder einer Aufweitungstafel integriert sein. Dann bezieht sich die vorgeschriebene Mindestgeschwindigkeit nur auf den jeweiligen Fahrstreifen, für den die Mindestgeschwindigkeit angeordnet ist."
+                    },
+                    {
+                        "Sign_id": "Zu 53, 54 und 54.4",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1120.jpg</img>",
+                        "description": " Ge- oder Verbot Die nachfolgenden Zeichen 276 und 277 verbieten Kraftfahrzeugen das Überholen von mehrspurigen Kraftfahrzeugen und Krafträdern mit Beiwagen. Ist auf einem Zusatzzeichen eine Masse, wie „7,5 t“ angegeben, gilt das Verbot nur, soweit die zulässige Gesamtmasse dieser Kraftfahrzeuge, einschließlich ihrer Anhänger, die angegebene Grenze überschreitet. Soll mehrspurigen Kraftfahrzeugen und Krafträdern mit Beiwagen das Überholen von einspurigen Fahrzeugen verboten werden, ist Zeichen 277.1 angeordnet."
+                    },
+                    {
+                        "Sign_id": "53",
+                        "Sign_number": "276",
+                        "Sign_name": "Zeichen 276",
+                        "image": "<img>j0367-1_1130.jpg</img>",
+                        "description": " : Kraftfahrzeuge aller Art"
+                    },
+                    {
+                        "Sign_id": "54",
+                        "Sign_number": "277",
+                        "Sign_name": "Zeichen 277",
+                        "image": "<img>j0367-1_1140.jpg</img>",
+                        "description": " : Kraftfahrzeuge über 3,5 t Ge- oder Verbot Überholverbot für Kraftfahrzeuge mit einer zulässigen Gesamtmasse über 3,5 t, einschließlich ihrer Anhänger, und für Zugmaschinen. Ausgenommen sind Personenkraftwagen und Kraftomnibusse."
+                    },
+                    {
+                        "Sign_id": "54.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1150.jpg</img>",
+                        "description": " :  Ge- oder Verbot Mit dem Zusatzzeichen gilt das durch Zeichen 277 angeordnete Überholverbot auch für Kraftfahrzeuge über 2,8 t, einschließlich ihrer Anhänger."
+                    },
+                    {
+                        "Sign_id": "54.2",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1160.jpg</img>",
+                        "description": " :  Ge- oder Verbot Mit dem Zusatzzeichen gilt das durch Zeichen 277 angeordnete Überholverbot auch für Kraftomnibusse und Personenkraftwagen mit Anhänger."
+                    },
+                    {
+                        "Sign_id": "54.3",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1170.jpg</img>",
+                        "description": " :  Erläuterung Das Zusatzzeichen zu dem Zeichen 274, 276, 277 oder 277.1 gibt die Länge einer Geschwindigkeitsbeschränkung oder eines Überholverbots an."
+                    },
+                    {
+                        "Sign_id": "54.4",
+                        "Sign_number": "277.1",
+                        "Sign_name": "Zeichen 277.1",
+                        "image": "<img>j0814-1_0100.jpg</img>",
+                        "description": " : und Krafträder mit Beiwagen Ge- oder Verbot Wer ein mehrspuriges Kraftfahrzeug führt, darf ein- und mehrspurige Fahrzeuge nicht überholen."
+                    },
+                    {
+                        "Sign_id": "55",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0814-1_0100.jpg</img>",
+                        "description": " Erläuterung Das Ende einer streckenbezogenen Geschwindigkeitsbeschränkung oder eines Überholverbots ist nicht gekennzeichnet, wenn das Verbot nur für eine kurze Strecke gilt und auf einem Zusatzzeichen die Länge des Verbots angegeben ist. Es ist auch nicht gekennzeichnet, wenn das Verbotszeichen zusammen mit einem Gefahrzeichen angebracht ist und sich aus der Örtlichkeit zweifelsfrei ergibt, von wo an die angezeigte Gefahr nicht mehr besteht. Sonst ist es gekennzeichnet durch die Zeichen 278 bis 282."
+                    },
+                    {
+                        "Sign_id": "56",
+                        "Sign_number": "278",
+                        "Sign_name": "Zeichen 278",
+                        "image": "<img>j0367-1_1180.jpg</img>",
+                        "description": " : Höchstgeschwindigkeit Erläuterung Das Zeichen kann in einer Fahrstreifentafel oder einer Einengungstafel oder Aufweitungstafel integriert sein. Dann bezieht sich das Zeichen nur auf den jeweiligen Fahrstreifen, für den die zulässige Höchstgeschwindigkeit vorher angeordnet worden war."
+                    },
+                    {
+                        "Sign_id": "57",
+                        "Sign_number": "279",
+                        "Sign_name": "Zeichen 279",
+                        "image": "<img>j0367-1_1190.jpg</img>",
+                        "description": " : Mindestgeschwindigkeit Erläuterung Das Zeichen kann in einer Fahrstreifentafel oder einer Einengungstafel integriert sein. Dann bezieht sich das Zeichen nur auf den jeweiligen Fahrstreifen, für den die vorgeschriebene Mindestgeschwindigkeit vorher angeordnet worden war."
+                    },
+                    {
+                        "Sign_id": "58",
+                        "Sign_number": "280",
+                        "Sign_name": "Zeichen 280",
+                        "image": "<img>j0367-1_1200.jpg</img>",
+                        "description": " : für Kraftfahrzeuge aller Art"
+                    },
+                    {
+                        "Sign_id": "59",
+                        "Sign_number": "281",
+                        "Sign_name": "Zeichen 281",
+                        "image": "<img>j0367-1_1210.jpg</img>",
+                        "description": " : für Kraftfahrzeuge über 3,5 t"
+                    },
+                    {
+                        "Sign_id": "59.1",
+                        "Sign_number": "281.1",
+                        "Sign_name": "Zeichen 281.1",
+                        "image": "<img>j0814-1_0110.jpg</img>",
+                        "description": " : und Krafträder mit Beiwagen"
+                    },
+                    {
+                        "Sign_id": "60",
+                        "Sign_number": "282",
+                        "Sign_name": "Zeichen 282",
+                        "image": "<img>j0367-1_1220.jpg</img>",
+                        "description": " : und Überholverbote Erläuterung Das Zeichen kann in einer Fahrstreifentafel oder einer Aufweitungstafel integriert sein. Dann bezieht sich das Zeichen nur auf den jeweiligen Fahrstreifen, für den die streckenbezogenen Geschwindigkeitsbeschränkungen und Überholverbote vorher angeordnet worden waren."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 8 Halt- und Parkverbote",
+                "Section_Id": "8",
+                "Content": [
+                    {
+                        "Sign_id": "61",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1220.jpg</img>",
+                        "description": " Ge- oder Verbot 1. Die durch die nachfolgenden Zeichen 283 und 286 angeordneten Haltverbote gelten nur auf der Straßenseite, auf der die Zeichen angebracht sind. Sie gelten bis zur nächsten Kreuzung oder Einmündung auf der gleichen Straßenseite oder bis durch Verkehrszeichen für den ruhenden Verkehr eine andere Regelung vorgegeben wird. 2. Mobile, vorübergehend angeordnete Haltverbote durch Zeichen 283 und 286 heben Verkehrszeichen auf, die das Parken erlauben. Erläuterung Der Anfang der Verbotsstrecke kann durch einen zur Fahrbahn weisenden waagerechten weißen Pfeil im Zeichen, das Ende durch einen solchen von der Fahrbahn wegweisenden Pfeil gekennzeichnet sein. Bei in der Verbotsstrecke wiederholten Zeichen weist eine Pfeilspitze zur Fahrbahn, die zweite Pfeilspitze von ihr weg."
+                    },
+                    {
+                        "Sign_id": "62",
+                        "Sign_number": "283",
+                        "Sign_name": "Zeichen 283",
+                        "image": "<img>j0367-1_1230.jpg</img>",
+                        "description": " : Absolutes Haltverbot Ge- oder Verbot Das Halten auf der Fahrbahn ist verboten."
+                    },
+                    {
+                        "Sign_id": "62.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1240.jpg</img>",
+                        "description": " :  Ge- oder Verbot Das mit dem Zeichen 283 angeordnete Zusatzzeichen verbietet das Halten von Fahrzeugen auch auf dem Seitenstreifen."
+                    },
+                    {
+                        "Sign_id": "62.2",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1250.jpg</img>",
+                        "description": " :  Ge- oder Verbot Das mit dem Zeichen 283 angeordnete Zusatzzeichen verbietet das Halten von Fahrzeugen nur auf dem Seitenstreifen."
+                    },
+                    {
+                        "Sign_id": "63",
+                        "Sign_number": "286",
+                        "Sign_name": "Zeichen 286",
+                        "image": "<img>j0367-1_1260.jpg</img>",
+                        "description": " : Eingeschränktes Haltverbot Ge- oder Verbot 1. Wer ein Fahrzeug führt, darf nicht länger als drei Minuten auf der Fahrbahn halten, ausgenommen zum Ein- oder Aussteigen oder zum Be- oder Entladen. 2. Ladegeschäfte müssen ohne Verzögerung durchgeführt werden."
+                    },
+                    {
+                        "Sign_id": "63.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1270.jpg</img>",
+                        "description": " :  Ge- oder Verbot Mit dem Zusatzzeichen zu Zeichen 286 darf auch auf dem Seitenstreifen nicht länger als drei Minuten gehalten werden, ausgenommen zum Ein- oder Aussteigen oder zum Be- oder Entladen."
+                    },
+                    {
+                        "Sign_id": "63.2",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1280.jpg</img>",
+                        "description": " :  Ge- oder Verbot Mit dem Zusatzzeichen zu Zeichen 286 darf nur auf dem Seitenstreifen nicht länger als drei Minuten gehalten werden, ausgenommen zum Ein- oder Aussteigen oder zum Be- oder Entladen."
+                    },
+                    {
+                        "Sign_id": "63.3",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1290.jpg</img>",
+                        "description": " :  Ge- oder Verbot 1. Das Zusatzzeichen zu Zeichen 286 nimmt schwerbehinderte Menschen mit außergewöhnlicher Gehbehinderung, beidseitiger Amelie oder Phokomelie oder mit vergleichbaren Funktionseinschränkungen sowie blinde Menschen, jeweils mit besonderem Parkausweis Nummer …, vom Haltverbot aus. 2. Die Ausnahme gilt nur, soweit der Parkausweis gut lesbar ausgelegt oder angebracht ist."
+                    },
+                    {
+                        "Sign_id": "63.4",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1300.jpg</img>",
+                        "description": " :  Ge- oder Verbot 1. Das Zusatzzeichen zu Zeichen 286 nimmt Bewohner mit besonderem Parkausweis vom Haltverbot aus. 2. Die Ausnahme gilt nur, soweit der Parkausweis gut lesbar ausgelegt oder angebracht ist."
+                    },
+                    {
+                        "Sign_id": "63.5",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j1573-1_0050.jpg</img>",
+                        "description": " :  Ge- oder Verbot"
+                    },
+                    {
+                        "Sign_id": "63.6",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0814-1_0120.jpg</img>",
+                        "description": " :  Ge- oder Verbot Durch das Zusatzzeichen zu Zeichen 286 wird das Parken für Carsharingfahrzeuge (§ 39 Absatz 11) innerhalb der gekennzeichneten Flächen erlaubt."
+                    },
+                    {
+                        "Sign_id": "64",
+                        "Sign_number": "290.1",
+                        "Sign_name": "Zeichen 290.1",
+                        "image": "<img>j0367-1_1310.jpg</img>",
+                        "description": " : für eine Zone Ge- oder Verbot 1. Wer ein Fahrzeug führt, darf innerhalb der gekennzeichneten Zone nicht länger als drei Minuten halten, ausgenommen zum Ein- oder Aussteigen oder zum Be- oder Entladen. 2. Innerhalb der gekennzeichneten Zone gilt das eingeschränkte Haltverbot auf allen öffentlichen Verkehrsflächen, sofern nicht abweichende Regelungen durch Verkehrszeichen oder Verkehrseinrichtungen getroffen sind. 3. Durch Zusatzzeichen kann das Parken für Bewohner mit Parkausweis oder mit Parkschein oder Parkscheibe (Bild 318) innerhalb gekennzeichneter Flächen erlaubt sein. 4. Durch Zusatzzeichen kann das Parken mit Parkschein oder Parkscheibe (Bild 318) innerhalb gekennzeichneter Flächen erlaubt sein. Dabei ist der Parkausweis, der Parkschein oder die Parkscheibe gut lesbar auszulegen oder anzubringen."
+                    },
+                    {
+                        "Sign_id": "64.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j1573-1_0060.jpg</img>",
+                        "description": " :  Ge- oder Verbot"
+                    },
+                    {
+                        "Sign_id": "64.2",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0814-1_0130.jpg</img>",
+                        "description": " :  Ge- oder Verbot Durch das Zusatzzeichen zu Zeichen 290.1 wird das Parken für Carsharingfahrzeuge (§ 39 Absatz 11) innerhalb der gekennzeichneten Flächen erlaubt."
+                    },
+                    {
+                        "Sign_id": "65",
+                        "Sign_number": "290.2",
+                        "Sign_name": "Zeichen 290.2",
+                        "image": "<img>j0367-1_1320.jpg</img>",
+                        "description": " : für eine Zone"
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 9 Markierungen",
+                "Section_Id": "9",
+                "Content": [
+                    {
+                        "Sign_id": "66",
+                        "Sign_number": "293",
+                        "Sign_name": "Zeichen 293",
+                        "image": "<img>j0367-1_1330.jpg</img>",
+                        "description": " : Fußgängerüberweg Ge- oder Verbot Wer ein Fahrzeug führt, darf auf Fußgängerüberwegen sowie bis zu 5 m davor nicht halten."
+                    },
+                    {
+                        "Sign_id": "67",
+                        "Sign_number": "294",
+                        "Sign_name": "Zeichen 294",
+                        "image": "<img>j0367-1_1340.jpg</img>",
+                        "description": " : Haltlinie Ge- oder Verbot Ergänzend zu Halt- oder Wartegeboten, die durch Zeichen 206, durch Polizeibeamte, Lichtzeichen oder Schranken gegeben werden, ordnet sie an: Wer ein Fahrzeug führt, muss hier anhalten. Erforderlichenfalls ist an der Stelle, wo die Straße eingesehen werden kann, in die eingefahren werden soll (Sichtlinie), erneut anzuhalten."
+                    },
+                    {
+                        "Sign_id": "68",
+                        "Sign_number": "295",
+                        "Sign_name": "Zeichen 295",
+                        "image": "<img>j0367-1_1350.jpg</img>",
+                        "description": " : Begrenzung von Fahrbahnen und Sonderwegen Ge- oder Verbot 1. a) Wer ein Fahrzeug führt, darf die durchgehende Linie auch nicht teilweise überfahren. b) Trennt die durchgehende Linie den Teil der Fahrbahn oder des Sonderwegs für den Gegenverkehr ab, ist rechts von ihr zu fahren. c) Grenzt sie einen befestigten Seitenstreifen ab, müssen außerorts landwirtschaftliche Zug- und Arbeitsmaschinen, Fuhrwerke und ähnlich langsame Fahrzeuge möglichst rechts von ihr fahren. d) Wer ein Fahrzeug führt, darf auf der Fahrbahn nicht parken, wenn zwischen dem abgestellten Fahrzeug und der Fahrstreifenbegrenzungslinie kein Fahrstreifen von mindestens 3 m mehr verbleibt. 2. a) Wer ein Fahrzeug führt, darf links von der durchgehenden Fahrbahnbegrenzungslinie nicht halten, wenn rechts ein Seitenstreifen oder Sonderweg vorhanden ist. b) Wer ein Fahrzeug führt, darf die Fahrbahnbegrenzung der Mittelinsel des Kreisverkehrs nicht überfahren. c) Ausgenommen von dem Verbot zum Überfahren der Fahrbahnbegrenzung der Mittelinsel des Kreisverkehrs sind nur Fahrzeuge, denen wegen ihrer Abmessungen das Befahren sonst nicht möglich wäre. Mit ihnen darf die Mittelinsel überfahren werden, wenn eine Gefährdung anderer am Verkehr Teilnehmenden ausgeschlossen ist. 3. a) Wird durch Zeichen 223.1 das Befahren eines Seitenstreifens angeordnet, darf die Fahrbahnbegrenzung wie eine Leitlinie zur Markierung von Fahrstreifen einer durchgehenden Fahrbahn (Zeichen 340) überfahren werden. b) Grenzt sie einen Sonderweg ab, darf sie nur überfahren werden, wenn dahinter anders nicht erreichbare Parkstände angelegt sind oder sich Grundstückszufahrten befinden und das Benutzen von Sonderwegen weder gefährdet noch behindert wird. c) Die Linie zur Begrenzung von Fahrbahnen oder Sonderwegen darf überfahren werden, wenn sich dahinter eine nicht anders erreichbare Grundstückszufahrt befindet. Erläuterung 1. Als Fahrstreifenbegrenzung trennt das Zeichen den für den Gegenverkehr bestimmten Teil der Fahrbahn oder mehrere Fahrstreifen für den gleichgerichteten Verkehr voneinander ab. Die Fahrstreifenbegrenzung kann zur Abtrennung des Gegenverkehrs aus einer Doppellinie bestehen. Die Doppellinie kann voneinander abgesetzt aufgebracht sein, dann kann der verbleibende Zwischenraum in grüner Farbe ausgefüllt sein, was weder einen Mittelstreifen noch eine bauliche Trennung darstellt. 2. Als Fahrbahnbegrenzung kann die durchgehende Linie auch einen Seitenstreifen oder Sonderweg abgrenzen. 3. Als Begrenzung eines Sonderwegs kennzeichnet sie den Verlauf des für den Radverkehr bestimmten Teils des Sonderwegs."
+                    },
+                    {
+                        "Sign_id": "69",
+                        "Sign_number": "296",
+                        "Sign_name": "Zeichen 296",
+                        "image": "<img>j0367-1_1360.jpg</img>",
+                        "description": " : Fahrstreifenbegrenzung Ge- oder Verbot 1. Wer ein Fahrzeug führt, darf die durchgehende Linie nicht überfahren oder auf ihr fahren. 2. Wer ein Fahrzeug führt, darf nicht auf der Fahrbahn parken, wenn zwischen dem parkenden Fahrzeug und der durchgehenden Fahrstreifenbegrenzungslinie kein Fahrstreifen von mindestens 3 m mehr verbleibt. 3. Für Fahrzeuge auf dem Fahrstreifen B ordnet die Markierung an: Fahrzeuge auf dem Fahrstreifen B dürfen die Markierung überfahren, wenn der Verkehr dadurch nicht gefährdet wird."
+                    },
+                    {
+                        "Sign_id": "70",
+                        "Sign_number": "297",
+                        "Sign_name": "Zeichen 297",
+                        "image": "<img>j0367-1_1370.jpg</img>",
+                        "description": " : Pfeilmarkierungen Ge- oder Verbot 1. Wer ein Fahrzeug führt, muss der Fahrtrichtung auf der folgenden Kreuzung oder Einmündung folgen, wenn zwischen den Pfeilen Leitlinien (Zeichen 340) oder Fahrstreifenbegrenzungen (Zeichen 295) markiert sind. 2. Wer ein Fahrzeug führt, darf auf der mit Pfeilen markierten Strecke der Fahrbahn nicht halten (§ 12 Absatz 1). Erläuterung Pfeile empfehlen, sich rechtzeitig einzuordnen und in Fahrstreifen nebeneinander zu fahren. Fahrzeuge, die sich eingeordnet haben, dürfen auch rechts überholt werden."
+                    },
+                    {
+                        "Sign_id": "71",
+                        "Sign_number": "297.1",
+                        "Sign_name": "Zeichen 297.1",
+                        "image": "<img>j0367-1_1380.jpg</img>",
+                        "description": " : Vorankündigungspfeil Erläuterung Mit dem Vorankündigungspfeil wird eine Fahrstreifenbegrenzung angekündigt oder das Ende eines Fahrstreifens angezeigt. Die Ausführung des Pfeils kann von der gezeigten abweichen."
+                    },
+                    {
+                        "Sign_id": "72",
+                        "Sign_number": "298",
+                        "Sign_name": "Zeichen 298",
+                        "image": "<img>j0367-1_1390.jpg</img>",
+                        "description": " : Sperrfläche Ge- oder Verbot Wer ein Fahrzeug führt, darf Sperrflächen nicht benutzen."
+                    },
+                    {
+                        "Sign_id": "73",
+                        "Sign_number": "299",
+                        "Sign_name": "Zeichen 299",
+                        "image": "<img>j0367-1_1400.jpg</img>",
+                        "description": " : Halt- oder Parkverbote Ge- oder Verbot Wer ein Fahrzeug führt, darf innerhalb einer Grenzmarkierung für Halt- oder Parkverbote nicht halten oder parken. Erläuterung Grenzmarkierungen bezeichnen, verlängern oder verkürzen ein an anderer Stelle vorgeschriebenes Halt- oder Parkverbot."
+                    },
+                    {
+                        "Sign_id": "74",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1400.jpg</img>",
+                        "description": " Parkflächenmarkierung Ge- oder Verbot Eine Parkflächenmarkierung erlaubt das Parken; auf Gehwegen aber nur Fahrzeugen mit einer zulässigen Gesamtmasse bis zu 2,8 t. Die durch die Parkflächenmarkierung angeordnete Aufstellung ist einzuhalten. Wo sie mit durchgehenden Linien markiert ist, darf diese überfahren werden. Erläuterung Sind Parkflächen auf Straßen erkennbar abgegrenzt, wird damit angeordnet, wie Fahrzeuge aufzustellen sind."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "table_name": "Anlage 3(zu § 42 Absatz 2)Richtzeichen",
+        "table_id": "3",
+        "table_data": [
+            {
+                "Section": "Abschnitt 1 Vorrangzeichen",
+                "Section_Id": "1",
+                "Content": [
+                    {
+                        "Sign_id": "1",
+                        "Sign_number": "301",
+                        "Sign_name": "Zeichen 301",
+                        "image": "<img>j0367-1_1410.jpg</img>",
+                        "description": " : Vorfahrt Ge- oder Verbot Das Zeichen zeigt an, dass an der nächsten Kreuzung oder Einmündung Vorfahrt besteht."
+                    },
+                    {
+                        "Sign_id": "2",
+                        "Sign_number": "306",
+                        "Sign_name": "Zeichen 306",
+                        "image": "<img>j0367-1_1420.jpg</img>",
+                        "description": " : Vorfahrtstraße Ge- oder Verbot Wer ein Fahrzeug führt, darf außerhalb geschlossener Ortschaften auf Fahrbahnen von Vorfahrtstraßen nicht parken. Das Zeichen zeigt an, dass Vorfahrt besteht bis zum nächsten Zeichen 205 „Vorfahrt gewähren.“, 206 „Halt. Vorfahrt gewähren.“ oder 307 „Ende der Vorfahrtstraße“."
+                    },
+                    {
+                        "Sign_id": "2.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1430.jpg</img>",
+                        "description": " :  Ge- oder Verbot 1. Wer ein Fahrzeug führt und dem Verlauf der abknickenden Vorfahrtstraße folgen will, muss dies rechtzeitig und deutlich ankündigen; dabei sind die Fahrtrichtungsanzeiger zu benutzen. 2. Auf den Fußgängerverkehr ist besondere Rücksicht zu nehmen. Wenn nötig, muss gewartet werden. Erläuterung Das Zusatzzeichen zum Zeichen 306 zeigt den Verlauf der Vorfahrtstraße an."
+                    },
+                    {
+                        "Sign_id": "3",
+                        "Sign_number": "307",
+                        "Sign_name": "Zeichen 307",
+                        "image": "<img>j0367-1_1440.jpg</img>",
+                        "description": " : Ende der Vorfahrtstraße"
+                    },
+                    {
+                        "Sign_id": "4",
+                        "Sign_number": "308",
+                        "Sign_name": "Zeichen 308",
+                        "image": "<img>j0367-1_1450.jpg</img>",
+                        "description": " : Vorrang vor dem Gegenverkehr Ge- oder Verbot Wer ein Fahrzeug führt, hat Vorrang vor dem Gegenverkehr."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 2 Ortstafel",
+                "Section_Id": "2",
+                "Content": [
+                    {
+                        "Sign_id": "zu 5 und 6",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1450.jpg</img>",
+                        "description": " Erläuterung Ab der Ortstafel gelten jeweils die für den Verkehr innerhalb oder außerhalb geschlossener Ortschaften bestehenden Vorschriften."
+                    },
+                    {
+                        "Sign_id": "5",
+                        "Sign_number": "310",
+                        "Sign_name": "Zeichen 310",
+                        "image": "<img>j0367-1_1460.jpg</img>",
+                        "description": " : Ortstafel Vorderseite Die Ortstafel bestimmt: Hier beginnt eine geschlossene Ortschaft."
+                    },
+                    {
+                        "Sign_id": "6",
+                        "Sign_number": "311",
+                        "Sign_name": "Zeichen 311",
+                        "image": "<img>j0367-1_1470.jpg</img>",
+                        "description": " : Ortstafel Rückseite Die Ortstafel bestimmt: Hier endet eine geschlossene Ortschaft."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 3 Parken",
+                "Section_Id": "3",
+                "Content": [
+                    {
+                        "Sign_id": "7",
+                        "Sign_number": "314",
+                        "Sign_name": "Zeichen 314",
+                        "image": "<img>j0367-1_1480.jpg</img>",
+                        "description": " : Parken Ge- oder Verbot 1. Wer ein Fahrzeug führt, darf hier parken. 2. a) Durch ein Zusatzzeichen kann die Parkerlaubnis insbesondere nach der Dauer, nach Fahrzeugarten, zugunsten der mit besonderem Parkausweis versehenen Bewohner oder auf das Parken mit Parkschein oder Parkscheibe beschränkt sein. b) Ein Zusatzzeichen mit Bild 318 (Parkscheibe) und Angabe der Stundenzahl schreibt das Parken mit Parkscheibe und dessen zulässige Höchstdauer vor. c) Durch Zusatzzeichen können Bewohner mit Parkausweis von der Verpflichtung zum Parken mit Parkschein oder Parkscheibe freigestellt sein. d) Durch ein Zusatzzeichen mit Rollstuhlfahrersinnbild kann die Parkerlaubnis beschränkt sein auf schwerbehinderte Menschen mit außergewöhnlicher Gehbehinderung, beidseitiger Amelie oder Phokomelie oder mit vergleichbaren Funktionseinschränkungen sowie auf blinde Menschen. e) Die Parkerlaubnis gilt nur, wenn der Parkschein, die Parkscheibe oder der Parkausweis gut lesbar ausgelegt oder angebracht ist. f) Durch Zusatzzeichen kann ein Parkplatz als gebührenpflichtig ausgewiesen sein. 3. a) Durch Zusatzzeichen kann die Parkerlaubnis zugunsten elektrisch betriebener Fahrzeuge beschränkt sein. b) Durch Zusatzzeichen können elektrisch betriebene Fahrzeuge von der Verpflichtung zum Parken mit Parkschein oder Parkscheibe freigestellt sein. Sind Parkscheinautomaten aufgestellt, kann die Freistellung auch allein am Automaten angegeben sein. c) Durch Zusatzzeichen kann die Parkerlaubnis für elektrisch betriebene Fahrzeuge nach der Dauer beschränkt sein. Der Nachweis zur Einhaltung der zeitlichen Dauer erfolgt durch Auslegen der Parkscheibe. Die Parkerlaubnis gilt nur, wenn die Parkscheibe gut lesbar ausgelegt oder angebracht ist. 4. a) Durch Zusatzzeichen kann die Parkerlaubnis zugunsten von mit einem Carsharingausweis versehenen Carsharingfahrzeugen beschränkt sein. Eine Beschränkung auf Fahrzeuge nur eines Carsharingunternehmens oder auf bestimmte Carsharingunternehmen ist nach Maßgabe des Carsharinggesetzes zulässig. Die Beschränkung erfolgt durch die Angabe der entsprechenden Firmenbezeichnung in schwarzer Schrift auf weißem Grund auf einem weiteren Zusatzzeichen. Die Parkerlaubnis gilt nur, wenn der Carsharingausweis im Fahrzeug gut lesbar ausgelegt oder angebracht ist. b) Durch Zusatzzeichen können Carsharingfahrzeuge von der Verpflichtung zum Parken mit Parkschein oder Parkscheibe freigestellt sein. Sind Parkscheinautomaten aufgestellt, kann die Freistellung auch allein am Automaten angegeben sein. Erläuterung 1. Der Anfang des erlaubten Parkens kann durch einen zur Fahrbahn weisenden waagerechten weißen Pfeil im Zeichen, das Ende durch einen solchen von der Fahrbahn wegweisenden Pfeil gekennzeichnet sein. Bei in der Strecke wiederholten Zeichen weist eine Pfeilspitze zur Fahrbahn, die zweite Pfeilspitze von ihr weg. 2. Das Zeichen mit einem Zusatzzeichen mit schwarzem Pfeil weist auf die Zufahrt zu größeren Parkplätzen oder Parkhäusern hin. Das Zeichen kann auch durch Hinweise ergänzt werden, ob es sich um ein Parkhaus handelt."
+                    },
+                    {
+                        "Sign_id": "8",
+                        "Sign_number": "314.1",
+                        "Sign_name": "Zeichen 314.1",
+                        "image": "<img>j0367-1_1490.jpg</img>",
+                        "description": " : Parkraumbewirtschaftungszone Ge- oder Verbot 1. Wer ein Fahrzeug führt, darf innerhalb der Parkraumbewirtschaftungszone nur mit Parkschein oder mit Parkscheibe (Bild 318) parken, soweit das Halten und Parken nicht gesetzlich oder durch Verkehrszeichen verboten ist. 2. Durch Zusatzzeichen können Bewohner mit Parkausweis von der Verpflichtung zum Parken mit Parkschein oder Parkscheibe freigestellt sein. 3. Die Parkerlaubnis gilt nur, wenn der Parkschein, die Parkscheibe oder der Parkausweis gut lesbar ausgelegt oder angebracht ist. 4. a) Durch Zusatzzeichen kann die Parkerlaubnis zugunsten elektrisch betriebener Fahrzeuge beschränkt sein. b) Durch Zusatzzeichen können elektrisch betriebene Fahrzeuge von der Verpflichtung zum Parken mit Parkschein oder Parkscheibe freigestellt sein. Sind Parkscheinautomaten aufgestellt, kann die Freistellung auch allein am Automaten angegeben sein. c) Durch Zusatzzeichen kann die Parkerlaubnis für elektrisch betriebene Fahrzeuge nach der Dauer beschränkt sein. Der Nachweis zur Einhaltung der zeitlichen Dauer erfolgt durch Auslegen der Parkscheibe. Die Parkerlaubnis gilt nur, wenn die Parkscheibe gut lesbar ausgelegt oder angebracht ist. 5. a) Durch Zusatzzeichen kann die Parkerlaubnis zugunsten von mit einem Carsharingausweis versehenen Carsharingfahrzeugen beschränkt sein. Eine Beschränkung auf Fahrzeuge nur eines Carsharingunternehmens oder auf bestimmte Carsharingunternehmen ist nach Maßgabe des Carsharinggesetzes zulässig. Die Beschränkung erfolgt durch eine zusätzliche Angabe der entsprechenden Firmenbezeichnung in schwarzer Schrift auf weißem Grund auf einem weiteren Zusatzzeichen. Die Parkerlaubnis gilt nur, wenn der Carsharingausweis gut lesbar im Fahrzeug ausgelegt oder angebracht ist. b) Durch Zusatzzeichen können Carsharingfahrzeuge von der Verpflichtung zum Parken mit Parkschein oder Parkscheibe freigestellt sein. Sind Parkscheinautomaten aufgestellt, kann die Freistellung auch allein am Automaten angegeben sein. Erläuterung Die Art der Parkbeschränkung wird durch Zusatzzeichen angezeigt."
+                    },
+                    {
+                        "Sign_id": "9",
+                        "Sign_number": "314.2",
+                        "Sign_name": "Zeichen 314.2",
+                        "image": "<img>j0367-1_1500.jpg</img>",
+                        "description": " : Parkraumbewirtschaftungszone"
+                    },
+                    {
+                        "Sign_id": "10",
+                        "Sign_number": "315",
+                        "Sign_name": "Zeichen 315",
+                        "image": "<img>j0367-1_1510.jpg</img>",
+                        "description": " : Parken auf Gehwegen Ge- oder Verbot 1. Wer ein Fahrzeug führt, darf auf Gehwegen mit Fahrzeugen mit einer zulässigen Gesamtmasse über 2,8 t nicht parken. Dann darf auch nicht entgegen der angeordneten Aufstellungsart des Zeichens oder entgegen Beschränkungen durch Zusatzzeichen geparkt werden. 2. a) Durch ein Zusatzzeichen kann die Parkerlaubnis insbesondere nach der Dauer, nach Fahrzeugarten, zugunsten der mit besonderem Parkausweis versehenen Bewohner oder auf das Parken mit Parkschein oder Parkscheibe beschränkt sein. b) Ein Zusatzzeichen mit Bild 318 (Parkscheibe) und Angabe der Stundenzahl schreibt das Parken mit Parkscheibe und dessen zulässige Höchstdauer vor. c) Durch Zusatzzeichen können Bewohner mit Parkausweis von der Verpflichtung zum Parken mit Parkschein oder Parkscheibe freigestellt sein. d) Durch ein Zusatzzeichen mit Rollstuhlfahrersinnbild kann die Parkerlaubnis beschränkt sein für schwerbehinderte Menschen mit außergewöhnlicher Gehbehinderung, beidseitiger Amelie oder Phokomelie oder mit vergleichbaren Funktionseinschränkungen sowie für blinde Menschen. e) Die Parkerlaubnis gilt nur, wenn der Parkschein, die Parkscheibe oder der Parkausweis gut lesbar ausgelegt oder angebracht ist. 3. a) Durch Zusatzzeichen kann die Parkerlaubnis zugunsten elektrisch betriebener Fahrzeuge beschränkt sein. b) Durch Zusatzzeichen können elektrisch betriebene Fahrzeuge von der Verpflichtung zum Parken mit Parkschein oder Parkscheibe freigestellt sein. Sind Parkscheinautomaten aufgestellt, kann die Freistellung auch allein am Automaten angegeben sein. c) Durch Zusatzzeichen kann die Parkerlaubnis für elektrisch betriebene Fahrzeuge nach der Dauer beschränkt sein. Der Nachweis zur Einhaltung der zeitlichen Dauer erfolgt durch Auslegen der Parkscheibe. Die Parkerlaubnis gilt nur, wenn die Parkscheibe gut lesbar ausgelegt oder angebracht ist. 4. a) Durch Zusatzzeichen kann die Parkerlaubnis zugunsten von mit einem Carsharingausweis versehenen Carsharingfahrzeugen beschränkt sein. Eine Beschränkung auf Fahrzeuge nur eines Carsharingunternehmens oder auf bestimmte Carsharingunternehmen ist nach Maßgabe des Carsharinggesetzes zulässig. Die Beschränkung erfolgt durch eine zusätzliche Angabe der entsprechenden Firmenbezeichnung in schwarzer Schrift auf weißem Grund auf einem weiteren Zusatzzeichen. Die Parkerlaubnis gilt nur, wenn der Carsharingausweis gut lesbar im Fahrzeug ausgelegt oder angebracht ist. b) Durch Zusatzzeichen können Carsharingfahrzeuge von der Verpflichtung zum Parken mit Parkschein oder Parkscheibe freigestellt sein. Sind Parkscheinautomaten aufgestellt, kann die Freistellung auch allein am Automaten angegeben sein. Erläuterung 1. Der Anfang des erlaubten Parkens kann durch einen zur Fahrbahn weisenden waagerechten weißen Pfeil im Zeichen, das Ende durch einen solchen von der Fahrbahn wegweisenden Pfeil gekennzeichnet sein. Bei in der Strecke wiederholten Zeichen weist eine Pfeilspitze zur Fahrbahn, die zweite Pfeilspitze von ihr weg. 2. Im Zeichen ist bildlich dargestellt, wie die Fahrzeuge aufzustellen sind."
+                    },
+                    {
+                        "Sign_id": "11",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1520.jpg</img>",
+                        "description": " Bild 318 : Parkscheibe Ge- oder Verbot Ist die Parkzeit bei elektrisch betriebenen Fahrzeugen beschränkt, so ist der Nachweis durch Auslegen der Parkscheibe zu erbringen."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 4 Verkehrsberuhigter Bereich",
+                "Section_Id": "4",
+                "Content": [
+                    {
+                        "Sign_id": "12",
+                        "Sign_number": "325.1",
+                        "Sign_name": "Zeichen 325.1",
+                        "image": "<img>j0367-1_1530.jpg</img>",
+                        "description": " : verkehrsberuhigten Bereichs Ge- oder Verbot 1. Wer ein Fahrzeug führt, muss mit Schrittgeschwindigkeit fahren. 2. Wer ein Fahrzeug führt, darf den Fußgängerverkehr weder gefährden noch behindern; wenn nötig, muss gewartet werden. 3. Wer zu Fuß geht, darf den Fahrverkehr nicht unnötig behindern. 4. Wer ein Fahrzeug führt, darf außerhalb der dafür gekennzeichneten Flächen nicht parken, ausgenommen zum Ein- oder Aussteigen und zum Be- oder Entladen. 5. Wer zu Fuß geht, darf die Straße in ihrer ganzen Breite benutzen; Kinderspiele sind überall erlaubt."
+                    },
+                    {
+                        "Sign_id": "13",
+                        "Sign_number": "325.2",
+                        "Sign_name": "Zeichen 325.2",
+                        "image": "<img>j0367-1_1540.jpg</img>",
+                        "description": " : verkehrsberuhigten Bereichs Erläuterung Beim Ausfahren ist § 10 zu beachten."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 5 Tunnel",
+                "Section_Id": "5",
+                "Content": [
+                    {
+                        "Sign_id": "14",
+                        "Sign_number": "327",
+                        "Sign_name": "Zeichen 327",
+                        "image": "<img>j0367-1_1550.jpg</img>",
+                        "description": " : Tunnel Ge- oder Verbote 1. Wer ein Fahrzeug führt, muss beim Durchfahren des Tunnels Abblendlicht benutzen und darf im Tunnel nicht wenden. 2. Im Falle eines Notfalls oder einer Panne sollen nur vorhandene Nothalte- und Pannenbuchten genutzt werden."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 6 Nothalte- und Pannenbucht",
+                "Section_Id": "6",
+                "Content": [
+                    {
+                        "Sign_id": "15",
+                        "Sign_number": "328",
+                        "Sign_name": "Zeichen 328",
+                        "image": "<img>j0367-1_1560.jpg</img>",
+                        "description": " : Nothalte- und Pannenbucht Ge- oder Verbot Wer ein Fahrzeug führt, darf nur im Notfall oder bei einer Panne in einer Nothalte- und Pannenbucht halten."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 7 Autobahnen und Kraftfahrstraßen",
+                "Section_Id": "7",
+                "Content": [
+                    {
+                        "Sign_id": "16",
+                        "Sign_number": "330.1",
+                        "Sign_name": "Zeichen 330.1",
+                        "image": "<img>j0367-1_1570.jpg</img>",
+                        "description": " : Autobahn Erläuterung Ab diesem Zeichen gelten die Regeln für den Verkehr auf Autobahnen."
+                    },
+                    {
+                        "Sign_id": "17",
+                        "Sign_number": "330.2",
+                        "Sign_name": "Zeichen 330.2",
+                        "image": "<img>j0367-1_1580.jpg</img>",
+                        "description": " : Ende der Autobahn"
+                    },
+                    {
+                        "Sign_id": "18",
+                        "Sign_number": "331.1",
+                        "Sign_name": "Zeichen 331.1",
+                        "image": "<img>j0367-1_1590.jpg</img>",
+                        "description": " : Kraftfahrstraße Erläuterung Ab diesem Zeichen gelten die Regeln für den Verkehr auf Kraftfahrstraßen."
+                    },
+                    {
+                        "Sign_id": "19",
+                        "Sign_number": "331.2",
+                        "Sign_name": "Zeichen 331.2",
+                        "image": "<img>j0367-1_1600.jpg</img>",
+                        "description": " : Ende der Kraftfahrstraße"
+                    },
+                    {
+                        "Sign_id": "20",
+                        "Sign_number": "333",
+                        "Sign_name": "Zeichen 333",
+                        "image": "<img>j0367-1_1610.jpg</img>",
+                        "description": " : Ausfahrt von der Autobahn Erläuterung Auf Kraftfahrstraßen oder autobahnähnlich ausgebauten Straßen weist das entsprechende Zeichen mit schwarzer Schrift auf gelbem Grund auf die Ausfahrt hin. Das Zeichen kann auch auf weißem Grund ausgeführt sein."
+                    },
+                    {
+                        "Sign_id": "21",
+                        "Sign_number": "450",
+                        "Sign_name": "Zeichen 450",
+                        "image": "<img>j0367-1_1620.jpg</img>",
+                        "description": " : Ankündigungsbake Erläuterung Das Zeichen steht 300 m, 200 m (wie abgebildet) und 100 m vor einem Autobahnknotenpunkt (Autobahnanschlussstelle, Autobahnkreuz oder Autobahndreieck). Es steht auch vor einer bewirtschafteten Rastanlage. Vor einem Knotenpunkt kann auf der 300 m-Bake die Nummer des Knotenpunktes angezeigt sein."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 8 Markierungen",
+                "Section_Id": "8",
+                "Content": [
+                    {
+                        "Sign_id": "22",
+                        "Sign_number": "340",
+                        "Sign_name": "Zeichen 340",
+                        "image": "<img>j0367-1_1630.jpg</img>",
+                        "description": " : Leitlinie Ge- oder Verbot 1. Wer ein Fahrzeug führt, darf Leitlinien nicht überfahren, wenn dadurch der Verkehr gefährdet wird. 2. Wer ein Fahrzeug führt, darf auf der Fahrbahn durch Leitlinien markierte Schutzstreifen für den Radverkehr nur bei Bedarf überfahren, insbesondere um dem Gegenverkehr auszuweichen. Der Radverkehr darf dabei nicht gefährdet werden. 3. Auf durch Leitlinien markierten Schutzstreifen für den Radverkehr darf nicht gehalten werden. Satz 1 gilt nicht für Fahrräder und Elektrokleinstfahrzeuge im Sinne der eKFV. Erläuterung Der Schutzstreifen für den Radverkehr ist in regelmäßigen Abständen mit dem Sinnbild „Radverkehr“ auf der Fahrbahn gekennzeichnet."
+                    },
+                    {
+                        "Sign_id": "23",
+                        "Sign_number": "341",
+                        "Sign_name": "Zeichen 341",
+                        "image": "<img>j0367-1_1640.jpg</img>",
+                        "description": " : Wartelinie Erläuterung Die Wartelinie empfiehlt dem Wartepflichtigen, an dieser Stelle zu warten."
+                    },
+                    {
+                        "Sign_id": "23.1",
+                        "Sign_number": "342",
+                        "Sign_name": "Zeichen 342",
+                        "image": "<img>j0814-1_0140.jpg</img>",
+                        "description": " : Haifischzähne Erläuterung Die Markierung hebt eine Wartepflicht infolge einer bestehenden Rechts-vor-links-Regelung abseits der Bundes-, Landes- und Kreisstraßen sowie weiterer Hauptverkehrsstraßen und eine durch Zeichen 205 oder 206 angeordnete Vorfahrtberechtigung des Radverkehrs im Zuge von Kreuzungen oder Einmündungen von Radschnellwegen hervor. Im Fall dieser Vorfahrtberechtigung des Radverkehrs sind die Markierungen auf beiden Seiten entlang der Fahrbahnkanten des Radschnellwegs mit den Spitzen in Richtung des wartepflichtigen Verkehrs anzuordnen."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 9 Hinweise",
+                "Section_Id": "9",
+                "Content": [
+                    {
+                        "Sign_id": "24",
+                        "Sign_number": "350",
+                        "Sign_name": "Zeichen 350",
+                        "image": "<img>j0367-1_1650.jpg</img>",
+                        "description": " : Fußgängerüberweg"
+                    },
+                    {
+                        "Sign_id": "24.1",
+                        "Sign_number": "350.1",
+                        "Sign_name": "Zeichen 350.1",
+                        "image": "<img>j0814-1_0150.jpg</img>",
+                        "description": " : Radschnellweg Erläuterung Das Zeichen steht an Radschnellwegen. Es dient der Unterrichtung über den Beginn von Radschnellwegen und der Führung von Radschnellwegen an Knotenpunkten."
+                    },
+                    {
+                        "Sign_id": "24.2",
+                        "Sign_number": "350.2",
+                        "Sign_name": "Zeichen 350.2",
+                        "image": "<img>j0814-1_0160.jpg</img>",
+                        "description": " : Ende des Radschnellwegs"
+                    },
+                    {
+                        "Sign_id": "25",
+                        "Sign_number": "354",
+                        "Sign_name": "Zeichen 354",
+                        "image": "<img>j0367-1_1660.jpg</img>",
+                        "description": " : Wasserschutzgebiet"
+                    },
+                    {
+                        "Sign_id": "26",
+                        "Sign_number": "356",
+                        "Sign_name": "Zeichen 356",
+                        "image": "<img>j0367-1_1670.jpg</img>",
+                        "description": " : Verkehrshelfer"
+                    },
+                    {
+                        "Sign_id": "27",
+                        "Sign_number": "357",
+                        "Sign_name": "Zeichen 357",
+                        "image": "<img>j0367-1_1680.jpg</img>",
+                        "description": " : Sackgasse Erläuterung Im oberen Teil des Verkehrszeichens kann die Durchlässigkeit der Sackgasse für den Radverkehr und/oder Fußgängerverkehr durch Piktogramme angezeigt sein."
+                    },
+                    {
+                        "Sign_id": "zu 28 und 29",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1680.jpg</img>",
+                        "description": " Erläuterung 1. Durch solche Zeichen mit entsprechenden Sinnbildern können auch andere Hinweise gegeben werden, wie auf Fußgängerunter- oder -überführung, Fernsprecher, Notrufsäule, Pannenhilfe, Tankstellen, Zelt- und Wohnwagenplätze, Autobahnhotel, Autobahngasthaus, Autobahnkiosk. 2. Auf Hotels, Gasthäuser und Kioske wird nur auf Autobahnen und nur dann hingewiesen, wenn es sich um Autobahnanlagen oder Autohöfe handelt."
+                    },
+                    {
+                        "Sign_id": "28",
+                        "Sign_number": "358",
+                        "Sign_name": "Zeichen 358",
+                        "image": "<img>j0367-1_1690.jpg</img>",
+                        "description": " : Erste Hilfe"
+                    },
+                    {
+                        "Sign_id": "29",
+                        "Sign_number": "363",
+                        "Sign_name": "Zeichen 363",
+                        "image": "<img>j0367-1_1700.jpg</img>",
+                        "description": " : Polizei"
+                    },
+                    {
+                        "Sign_id": "30",
+                        "Sign_number": "385",
+                        "Sign_name": "Zeichen 385",
+                        "image": "<img>j0367-1_1710.jpg</img>",
+                        "description": " : Ortshinweistafel"
+                    },
+                    {
+                        "Sign_id": "zu 31 und 32",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1710.jpg</img>",
+                        "description": " Erläuterung Die Zeichen stehen außerhalb von Autobahnen. Sie dienen dem Hinweis auf touristisch bedeutsame Ziele und der Kennzeichnung des Verlaufs touristischer Routen. Sie können auch als Wegweiser ausgeführt sein."
+                    },
+                    {
+                        "Sign_id": "31",
+                        "Sign_number": "386.1",
+                        "Sign_name": "Zeichen 386.1",
+                        "image": "<img>j0367-1_1720.jpg</img>",
+                        "description": " : Touristischer Hinweis"
+                    },
+                    {
+                        "Sign_id": "32",
+                        "Sign_number": "386.2",
+                        "Sign_name": "Zeichen 386.2",
+                        "image": "<img>j0367-1_1730.jpg</img>",
+                        "description": " : Touristische Route"
+                    },
+                    {
+                        "Sign_id": "33",
+                        "Sign_number": "386.3",
+                        "Sign_name": "Zeichen 386.3",
+                        "image": "<img>j0367-1_1740.jpg</img>",
+                        "description": " : Touristische Unterrichtungstafel Erläuterung Das Zeichen steht an der Autobahn. Es dient der Unterrichtung über touristisch bedeutsame Ziele."
+                    },
+                    {
+                        "Sign_id": "34",
+                        "Sign_number": "390",
+                        "Sign_name": "Zeichen 390",
+                        "image": "<img>j0367-1_1750.jpg</img>",
+                        "description": " : Bundesfernstraßenmautgesetz"
+                    },
+                    {
+                        "Sign_id": "35",
+                        "Sign_number": "391",
+                        "Sign_name": "Zeichen 391",
+                        "image": "<img>j0367-1_1760.jpg</img>",
+                        "description": " : Mautpflichtige Strecke"
+                    },
+                    {
+                        "Sign_id": "36",
+                        "Sign_number": "392",
+                        "Sign_name": "Zeichen 392",
+                        "image": "<img>j0367-1_1770.jpg</img>",
+                        "description": " : Zollstelle"
+                    },
+                    {
+                        "Sign_id": "37",
+                        "Sign_number": "393",
+                        "Sign_name": "Zeichen 393",
+                        "image": "<img>j0367-1_1780.jpg</img>",
+                        "description": " : Grenzübergangsstellen"
+                    },
+                    {
+                        "Sign_id": "38",
+                        "Sign_number": "394",
+                        "Sign_name": "Zeichen 394",
+                        "image": "<img>j0367-1_1790.jpg</img>",
+                        "description": " : Laternenring Erläuterung Das Zeichen kennzeichnet innerhalb geschlossener Ortschaften Laternen, die nicht die ganze Nacht leuchten. In dem roten Feld kann in weißer Schrift angegeben sein, wann die Laterne erlischt."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 10 Wegweisung",
+                "Section_Id": "10",
+                "Content": [
+                    {
+                        "Sign_id": "39",
+                        "Sign_number": "401",
+                        "Sign_name": "Zeichen 401",
+                        "image": "<img>j0367-1_1800.jpg</img>",
+                        "description": " : Bundesstraßen"
+                    },
+                    {
+                        "Sign_id": "40",
+                        "Sign_number": "405",
+                        "Sign_name": "Zeichen 405",
+                        "image": "<img>j0367-1_1810.jpg</img>",
+                        "description": " : Autobahnen"
+                    },
+                    {
+                        "Sign_id": "41",
+                        "Sign_number": "406",
+                        "Sign_name": "Zeichen 406",
+                        "image": "<img>j0367-1_1820.jpg</img>",
+                        "description": " : Knotenpunkte der Autobahnen Erläuterung So sind Knotenpunkte der Autobahnen (Autobahnausfahrten, Autobahnkreuze und Autobahndreiecke) beziffert."
+                    },
+                    {
+                        "Sign_id": "42",
+                        "Sign_number": "410",
+                        "Sign_name": "Zeichen 410",
+                        "image": "<img>j0367-1_1830.jpg</img>",
+                        "description": " : Europastraßen"
+                    },
+                    {
+                        "Sign_id": "43",
+                        "Sign_number": "438",
+                        "Sign_name": "Zeichen 438",
+                        "image": "<img>j0367-1_1840.jpg</img>",
+                        "description": " :"
+                    },
+                    {
+                        "Sign_id": "44",
+                        "Sign_number": "439",
+                        "Sign_name": "Zeichen 439",
+                        "image": "<img>j0367-1_1850.jpg</img>",
+                        "description": " :"
+                    },
+                    {
+                        "Sign_id": "45",
+                        "Sign_number": "440",
+                        "Sign_name": "Zeichen 440",
+                        "image": "<img>j0367-1_1860.jpg</img>",
+                        "description": " :"
+                    },
+                    {
+                        "Sign_id": "46",
+                        "Sign_number": "441",
+                        "Sign_name": "Zeichen 441",
+                        "image": "<img>j0367-1_1870.jpg</img>",
+                        "description": " :"
+                    },
+                    {
+                        "Sign_id": "zu 47 bis 49",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1870.jpg</img>",
+                        "description": " Erläuterung Das Zusatzzeichen „Nebenstrecke“ oder der Zusatz „Nebenstrecke“ im Wegweiser weist auf eine Straßenverbindung von untergeordneter Bedeutung hin."
+                    },
+                    {
+                        "Sign_id": "47",
+                        "Sign_number": "415",
+                        "Sign_name": "Zeichen 415",
+                        "image": "<img>j0367-1_1880.jpg</img>",
+                        "description": " : Erläuterung Pfeilwegweiser auf Bundesstraßen"
+                    },
+                    {
+                        "Sign_id": "48",
+                        "Sign_number": "418",
+                        "Sign_name": "Zeichen 418",
+                        "image": "<img>j0367-1_1890.jpg</img>",
+                        "description": " : Erläuterung Pfeilwegweiser auf sonstigen Straßen"
+                    },
+                    {
+                        "Sign_id": "49",
+                        "Sign_number": "419",
+                        "Sign_name": "Zeichen 419",
+                        "image": "<img>j0367-1_1900.jpg</img>",
+                        "description": " : Erläuterung Pfeilwegweiser auf sonstigen Straßen mit geringerer Verkehrsbedeutung"
+                    },
+                    {
+                        "Sign_id": "50",
+                        "Sign_number": "430",
+                        "Sign_name": "Zeichen 430",
+                        "image": "<img>j0367-1_1910.jpg</img>",
+                        "description": " : Erläuterung Pfeilwegweiser zur Autobahn"
+                    },
+                    {
+                        "Sign_id": "51",
+                        "Sign_number": "432",
+                        "Sign_name": "Zeichen 432",
+                        "image": "<img>j0367-1_1920.jpg</img>",
+                        "description": " : Erläuterung Pfeilwegweiser zu Zielen mit erheblicher Verkehrsbedeutung."
+                    },
+                    {
+                        "Sign_id": "52",
+                        "Sign_number": "434",
+                        "Sign_name": "Zeichen 434",
+                        "image": "<img>j0367-1_1930.jpg</img>",
+                        "description": " : Erläuterung Der Tabellenwegweiser kann auch auf einer Tafel zusammengefasst sein. Die Zielangaben in einer Richtung können auch auf separaten Tafeln gezeigt werden."
+                    },
+                    {
+                        "Sign_id": "53",
+                        "Sign_number": "332.1",
+                        "Sign_name": "Zeichen 332.1",
+                        "image": "<img>j0367-1_1940.jpg</img>",
+                        "description": " : Erläuterung Ausfahrt von der Kraftfahrstraße oder einer autobahnähnlich ausgebauten Straße. Das Zeichen kann innerhalb geschlossener Ortschaften auch mit weißem Grund ausgeführt sein."
+                    },
+                    {
+                        "Sign_id": "54",
+                        "Sign_number": "437",
+                        "Sign_name": "Zeichen 437",
+                        "image": "<img>j0367-1_1950.jpg</img>",
+                        "description": " : Erläuterung Das Zeichen hat entweder weiße Schrift auf dunklem Grund oder schwarze Schrift auf hellem Grund. Es kann auch an Bauwerken angebracht sein."
+                    },
+                    {
+                        "Sign_id": "zu 55 und 58",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1950.jpg</img>",
+                        "description": " Erläuterung Die Nummer (Zeichen 406) ist die laufende Nummer der Autobahnausfahrten, Autobahnkreuze und Autobahndreiecke der gerade befahrenen Autobahn. Sie dient der besseren Orientierung."
+                    },
+                    {
+                        "Sign_id": "55",
+                        "Sign_number": "448",
+                        "Sign_name": "Zeichen 448",
+                        "image": "<img>j0367-1_1960.jpg</img>",
+                        "description": " : Erläuterung Das Zeichen weist auf eine Autobahnausfahrt, ein Autobahnkreuz oder Autobahndreieck hin. Es schließt Zeichen 406 ein."
+                    },
+                    {
+                        "Sign_id": "56",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1970.jpg</img>",
+                        "description": " :  Erläuterung Das Sinnbild weist auf eine Ausfahrt hin."
+                    },
+                    {
+                        "Sign_id": "57",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_1980.jpg</img>",
+                        "description": " :  Erläuterung Das Sinnbild weist auf ein Autobahnkreuz oder Autobahndreieck hin; es weist auch auf Kreuze und Dreiecke von Autobahnen mit autobahnähnlich ausgebauten Straßen des nachgeordneten Netzes hin."
+                    },
+                    {
+                        "Sign_id": "58",
+                        "Sign_number": "448.1",
+                        "Sign_name": "Zeichen 448.1",
+                        "image": "<img>j0367-1_1990.jpg</img>",
+                        "description": " : Erläuterung 1. Mit dem Zeichen wird ein Autohof in unmittelbarer Nähe einer Autobahnausfahrt angekündigt. 2. Der Autohof wird einmal am rechten Fahrbahnrand 500 bis 1 000 m vor dem Zeichen 448 angekündigt. Auf einem Zusatzzeichen wird durch grafische Symbole der Leistungsumfang des Autohofs dargestellt."
+                    },
+                    {
+                        "Sign_id": "59",
+                        "Sign_number": "449",
+                        "Sign_name": "Zeichen 449",
+                        "image": "<img>j0367-1_2000.jpg</img>",
+                        "description": " :"
+                    },
+                    {
+                        "Sign_id": "60",
+                        "Sign_number": "332",
+                        "Sign_name": "Zeichen 332",
+                        "image": "<img>j0367-1_2010.jpg</img>",
+                        "description": " :"
+                    },
+                    {
+                        "Sign_id": "61",
+                        "Sign_number": "453",
+                        "Sign_name": "Zeichen 453",
+                        "image": "<img>j0367-1_2020.jpg</img>",
+                        "description": " : Erläuterung Die Entfernungstafel gibt Fernziele und die Entfernung zur jeweiligen Ortsmitte an. Ziele, die über eine andere als die gerade befahrene Autobahn zu erreichen sind, werden unterhalb des waagerechten Striches angegeben."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 11 Umleitungsbeschilderung",
+                "Section_Id": "11",
+                "Content": [
+                    {
+                        "Sign_id": "62",
+                        "Sign_number": "442",
+                        "Sign_name": "Zeichen 442",
+                        "image": "<img>j0367-1_2030.jpg</img>",
+                        "description": " : Vorwegweiser Erläuterung Vorwegweiser für bestimmte Verkehrsarten"
+                    },
+                    {
+                        "Sign_id": "63",
+                        "Sign_number": "421",
+                        "Sign_name": "Zeichen 421",
+                        "image": "<img>j0367-1_2040.jpg</img>",
+                        "description": " : Erläuterung Pfeilwegweiser für bestimmte Verkehrsarten"
+                    },
+                    {
+                        "Sign_id": "64",
+                        "Sign_number": "422",
+                        "Sign_name": "Zeichen 422",
+                        "image": "<img>j0367-1_2050.jpg</img>",
+                        "description": " : Erläuterung Wegweiser für bestimmte Verkehrsarten"
+                    },
+                    {
+                        "Sign_id": "65",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_2050.jpg</img>",
+                        "description": " Erläuterung Der Verlauf der Umleitungsstrecke kann gekennzeichnet werden durch"
+                    },
+                    {
+                        "Sign_id": "66",
+                        "Sign_number": "454",
+                        "Sign_name": "Zeichen 454",
+                        "image": "<img>j0367-1_2060.jpg</img>",
+                        "description": " : Erläuterung Umleitungswegweiser oder"
+                    },
+                    {
+                        "Sign_id": "67",
+                        "Sign_number": "455.1",
+                        "Sign_name": "Zeichen 455.1",
+                        "image": "<img>j0367-1_2070.jpg</img>",
+                        "description": " : Erläuterung Fortsetzung der Umleitung"
+                    },
+                    {
+                        "Sign_id": "zu 66 und 67",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_2070.jpg</img>",
+                        "description": " Erläuterung Die Zeichen 454 und 455.1 können durch eine Zielangabe auf einem Schild über den Zeichen ergänzt sein. Werden nur bestimmte Verkehrsarten umgeleitet, sind diese auf einem Zusatzzeichen über dem Zeichen angegeben."
+                    },
+                    {
+                        "Sign_id": "68",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_2070.jpg</img>",
+                        "description": " Erläuterung Die temporäre Umleitung kann angekündigt sein durch Zeichen 455.1 oder"
+                    },
+                    {
+                        "Sign_id": "69",
+                        "Sign_number": "457.1",
+                        "Sign_name": "Zeichen 457.1",
+                        "image": "<img>j0367-1_2080.jpg</img>",
+                        "description": " : Erläuterung Umleitungsankündigung"
+                    },
+                    {
+                        "Sign_id": "70",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_2080.jpg</img>",
+                        "description": " Erläuterung jedoch nur mit Entfernungsangabe auf einem Zusatzzeichen und bei Bedarf mit Zielangabe auf einem zusätzlichen Schild über dem Zeichen. Soll die Ankündigung nur für bestimmte Verkehrsarten gelten, sind diese auf einem Zusatzzeichen über dem Zeichen angegeben."
+                    },
+                    {
+                        "Sign_id": "71",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_2080.jpg</img>",
+                        "description": " Erläuterung Die Ankündigung kann auch erfolgen durch"
+                    },
+                    {
+                        "Sign_id": "72",
+                        "Sign_number": "458",
+                        "Sign_name": "Zeichen 458",
+                        "image": "<img>j0367-1_2090.jpg</img>",
+                        "description": " : Erläuterung eine Planskizze"
+                    },
+                    {
+                        "Sign_id": "73",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_2090.jpg</img>",
+                        "description": " Erläuterung Das Ende der Umleitung kann angezeigt werden durch"
+                    },
+                    {
+                        "Sign_id": "74",
+                        "Sign_number": "457.2",
+                        "Sign_name": "Zeichen 457.2",
+                        "image": "<img>j0367-1_2100.jpg</img>",
+                        "description": " : Erläuterung Ende der Umleitung oder"
+                    },
+                    {
+                        "Sign_id": "75",
+                        "Sign_number": "455.2",
+                        "Sign_name": "Zeichen 455.2",
+                        "image": "<img>j0367-1_2110.jpg</img>",
+                        "description": " : Erläuterung Ende der Umleitung"
+                    },
+                    {
+                        "Sign_id": "76",
+                        "Sign_number": "460",
+                        "Sign_name": "Zeichen 460",
+                        "image": "<img>j0367-1_2120.jpg</img>",
+                        "description": " : Bedarfsumleitung Erläuterung Das Zeichen kennzeichnet eine alternative Streckenführung im nachgeordneten Straßennetz zwischen Autobahnanschlussstellen."
+                    },
+                    {
+                        "Sign_id": "77",
+                        "Sign_number": "466",
+                        "Sign_name": "Zeichen 466",
+                        "image": "<img>j0367-1_2130.jpg</img>",
+                        "description": " : Weiterführende Bedarfsumleitung Erläuterung Kann der umgeleitete Verkehr an der nach Zeichen 460 vorgesehenen Anschlussstelle noch nicht auf die Autobahn zurückgeleitet werden, wird er durch dieses Zeichen über die nächste Bedarfsumleitung weitergeführt."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 12 Sonstige Verkehrsführung",
+                "Section_Id": "12",
+                "Content": [
+                    {
+                        "Sign_id": "78",
+                        "Sign_number": "467.1",
+                        "Sign_name": "Zeichen 467.1",
+                        "image": "<img>j0367-1_2140.jpg</img>",
+                        "description": " : Umlenkungspfeil Erläuterung Das Zeichen kennzeichnet Alternativstrecken auf Autobahnen, deren Benutzung im Bedarfsfall empfohlen wird (Streckenempfehlung)."
+                    },
+                    {
+                        "Sign_id": "79",
+                        "Sign_number": "467.2",
+                        "Sign_name": "Zeichen 467.2",
+                        "image": "<img>j0367-1_2150.jpg</img>",
+                        "description": " : Erläuterung Das Zeichen kennzeichnet das Ende einer Streckenempfehlung."
+                    },
+                    {
+                        "Sign_id": "80",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_2150.jpg</img>",
+                        "description": " Erläuterung Verkehrslenkungstafeln geben den Verlauf und die Anzahl der Fahrstreifen an, wie beispielsweise:"
+                    },
+                    {
+                        "Sign_id": "81",
+                        "Sign_number": "501",
+                        "Sign_name": "Zeichen 501",
+                        "image": "<img>j0367-1_2160.jpg</img>",
+                        "description": " : Überleitungstafel Erläuterung Das Zeichen kündigt die Überleitung des Verkehrs auf die Gegenfahrbahn an."
+                    },
+                    {
+                        "Sign_id": "82",
+                        "Sign_number": "531",
+                        "Sign_name": "Zeichen 531",
+                        "image": "<img>j0367-1_2170.jpg</img>",
+                        "description": " : Einengungstafel"
+                    },
+                    {
+                        "Sign_id": "82.1",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_2180.jpg</img>",
+                        "description": " :  Erläuterung Bei Einengungstafeln wird mit dem Zusatzzeichen der Ort angekündigt, an dem der Fahrstreifenwechsel nach dem Reißverschlussverfahren (§ 7 Absatz 4) erfolgen soll."
+                    },
+                    {
+                        "Sign_id": "83",
+                        "Sign_number": "590",
+                        "Sign_name": "Zeichen 590",
+                        "image": "<img>j0367-1_2190.jpg</img>",
+                        "description": " : Blockumfahrung Erläuterung Das Zeichen kündigt eine durch die Zeichen „Vorgeschriebene Fahrtrichtung“ (Zeichen 209 bis 214) vorgegebene Verkehrsführung an."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "table_name": "Anlage 4(zu § 43 Absatz 3)Verkehrseinrichtungen",
+        "table_id": "4",
+        "table_data": [
+            {
+                "Section": "Abschnitt 1 Einrichtungen zur Kennzeichnung von Arbeits- und Unfallstellen oder sonstigen vorübergehenden Hindernissen",
+                "Section_Id": "1",
+                "Content": [
+                    {
+                        "Sign_id": "1",
+                        "Sign_number": "600",
+                        "Sign_name": "Zeichen 600",
+                        "image": "<img>j0367-1_2200.jpg</img>",
+                        "description": " : Absperrschranke"
+                    },
+                    {
+                        "Sign_id": "2",
+                        "Sign_number": "605",
+                        "Sign_name": "Zeichen 605",
+                        "image": "<img>j0367-1_2200.jpg</img>",
+                        "description": " "
+                    },
+                    {
+                        "Sign_id": "3",
+                        "Sign_number": "628",
+                        "Sign_name": "Zeichen 628",
+                        "image": "<img>j0367-1_2220.jpg</img>",
+                        "description": ":   : Leitbake Pfeilbake Schraffenbake "
+                    },
+                    {
+                        "Sign_id": "4",
+                        "Sign_number": "629",
+                        "Sign_name": "Zeichen 629",
+                        "image": "<img>j0367-1_2240.jpg</img>",
+                        "description": ":   : Leitschwelle mit Pfeilbake mit Schraffenbake "
+                    },
+                    {
+                        "Sign_id": "5",
+                        "Sign_number": "610",
+                        "Sign_name": "Zeichen 610",
+                        "image": "<img>j0367-1_2270.jpg</img>",
+                        "description": ":   : Leitbord mit Pfeilbake mit Schraffenbake : Leitkegel"
+                    },
+                    {
+                        "Sign_id": "6",
+                        "Sign_number": "615",
+                        "Sign_name": "Zeichen 615",
+                        "image": "<img>j0367-1_2280.jpg</img>",
+                        "description": " : Fahrbare Absperrtafel"
+                    },
+                    {
+                        "Sign_id": "7",
+                        "Sign_number": "616",
+                        "Sign_name": "Zeichen 616",
+                        "image": "<img>j0367-1_2290.jpg</img>",
+                        "description": " : Fahrbare Absperrtafel mit Blinkpfeil"
+                    },
+                    {
+                        "Sign_id": "zu 1 bis 7",
+                        "Sign_number": "",
+                        "Sign_name": "",
+                        "image": "<img>j0367-1_2290.jpg</img>",
+                        "description": " Ge- oder Verbot Die Einrichtungen verbieten das Befahren der so gekennzeichneten Straßenfläche und leiten den Verkehr an dieser Fläche vorbei. Erläuterung 1. Warnleuchten an diesen Einrichtungen zeigen rotes Licht, wenn die ganze Fahrbahn gesperrt ist, sonst gelbes Licht oder gelbes Blinklicht. 2. Zusammen mit der Absperrtafel können überfahrbare Warnschwellen verwendet sein, die quer zur Fahrtrichtung vor der Absperrtafel ausgelegt sind."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 2 Einrichtungen zur Kennzeichnung von dauerhaften Hindernissen oder sonstigen gefährlichen Stellen",
+                "Section_Id": "2",
+                "Content": [
+                    {
+                        "Sign_id": "8",
+                        "Sign_number": "625",
+                        "Sign_name": "Zeichen 625",
+                        "image": "<img>j0367-1_2300.jpg</img>",
+                        "description": " : Richtungstafel in Kurven Die Richtungstafel in Kurven kann auch in aufgelöster Form angebracht sein."
+                    },
+                    {
+                        "Sign_id": "9",
+                        "Sign_number": "626",
+                        "Sign_name": "Zeichen 626",
+                        "image": "<img>j0367-1_2310.jpg</img>",
+                        "description": " : Leitplatte"
+                    },
+                    {
+                        "Sign_id": "10",
+                        "Sign_number": "627",
+                        "Sign_name": "Zeichen 627",
+                        "image": "<img>j0367-1_2320.jpg</img>",
+                        "description": " : Leitmal Leitmale kennzeichnen in der Regel den Verkehr einschränkende Gegenstände. Ihre Ausführung richtet sich nach der senkrechten, waagerechten oder gewölbten Anbringung beispielsweise an Bauwerken, Bauteilen und Gerüsten."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 3 Einrichtung zur Kennzeichnung des Straßenverlaufs",
+                "Section_Id": "3",
+                "Content": [
+                    {
+                        "Sign_id": "11",
+                        "Sign_number": "620",
+                        "Sign_name": "Zeichen 620",
+                        "image": "<img>j0367-1_2330.jpg</img>",
+                        "description": " : (links)     (rechts) Um den Verlauf der Straße kenntlich zu machen, können an den Straßenseiten Leitpfosten in der Regel im Abstand von 50 m und in Kurven verdichtet stehen."
+                    }
+                ]
+            },
+            {
+                "Section": "Abschnitt 4 Warntafel zur Kennzeichnung von Fahrzeugen und Anhängern bei Dunkelheit",
+                "Section_Id": "4",
+                "Content": [
+                    {
+                        "Sign_id": "12",
+                        "Sign_number": "630",
+                        "Sign_name": "Zeichen 630",
+                        "image": "<img>j0367-1_2350.jpg</img>",
+                        "description": " : Parkwarntafel"
+                    }
+                ]
+            }
+        ]
+    }
+]

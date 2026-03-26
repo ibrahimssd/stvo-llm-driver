@@ -1,0 +1,218 @@
+#!/bin/bash
+#advance job
+#SBATCH --job-name=STVO_train
+#SBATCH --output=out/advance-STVO-train-JOB-%j.out
+#SBATCH --error=err/advance-STVO-train-JOB-%j.err
+#SBATCH --nodes=1 # As we have single node it should be always set as 1
+#SBATCH --cpus-per-task=40 # Number of CPUs # max = 40
+#SBATCH --gres=gpu:nvidia_a100_80gb_pcie_3g.39gb:1  # Allocate 1 GPU resources with specified configurations
+#SBATCH --mem=100G  # Specify the total amount of memory # max = 300G
+#SBATCH --time=120:00:00  # Set the time limit to 1 minute
+#SBATCH --partition=advance
+#SBATCH --qos=advance
+#SBATCH --account=advance
+
+
+ 
+
+# Save echo device info into CSV file
+mkdir -p ./MIG-IDs
+echo $SLURM_JOB_ID, $CUDA_VISIBLE_DEVICES > ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi -L >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+
+
+
+# Paths and parameters
+ROOT_DIR="/fast_storage/siddig"
+DATA_DIR="$ROOT_DIR/driving-license"
+
+
+HUGG_OUT_DIR="/super_fast_storage/siddig/driving-license/STVo_PRLM_HF_hierarchical_models"
+OUT_DIR="/super_fast_storage/siddig/driving-license/STVo_PRLM_PY_hierarchical_models"
+
+HF_DIR="$ROOT_DIR/driving-license/HF_models"
+
+mkdir -p $DATA_DIR
+mkdir -p $HUGG_OUT_DIR
+mkdir -p $OUT_DIR
+
+# Create and activate the virtual environment if it doesn't already exist
+if [ ! -d "$DATA_DIR/driving-env" ]; then
+    python3 -m venv $DATA_DIR/driving-env
+    source $DATA_DIR/driving-env/bin/activate
+    bash ./install.sh
+fi 
+
+source $DATA_DIR/driving-env/bin/activate
+# bash ./install.sh
+     
+
+# MASKED_MODELS=(
+#     casehold/custom-legalbert
+#     google-bert/bert-base-uncased
+#     microsoft/deberta-base
+#     'nlpaueb/legal-bert-base-uncased'
+#     nlpaueb/legal-bert-small-uncased
+#     # 'zlucia/custom-legalbert' # not required
+#     avichr/Legal-heBERT
+#     dlicari/Italian-Legal-BERT
+#     pile-of-law/legalbert-large-1.7M-1 # didn't work
+    
+# )
+
+# for BASE_MODEL in "${MASKED_MODELS[@]}"; do
+
+        
+#         python ../finetune_multi_task_STvO_mlm_clm_clu_cls.py \
+#             --translator_model_name "m2m100_418M" \
+#             --clm_data_path ../data/stvo/m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph.dot \
+#             --nsp_data_path ../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung_graph_nsp_dataset.json \
+#             --clu_data_path ../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung_graph_sentence_clu_dataset.json \
+#             --cls_data_path ../data/synthetic-data/generated_yes_no_qa_data_m2m100_418M_mistral.jsonl \
+#             --paragraph_embeddings_file ../transE_embeddings/m2m100_418M_STvO/paragraph_embeddings_lists.json \
+#             --train_history_path "training_history_job$SLURM_JOB_ID.json" \
+#             --plot_path "training_progress_job$SLURM_JOB_ID.png" \
+#             --base_model_name $BASE_MODEL \
+#             --modeling_type 'masked' \
+#             --hf_cache_dir $HF_DIR \
+#             --output_dir $OUT_DIR \
+#             --hugg_out_dir $HUGG_OUT_DIR \
+#             --num_epochs 50\
+#             --batch_size_clu 16\
+#             --batch_size_nsp 16\
+#             --batch_size_cls 16\
+#             --learning_rate 5e-5\
+#             --clm_mlm_lambdas 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9\
+#             --cls_lambdas 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9\
+#             --gradient_accumulation_steps 1\
+#             --clm_block_size 512\
+#             --max_seq_length_clu 128\
+#             --max_seq_length_nsp 128 \
+#             --max_seq_length_cls 128 \
+#             --max_segments 5\
+#             --seed 42
+
+
+#         python ../finetune_multi_task_STvO_mlm_clm_clu_cls.py \
+#             --translator_model_name "opus-mt-de-en" \
+#             --clm_data_path ../data/stvo/opus-mt-de-en_translated_integrated_Straßenverkehrs_Ordnung_graph.dot \
+#             --nsp_data_path ../data/stvo/opus-mt-de-en_translated_main_content_Straßenverkehrs_Ordnung_graph_nsp_dataset.json \
+#             --clu_data_path ../data/stvo/opus-mt-de-en_translated_main_content_Straßenverkehrs_Ordnung_graph_sentence_clu_dataset.json \
+#             --cls_data_path ../data/synthetic-data/generated_yes_no_qa_data_opus-mt-de-en_mistral.jsonl \
+#             --paragraph_embeddings_file ../transE_embeddings/opus-mt-de-en_STvO/paragraph_embeddings_lists.json \
+#             --train_history_path "training_history_job$SLURM_JOB_ID.json" \
+#             --plot_path "training_progress_job$SLURM_JOB_ID.png" \
+#             --base_model_name $BASE_MODEL \
+#             --modeling_type 'masked' \
+#             --hf_cache_dir $HF_DIR \
+#             --output_dir $OUT_DIR \
+#             --hugg_out_dir $HUGG_OUT_DIR \
+#             --num_epochs 50\
+#             --batch_size_clu 16\
+#             --batch_size_nsp 16\
+#             --batch_size_cls 16\
+#             --learning_rate 5e-5\
+#             --clm_mlm_lambdas 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9\
+#             --cls_lambdas 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9\
+#             --gradient_accumulation_steps 1\
+#             --clm_block_size 512\
+#             --max_seq_length_clu 128\
+#             --max_seq_length_nsp 128 \
+#             --max_seq_length_cls 128 \
+#             --max_segments 5\
+#             --seed 42
+
+# done
+
+
+
+
+CAUSAL_MODELS=(
+    Qwen/Qwen3-Embedding-0.6B
+    # ibm-granite/granite-3.1-1b-a400m-instruct
+    # openai-community/gpt2
+    # google/gemma-3-270m
+    # google/gemma-3-270m-it
+
+)
+
+
+for BASE_MODEL in "${CAUSAL_MODELS[@]}"; do
+
+       
+        python ../finetune_multi_task_STvO_mlm_clm_clu_cls.py \
+            --translator_model_name "m2m100_418M" \
+            --clm_data_path ../data/stvo/m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph.dot \
+            --nsp_data_path ../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung_graph_nsp_dataset.json \
+            --clu_data_path ../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung_graph_sentence_clu_dataset.json \
+            --cls_data_path ../data/synthetic-data/generated_yes_no_qa_data_m2m100_418M_mistral.jsonl \
+            --paragraph_embeddings_file ../transE_embeddings/m2m100_418M_STvO/paragraph_embeddings_lists.json \
+            --train_history_path "training_history_job$SLURM_JOB_ID.json" \
+            --plot_path "training_progress_job$SLURM_JOB_ID.png" \
+            --base_model_name $BASE_MODEL \
+            --modeling_type 'causal' \
+            --hf_cache_dir $HF_DIR \
+            --output_dir $OUT_DIR \
+            --hugg_out_dir $HUGG_OUT_DIR \
+            --num_epochs 50\
+            --batch_size_clm 16\
+            --batch_size_clu 16\
+            --batch_size_cls 16\
+            --learning_rate 5e-5\
+            --clm_mlm_lambdas 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9\
+            --cls_lambdas 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9\
+            --gradient_accumulation_steps 1\
+            --clm_block_size 512\
+            --max_seq_length_clu 128\
+            --max_seq_length_nsp 128 \
+            --max_segments 5\
+            --seed 42
+
+
+        # python ../finetune_multi_task_STvO_mlm_clm_clu_cls.py \
+        #     --translator_model_name "opus-mt-de-en" \
+        #     --clm_data_path ../data/stvo/opus-mt-de-en_translated_integrated_Straßenverkehrs_Ordnung_graph.dot \
+        #     --nsp_data_path ../data/stvo/opus-mt-de-en_translated_main_content_Straßenverkehrs_Ordnung_graph_nsp_dataset.json \
+        #     --clu_data_path ../data/stvo/opus-mt-de-en_translated_main_content_Straßenverkehrs_Ordnung_graph_sentence_clu_dataset.json \
+        #     --cls_data_path ../data/synthetic-data/generated_yes_no_qa_data_opus-mt-de-en_mistral.jsonl \
+        #     --paragraph_embeddings_file ../transE_embeddings/opus-mt-de-en_STvO/paragraph_embeddings_lists.json \
+        #     --train_history_path "training_history_job$SLURM_JOB_ID.json" \
+        #     --plot_path "training_progress_job$SLURM_JOB_ID.png" \
+        #     --base_model_name $BASE_MODEL \
+        #     --modeling_type 'causal' \
+        #     --hf_cache_dir $HF_DIR \
+        #     --output_dir $OUT_DIR \
+        #     --hugg_out_dir $HUGG_OUT_DIR \
+        #     --num_epochs 50\
+        #     --batch_size_clm 16\
+        #     --batch_size_clu 16\
+        #     --batch_size_cls 16\
+        #     --learning_rate 5e-5\
+        #     --clm_mlm_lambdas 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9\
+        #     --cls_lambdas 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9\
+        #     --gradient_accumulation_steps 1\
+        #     --clm_block_size 512\
+        #     --max_seq_length_clu 128\
+        #     --max_seq_length_nsp 128 \
+        #     --max_segments 5\
+        #     --seed 42
+done
+
+
+# # Gensyn/Qwen2.5-0.5B-Instruct
+# # Qwen/Qwen3-Embedding-0.6B
+# # meta-llama/Llama-3.2-1B
+# # deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B
+# # Qwen/Qwen2.5-Math-1.5B
+
+# # Gensyn/Qwen2.5-0.5B-Instruct
+
+# # Qwen/Qwen3-Embedding-0.6B
+# # meta-llama/Llama-3.2-1B
+# # deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B
+# # Qwen/Qwen2.5-Math-1.5B
+
+# # openai/gpt-oss-20b
+# ### Tested Models
+# # dbmdz/german-gpt2

@@ -1,0 +1,27 @@
+{
+  "dataset_stats": {
+    "valid_triplets": 881,
+    "malformed_lines": 0,
+    "empty_components": 0,
+    "processing_errors": 0
+  },
+  "model_config": {
+    "num_entities": 555,
+    "num_relations": 5,
+    "embedding_dim": 200,
+    "margin": 1.0,
+    "l2_reg": 0.01,
+    "dropout": 0.1
+  },
+  "training_config": {
+    "epochs": 200,
+    "batch_size": 32,
+    "learning_rate": 5e-05,
+    "scheduler": "cosine",
+    "negative_sampling": "uniform"
+  },
+  "final_losses": {
+    "train_loss": 0.7860598638653755,
+    "val_loss": 0.9077469825744628
+  }
+}

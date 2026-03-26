@@ -1,0 +1,1854 @@
+[
+    {
+        "table_name": "Annex 1(to <par>§ 40</par> paragraphs <sen>6</sen> and 7)General and special signs of danger",
+        "table_id": "1",
+        "table_data": [
+            {
+                "Section": "Section 1 General hazard signs (to <par>§ 40</par> paragraph <sen>6</sen>)",
+                "Section_Id": "1",
+                "Content": [
+                    {
+                        "Sign_id": "1",
+                        "Sign_number": "101",
+                        "Sign_name": "Sign 101",
+                        "image": "<img>j0367-1_0280.jpg</img>",
+                        "description": "An additional sign can indicate the danger closer."
+                    },
+                    {
+                        "Sign_id": "2",
+                        "Sign_number": "102",
+                        "Sign_name": "Sign 102",
+                        "image": "<img>j0367-1_0290.jpg</img>",
+                        "description": ": crucifixion or inmunition crucifixion or inmunition with advance from right"
+                    },
+                    {
+                        "Sign_id": "3",
+                        "Sign_number": "103",
+                        "Sign_name": "Sign 103",
+                        "image": "<img>j0367-1_0300.jpg</img>",
+                        "description": "The Curve"
+                    },
+                    {
+                        "Sign_id": "4",
+                        "Sign_number": "105",
+                        "Sign_name": "Sign 105",
+                        "image": "<img>j0367-1_0310.jpg</img>",
+                        "description": "Double curve"
+                    },
+                    {
+                        "Sign_id": "5",
+                        "Sign_number": "108",
+                        "Sign_name": "Sign 108",
+                        "image": "<img>j0367-1_0320.jpg</img>",
+                        "description": "The accidents"
+                    },
+                    {
+                        "Sign_id": "6",
+                        "Sign_number": "110",
+                        "Sign_name": "Sign 110",
+                        "image": "<img>j0367-1_0330.jpg</img>",
+                        "description": "The ascension"
+                    },
+                    {
+                        "Sign_id": "7",
+                        "Sign_number": "112",
+                        "Sign_name": "Sign 112",
+                        "image": "<img>j0367-1_0340.jpg</img>",
+                        "description": "Unlevel trains"
+                    },
+                    {
+                        "Sign_id": "8",
+                        "Sign_number": "114",
+                        "Sign_name": "Sign 114",
+                        "image": "<img>j0367-1_0350.jpg</img>",
+                        "description": "Danger of slurry or slurry Danger of slurry or slurry in the case of nausea or dirt"
+                    },
+                    {
+                        "Sign_id": "9",
+                        "Sign_number": "117",
+                        "Sign_name": "Sign 117",
+                        "image": "<img>j0367-1_0360.jpg</img>",
+                        "description": "Side wind"
+                    },
+                    {
+                        "Sign_id": "10",
+                        "Sign_number": "120",
+                        "Sign_name": "Sign 120",
+                        "image": "<img>j0367-1_0370.jpg</img>",
+                        "description": "The narrow railway"
+                    },
+                    {
+                        "Sign_id": "11",
+                        "Sign_number": "121",
+                        "Sign_name": "Sign 121",
+                        "image": "<img>j0367-1_0380.jpg</img>",
+                        "description": "Unilaterally stretched railway"
+                    },
+                    {
+                        "Sign_id": "12",
+                        "Sign_number": "123",
+                        "Sign_name": "Sign 123",
+                        "image": "<img>j0367-1_0390.jpg</img>",
+                        "description": "The Workplace"
+                    },
+                    {
+                        "Sign_id": "13",
+                        "Sign_number": "124",
+                        "Sign_name": "Sign 124",
+                        "image": "<img>j0367-1_0400.jpg</img>",
+                        "description": "The Stau"
+                    },
+                    {
+                        "Sign_id": "14",
+                        "Sign_number": "125",
+                        "Sign_name": "Sign 125",
+                        "image": "<img>j0367-1_0410.jpg</img>",
+                        "description": "The countertrade"
+                    },
+                    {
+                        "Sign_id": "15",
+                        "Sign_number": "131",
+                        "Sign_name": "Sign 131",
+                        "image": "<img>j0367-1_0420.jpg</img>",
+                        "description": "The light signs"
+                    },
+                    {
+                        "Sign_id": "16",
+                        "Sign_number": "133",
+                        "Sign_name": "Sign 133",
+                        "image": "<img>j0367-1_0430.jpg</img>",
+                        "description": "The pedestrian"
+                    },
+                    {
+                        "Sign_id": "17",
+                        "Sign_number": "136",
+                        "Sign_name": "Sign 136",
+                        "image": "<img>j0367-1_0440.jpg</img>",
+                        "description": "The children"
+                    },
+                    {
+                        "Sign_id": "18",
+                        "Sign_number": "138",
+                        "Sign_name": "Sign 138",
+                        "image": "<img>j0367-1_0450.jpg</img>",
+                        "description": "The cycling"
+                    },
+                    {
+                        "Sign_id": "19",
+                        "Sign_number": "142",
+                        "Sign_name": "Sign 142",
+                        "image": "<img>j0367-1_0460.jpg</img>",
+                        "description": "The Wild Change"
+                    }
+                ]
+            },
+            {
+                "Section": "Section 2 Special signs of danger before passes of railways with priority (to <par>§ 40</par> paragraph <sen>7</sen>)",
+                "Section_Id": "2",
+                "Content": [
+                    {
+                        "Sign_id": "20",
+                        "Sign_number": "151",
+                        "Sign_name": "Sign 151",
+                        "image": "<img>j0367-1_0470.jpg</img>",
+                        "description": "The railway transition"
+                    },
+                    {
+                        "Sign_id": "21",
+                        "Sign_number": "156",
+                        "Sign_name": "Sign 156",
+                        "image": "<img>j0367-1_0480.jpg</img>",
+                        "description": ": triangular Bake railway transition with triangular Bake about 240 m before the railway transition. The indication of significantly different distances can be made on the triangular, two-triangular and one-triangular Bake above the scratches in black numbers."
+                    },
+                    {
+                        "Sign_id": "22",
+                        "Sign_number": "159",
+                        "Sign_name": "Sign 159",
+                        "image": "<img>j0367-1_0490.jpg</img>",
+                        "description": "Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake Bake"
+                    },
+                    {
+                        "Sign_id": "23",
+                        "Sign_number": "162",
+                        "Sign_name": "Sign 162",
+                        "image": "<img>j0367-1_0500.jpg</img>",
+                        "description": ": Smooth Bake Smooth Bake about 80 m before the railway transit"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "table_name": "Appendix 2(to <par>§ 41</par> paragraph <sen>1</sen>)Regular signs",
+        "table_id": "2",
+        "table_data": [
+            {
+                "Section": "Section 1 Offers and stops",
+                "Section_Id": "1",
+                "Content": [
+                    {
+                        "Sign_id": "1",
+                        "Sign_number": "201",
+                        "Sign_name": "Sign 201",
+                        "image": "<img>j0367-1_0510.jpg</img>",
+                        "description": "Whoever drives a vehicle shall give priority to rail traffic. 2. Whoever drives a vehicle shall not hold up to 10 m before this sign if it is hidden by it. 3. Whoever drives a vehicle shall be before and behind this sign (a) within closed locations (marks <sign>310</sign>, <sign>311</sign>) up to 5 m each, (b) outside closed locations not park up to 50 m each. 4. An additional sign with a black pile indicates that the Andrean cruise shall only apply for the road traffic towards this pile."
+                    },
+                    {
+                        "Sign_id": "2",
+                        "Sign_number": "205",
+                        "Sign_name": "Sign 205",
+                        "image": "<img>j0367-1_0520.jpg</img>",
+                        "description": "(1) Whoever drives a vehicle must give advance. (2) Whoever drives a vehicle must not hold up to 10 m from that sign if it is hidden by it. Explanation The sign stands directly before the cross or the mount. It can be announced by the same sign with the additional sign indicating the distance."
+                    },
+                    {
+                        "Sign_id": "2.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0530.jpg</img>",
+                        "description": "If the add-on mark is arranged along with the <sign>205</sign>, it means: Whoever drives a vehicle must give advance and at the same time pay attention to cycling and electric-crowd vehicles in the sense of the eKFV from the left and right."
+                    },
+                    {
+                        "Sign_id": "2.2",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0540.jpg</img>",
+                        "description": "If the add-on mark is arranged along with the <sign>205</sign> mark, it means: Whoever drives a vehicle must give the railway advance. Explanation The add-on mark is above the <sign>205</sign> mark."
+                    },
+                    {
+                        "Sign_id": "3",
+                        "Sign_number": "206",
+                        "Sign_name": "Sign 206",
+                        "image": "<img>j0367-1_0550.jpg</img>",
+                        "description": "The person who drives a vehicle must stop and give advance. the person who drives a vehicle must not hold up to 10 m from that sign if it is hidden by it. the person who drives a vehicle must stop and give advance. the person who drives a vehicle must not hold up to 10 m from that sign if it is hidden by it. the person who drives a vehicle must stop where the other road is to be forgotten."
+                    },
+                    {
+                        "Sign_id": "3.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0560.jpg</img>",
+                        "description": "The add-on sign, along with the <sign>205</sign> sign, announces the stop order at the specified distance."
+                    },
+                    {
+                        "Sign_id": "3.2",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0570.jpg</img>",
+                        "description": "If the add-on mark is arranged along with the <sign>206</sign>, it means: Whoever drives a vehicle must stop and give advance while paying attention to cycling and electric-cross vehicles in the sense of the eKFV from the left and right."
+                    },
+                    {
+                        "Sign_id": "Zu 2 und 3",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0580.jpg</img>",
+                        "description": "The add-on sign, along with the sign <sign>205</sign>, <sign>206</sign>, indicates the course of the pre-way (abknicking pre-way)."
+                    },
+                    {
+                        "Sign_id": "4",
+                        "Sign_number": "208",
+                        "Sign_name": "Sign 208",
+                        "image": "<img>j0367-1_0590.jpg</img>",
+                        "description": ": Contra-traffic prohibition or prohibition Who drives a vehicle has to give the contra-traffic priority."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 2 Requirements",
+                "Section_Id": "2",
+                "Content": [
+                    {
+                        "Sign_id": "zu 5 bis 7",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0590.jpg</img>",
+                        "description": "Interdiction or prohibition Who drives a vehicle must follow the required route. Explanation Other than the indicated route will be required accordingly. The current number 70 is indicated in Annex <tab>2</tab>."
+                    },
+                    {
+                        "Sign_id": "5",
+                        "Sign_number": "209",
+                        "Sign_name": "Sign 209",
+                        "image": "<img>j0367-1_0600.jpg</img>",
+                        "description": "The Right"
+                    },
+                    {
+                        "Sign_id": "6",
+                        "Sign_number": "211",
+                        "Sign_name": "Sign 211",
+                        "image": "<img>j0367-1_0610.jpg</img>",
+                        "description": "here right"
+                    },
+                    {
+                        "Sign_id": "7",
+                        "Sign_number": "214",
+                        "Sign_name": "Sign 214",
+                        "image": "<img>j0367-1_0620.jpg</img>",
+                        "description": "Right or right"
+                    },
+                    {
+                        "Sign_id": "8",
+                        "Sign_number": "215",
+                        "Sign_name": "Sign 215",
+                        "image": "<img>j0367-1_0630.jpg</img>",
+                        "description": "(1) Whoever drives a vehicle must follow the required direction in circular traffic. (2) Whoever drives a vehicle must not cross the central island of circular traffic. Except for this prohibition are only vehicles which due to their dimensions would otherwise not be possible to move. With them the central island and the road limit may be crossed if a danger of other participants in traffic is excluded."
+                    },
+                    {
+                        "Sign_id": "9",
+                        "Sign_number": "220",
+                        "Sign_name": "Sign 220",
+                        "image": "<img>j0367-1_0640.jpg</img>",
+                        "description": "Whoever drives a vehicle shall be allowed to drive the single road only in the direction of the steel. Explanation The sign indicates the direction of driving for the vehicle traffic on the trail."
+                    },
+                    {
+                        "Sign_id": "9.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0650.jpg</img>",
+                        "description": "If the sign <sign>220</sign> is arranged with this add-on sign, this means: Whoever drives a vehicle must pay attention to cycling and electric cycling vehicles within the meaning of eKFV against the direction of the direction of the direction of the direction of the direction of the direction of the direction of the direction of the direction of the direction of the direction of the direction of the direction of the direction of the direction of the direction of the direction."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 3 Predicts",
+                "Section_Id": "3",
+                "Content": [
+                    {
+                        "Sign_id": "10",
+                        "Sign_number": "222",
+                        "Sign_name": "Sign 222",
+                        "image": "<img>j0367-1_0660.jpg</img>",
+                        "description": "Whoever drives a vehicle must follow the required pre-driving. explanation \"link pass\" is required accordingly."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 4 Side stripes as routes, stops and tax stations",
+                "Section_Id": "4",
+                "Content": [
+                    {
+                        "Sign_id": "Zu 11 bis 13",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0660.jpg</img>",
+                        "description": "Explanation If the sign <sign>223.1</sign>, <sign>223.2</sign>, <sign>223.3</sign> is arranged for a trail with more than two trails, the sign shows the corresponding number of trails."
+                    },
+                    {
+                        "Sign_id": "11",
+                        "Sign_number": "223.1",
+                        "Sign_name": "Sign 223.1",
+                        "image": "<img>j0367-1_0670.jpg</img>",
+                        "description": ": Side stripes run prohibition or prohibition The sign gives the side strip as a drive strip free; this is like a right strip to run."
+                    },
+                    {
+                        "Sign_id": "11.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0680.jpg</img>",
+                        "description": "The sign <sign>223.1</sign> with the add-on sign announces the cancellation of the order."
+                    },
+                    {
+                        "Sign_id": "12",
+                        "Sign_number": "223.2",
+                        "Sign_name": "Sign 223.2",
+                        "image": "<img>j0367-1_0690.jpg</img>",
+                        "description": ": Side stripes no longer touch Prohibition or prohibition The sign lifts the release of the side strip as a drive strip."
+                    },
+                    {
+                        "Sign_id": "13",
+                        "Sign_number": "223.3",
+                        "Sign_name": "Sign 223.3",
+                        "image": "<img>j0367-1_0700.jpg</img>",
+                        "description": ": Side stripes remove prohibition or prohibition The sign orders the removal of the side strip."
+                    },
+                    {
+                        "Sign_id": "14",
+                        "Sign_number": "224",
+                        "Sign_name": "Sign 224",
+                        "image": "<img>j0367-1_0710.jpg</img>",
+                        "description": "Whoever drives a vehicle may not park up to 15 m in front and behind the sign. Explanation The sign marks a stop of the line traffic and for school buses. The sign with the add-on \"school bus\" (an indication of daily use) on a common white carrier surface marks a stop only for school buses."
+                    },
+                    {
+                        "Sign_id": "15",
+                        "Sign_number": "229",
+                        "Sign_name": "Sign 229",
+                        "image": "<img>j0367-1_0720.jpg</img>",
+                        "description": "The length of the tax stand is marked by indicating the number of scheduled taxes or the sign placed at the beginning of the route with a wave-right white pile indicating the trail and by a sign placed at the end with such a pile indicating the trail or by a border mark for stop and parking prohibitions (marks <sign>299</sign>)."
+                    },
+                    {
+                        "Sign_id": "15.1",
+                        "Sign_number": "230",
+                        "Sign_name": "Sign 230",
+                        "image": "<img>j02990_0010.jpg</img>",
+                        "description": ": Load area of prohibition or prohibition 1. holding and parking is only permitted for loading and discharge of vehicles. 2. loading and discharge must be carried out without delay. Explanation The length of the loading area is marked by the sign placed at the beginning of the route with a wave-right white strip and by a sign placed at the end with such a strip placed from the route or by a mark."
+                    }
+                ]
+            },
+            {
+                "Section": "5 Special routes",
+                "Section_Id": "5",
+                "Content": [
+                    {
+                        "Sign_id": "16",
+                        "Sign_number": "237",
+                        "Sign_name": "Sign 237",
+                        "image": "<img>j0367-1_0730.jpg</img>",
+                        "description": "The bicycle traffic shall not be allowed to use the road, but must use the bicycle route (bicycle use obligation). 2. Other traffic shall not be allowed to use it. 3. If the use of a bicycle route for another type of traffic is permitted by additional signs, it shall take into account the bicycle traffic and the other vehicle traffic shall, if necessary, adjust the speed to the bicycle traffic. 4. <par>§ 2</par> paragraph <sen>4</sen> paragraph 6 shall not be affected."
+                    },
+                    {
+                        "Sign_id": "17",
+                        "Sign_number": "238",
+                        "Sign_name": "Sign 238",
+                        "image": "<img>j0367-1_0740.jpg</img>",
+                        "description": "(1) Who runs shall not use the trail, but must use the trail. this also applies to the driving of horses (riding route obligation). (2) Other traffic shall not use it. (3) If the use of a riding route for another type of traffic is permitted by additional signs, it must take into account the riding route and the vehicle traffic must, if necessary, adjust the speed to the riding route."
+                    },
+                    {
+                        "Sign_id": "18",
+                        "Sign_number": "239",
+                        "Sign_name": "Sign 239",
+                        "image": "<img>j0367-1_0750.jpg</img>",
+                        "description": "If the use of a pathway for another type of traffic is permitted by additional signs, it must take into account the pedestrian traffic. The pedestrian traffic must not be endangered or hindered. If necessary, the traffic must wait; it may only run at step speed. Explanation The sign marks a pathway (<par>§ 25</par> paragraph <sen>1</sen> paragraph 1), where a clarification is necessary."
+                    },
+                    {
+                        "Sign_id": "19",
+                        "Sign_number": "240",
+                        "Sign_name": "Sign 240",
+                        "image": "<img>j0367-1_0760.jpg</img>",
+                        "description": ": Common Walking and Cycling Traffic or Prohibition 1. Cycling is not permitted to use the road, but must take into account the common Walking and Cycling Traffic (Road Use Obligation). It is necessary to take into account the pedestrian traffic. The pedestrian traffic must not be endangered or hindered. If necessary, the speed must be adjusted to the pedestrian traffic. 2. Other traffic must not be used. 3. If by additional signs the use of a common Walking and Cycling Traffic for another type of traffic is permitted, it must take into account the pedestrian and cycling traffic. If necessary, the pedestrian traffic must adjust the speed to the pedestrian traffic. 4. <par>PARAH_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_"
+                    },
+                    {
+                        "Sign_id": "20",
+                        "Sign_number": "241",
+                        "Sign_name": "Sign 241",
+                        "image": "<img>j0367-1_0770.jpg</img>",
+                        "description": ": Separate cycling and walkway Route or prohibition 1. Cycling is not permitted to use the road, but must use the road of the separate cycling and walkway (Route use obligation). 2. Other traffic is not permitted to use it. 3. If the use of a separate cycling and walkway is permitted by additional signs for another type of traffic, it is permitted to run only the part of the separate cycling and walkway specified for cycling. 4. The other type of traffic must take into account the cycling. If necessary, other vehicle traffic must adjust the speed to the cycling. 5. <par>PARAGRAPH_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_SIGN_"
+                    },
+                    {
+                        "Sign_id": "21",
+                        "Sign_number": "242.1",
+                        "Sign_name": "Sign 242.1",
+                        "image": "<img>j0367-1_0780.jpg</img>",
+                        "description": "If the use of a pedestrian area for another type of traffic is permitted by additional signs, the number 2 shall apply to the road traffic to the signs <sign>239</sign> accordingly."
+                    },
+                    {
+                        "Sign_id": "22",
+                        "Sign_number": "242.2",
+                        "Sign_name": "Sign 242.2",
+                        "image": "<img>j0367-1_0790.jpg</img>",
+                        "description": "The end of a pedestrian zone"
+                    },
+                    {
+                        "Sign_id": "23",
+                        "Sign_number": "244.1",
+                        "Sign_name": "Sign 244.1",
+                        "image": "<img>j0367-1_0800.jpg</img>",
+                        "description": ": Beginning of a bicycle road Traffic or prohibition 1. Other vehicle traffic as bicycle traffic as well as electric motor vehicles within the meaning of the eCFV shall not be used by bicycle roads unless this is permitted by additional signs. The expressed types of traffic may also be presented together on an additional signs. The passage of a bicycle road through other vehicle traffic on a crossroads is permitted to reach the further road. 2. The maximum speed of 30 km/h shall be applied for the road traffic. The bicycle traffic shall not be endangered or hindered. If necessary, the road traffic must continue to reduce the speed."
+                    },
+                    {
+                        "Sign_id": "24",
+                        "Sign_number": "244.2",
+                        "Sign_name": "Sign 244.2",
+                        "image": "<img>j0367-1_0810.jpg</img>",
+                        "description": "The End of a Bicycle Road"
+                    },
+                    {
+                        "Sign_id": "24.1",
+                        "Sign_number": "244.3",
+                        "Sign_name": "Sign 244.3",
+                        "image": "<img>j0814-1_0080.jpg</img>",
+                        "description": ": Beginning of a bicycle zone 1. Other vehicle traffic as bicycle traffic as well as electrical cycling vehicles within the meaning of the eCFV may not use bicycle zones unless this is permitted by additional signs. The releasing traffic types may also be presented together on an additional signs. 2. for the road traffic a maximum speed of 30 km/h shall be applied. The bicycle traffic shall not be endangered or hindered. If necessary, the motor vehicle traffic must further reduce the speed. 3. The side traffic with bicycles and electrical cycling vehicles within the meaning of the eCFV is permitted."
+                    },
+                    {
+                        "Sign_id": "24.2",
+                        "Sign_number": "244.4",
+                        "Sign_name": "Sign 244.4",
+                        "image": "<img>j0814-1_0090.jpg</img>",
+                        "description": "The End of a Bicycle Zone"
+                    },
+                    {
+                        "Sign_id": "25",
+                        "Sign_number": "245",
+                        "Sign_name": "Sign 245",
+                        "image": "<img>j0367-1_0820.jpg</img>",
+                        "description": "Other traffic as the omnibus of the line traffic as well as vehicles of the school bus and disabled traffic that are marked by the passenger transportation law with the school bus shield shall not be used by bus trails. 2. with medical vehicles, taxes, bicycles and buses in occasional traffic, the special trails shall be used only if this is indicated by additional signs. 3. taxes shall be kept at bus stops (signs <sign>224</sign>) for the immediate entrance and departure of passengers. 4. with electrically operated vehicles, the bus trails shall be used only if this is indicated by additional signs."
+                    },
+                    {
+                        "Sign_id": "25.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j1573-1_0030.jpg</img>",
+                        "description": "Prohibition or prohibition"
+                    }
+                ]
+            },
+            {
+                "Section": "Section 6 Traffic prohibitions",
+                "Section_Id": "6",
+                "Content": [
+                    {
+                        "Sign_id": "26",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j1573-1_0030.jpg</img>",
+                        "description": "The following signs <sign>250</sign>, <sign>251</sign>, <sign>252</sign>, <sign>253</sign>, <sign>254</sign>, <sign>255</sign>, <sign>256</sign>, <sign>257</sign>, <sign>258</sign>, <sign>259</sign>, <sign>260</sign>, <sign>261</sign> (Traffic prohibition) prohibit the participation of the traffic in whole or in part with the specified content."
+                    },
+                    {
+                        "Sign_id": "27",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0830.jpg</img>",
+                        "description": "If a mass, such as “7.5 t”, is indicated on an additional sign, the prohibition shall apply only to the extent that the permissible total mass of these means, including their supporters, exceeds the specified limit."
+                    },
+                    {
+                        "Sign_id": "27.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j1573-1_0040.jpg</img>",
+                        "description": "Prohibition or prohibition"
+                    },
+                    {
+                        "Sign_id": "28",
+                        "Sign_number": "250",
+                        "Sign_name": "Sign 250",
+                        "image": "<img>j0367-1_0840.jpg</img>",
+                        "description": "The mark does not apply to hand vehicles, unlike <par>§ 28</par> paragraph <sen>2</sen> nor to rider, horse driver as well as driver and animal driver. 2. power wheels and bicycles may be removed. 3. by means of additional signs special forms of mobility for testing purposes (<par>§ 45</par> paragraph <sen>9</sen> paragraph 4 paragraph 7a) may be removed from the traffic until 31 December 2028."
+                    },
+                    {
+                        "Sign_id": "29",
+                        "Sign_number": "251",
+                        "Sign_name": "Sign 251",
+                        "image": "<img>j0367-1_0850.jpg</img>",
+                        "description": "Prohibition for motor vehicles Prohibition or prohibition for motor vehicles and other multi-way motor vehicles"
+                    },
+                    {
+                        "Sign_id": "30",
+                        "Sign_number": "253",
+                        "Sign_name": "Sign 253",
+                        "image": "<img>j0367-1_0860.jpg</img>",
+                        "description": ": Prohibition for motor vehicles over 3.5 t prohibition or prohibition Prohibition for motor vehicles with a permissible total mass over 3.5 t, including their followers, and for train machines. Except for passenger motor vehicles and motor buses. Explanation The sign can be integrated into a transmitting table or a swing table or a road table. Then the prohibition applies only to the respective routes for which the prohibition is ordered."
+                    },
+                    {
+                        "Sign_id": "30.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0870.jpg</img>",
+                        "description": "If the sign <sign>253</sign> is placed with these add-on signs, this means: 1. the ban is limited to the passenger traffic with commercial vehicles, including their supporters, with a permissible total mass from 7.5 t. 2. passenger traffic is not required to reach or leave a land on the road affected by the traffic prohibition or on a road that is closed by the road affected by the traffic prohibition, b) the goods traffic as referred to in the <par>§ 1</par> paragraphs of the goods traffic law within a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of a district of"
+                    },
+                    {
+                        "Sign_id": "31",
+                        "Sign_number": "254",
+                        "Sign_name": "Sign 254",
+                        "image": "<img>j0367-1_0890.jpg</img>",
+                        "description": "Interdiction of cycling Interdiction or prohibition of cycling and the traffic of electric cycling vehicles within the meaning of the eCFV"
+                    },
+                    {
+                        "Sign_id": "32",
+                        "Sign_number": "255",
+                        "Sign_name": "Sign 255",
+                        "image": "<img>j0367-1_0900.jpg</img>",
+                        "description": ": Prohibition of power wheels Prohibition of power wheels, including by-wheels, small-power wheels and mofas"
+                    },
+                    {
+                        "Sign_id": "33",
+                        "Sign_number": "259",
+                        "Sign_name": "Sign 259",
+                        "image": "<img>j0367-1_0910.jpg</img>",
+                        "description": "Prohibition for pedestrian pedestrian pedestrian pedestrian pedestrian"
+                    },
+                    {
+                        "Sign_id": "34",
+                        "Sign_number": "260",
+                        "Sign_name": "Sign 260",
+                        "image": "<img>j0367-1_0920.jpg</img>",
+                        "description": "Prohibition of motor vehicles Prohibition or prohibition of power wheels, including by-wheels, small-power wheels and mofas, as well as for motor vehicles and other multi-way motor vehicles"
+                    },
+                    {
+                        "Sign_id": "35",
+                        "Sign_number": "261",
+                        "Sign_name": "Sign 261",
+                        "image": "<img>j0367-1_0930.jpg</img>",
+                        "description": "Vehicles with hazardous goods - Prohibition or prohibition of labelling vehicles with hazardous goods"
+                    },
+                    {
+                        "Sign_id": "zu 36 bis 40",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_0930.jpg</img>",
+                        "description": "The following signs <sign>262</sign>, <sign>263</sign>, <sign>264</sign>, <sign>265</sign>, <sign>266</sign> prohibit the entry of traffic for vehicles whose size or masses, including load, exceed the actual limit indicated on the respective sign."
+                    },
+                    {
+                        "Sign_id": "36",
+                        "Sign_number": "262",
+                        "Sign_name": "Sign 262",
+                        "image": "<img>j0367-1_0940.jpg</img>",
+                        "description": "The limitation by the sign <sign>262</sign> applies to vehicle combinations for the individual vehicle, for seating vehicles separately for the seating machine including seating load and for the actual axis load of the seating carrier. Explanation The sign may be integrated into a transmitting table or a swinging table or a driving table. Then the prohibition applies only to the respective routes for which the prohibition is ordered."
+                    },
+                    {
+                        "Sign_id": "37",
+                        "Sign_number": "263",
+                        "Sign_name": "Sign 263",
+                        "image": "<img>j0367-1_0950.jpg</img>",
+                        "description": "The sign can be integrated into a transfer table or a swing table or a road table. Then the prohibition applies only to the respective road lines for which the prohibition is ordered."
+                    },
+                    {
+                        "Sign_id": "38",
+                        "Sign_number": "264",
+                        "Sign_name": "Sign 264",
+                        "image": "<img>j0367-1_0960.jpg</img>",
+                        "description": ": Real width explanation The actual width indicates the measure, including the vehicle output level. The sign can be integrated into a transmission table or a swinging table or a road track table. Then the prohibition applies only to the respective road lines for which the prohibition is ordered."
+                    },
+                    {
+                        "Sign_id": "39",
+                        "Sign_number": "265",
+                        "Sign_name": "Sign 265",
+                        "image": "<img>j0367-1_0970.jpg</img>",
+                        "description": "The sign can be integrated into a transfer table or a swing table or a road table. Then the prohibition applies only to the respective road lines for which the prohibition is ordered."
+                    },
+                    {
+                        "Sign_id": "40",
+                        "Sign_number": "266",
+                        "Sign_name": "Sign 266",
+                        "image": "<img>j0367-1_0980.jpg</img>",
+                        "description": "The prohibition applies to vehicle combinations for the total length."
+                    },
+                    {
+                        "Sign_id": "41",
+                        "Sign_number": "267",
+                        "Sign_name": "Sign 267",
+                        "image": "<img>j0367-1_0990.jpg</img>",
+                        "description": "Whoever drives a vehicle shall not enter the trail for which the sign is ordered. Explanation The sign is on the right side of the trail for which it applies, or on both sides of this trail."
+                    },
+                    {
+                        "Sign_id": "41.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1000.jpg</img>",
+                        "description": "By the add-on sign to the sign <sign>267</sign>, the entry is permitted for cycling and electrical cycling vehicles within the meaning of the eKFV."
+                    },
+                    {
+                        "Sign_id": "42",
+                        "Sign_number": "268",
+                        "Sign_name": "Sign 268",
+                        "image": "<img>j0367-1_1010.jpg</img>",
+                        "description": ": Snow chains required prohibition or prohibition Who drives a vehicle may walk the road only with snow chains."
+                    },
+                    {
+                        "Sign_id": "43",
+                        "Sign_number": "269",
+                        "Sign_name": "Sign 269",
+                        "image": "<img>j0367-1_1020.jpg</img>",
+                        "description": "Water-threatening loading or prohibition Those who drive a vehicle may not use the road with more than 20 l of water-threatening loading."
+                    },
+                    {
+                        "Sign_id": "44",
+                        "Sign_number": "270.1",
+                        "Sign_name": "Sign 270.1",
+                        "image": "<img>j0367-1_1030.jpg</img>",
+                        "description": "2. <par>§ 1</par> paragraph <sen>2</sen> as well as <par>§ 2</par> paragraph <sen>3</sen> in conjunction with Annex 3 of the Regulation on the Marking of the Plan of the Federal Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval of the Approval."
+                    },
+                    {
+                        "Sign_id": "45",
+                        "Sign_number": "270.2",
+                        "Sign_name": "Sign 270.2",
+                        "image": "<img>j0367-1_1040.jpg</img>",
+                        "description": "Air pollution in a zone"
+                    },
+                    {
+                        "Sign_id": "46",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1050.jpg</img>",
+                        "description": "The additional sign to the sign <sign>270.1</sign> excludes motor vehicles from the traffic prohibition which are equipped with a poster displayed on the additional sign in the respective colour according to <par>§ 3</par> of the Regulation on the labelling of motor vehicles with a small contribution to the pollution."
+                    },
+                    {
+                        "Sign_id": "47",
+                        "Sign_number": "272",
+                        "Sign_name": "Sign 272",
+                        "image": "<img>j0367-1_1060.jpg</img>",
+                        "description": ": Prohibition of turn or prohibition Whoever drives a vehicle may not contact here."
+                    },
+                    {
+                        "Sign_id": "48",
+                        "Sign_number": "273",
+                        "Sign_name": "Sign 273",
+                        "image": "<img>j0367-1_1070.jpg</img>",
+                        "description": "Whoever drives a motor vehicle with a permissible total mass of more than 3.5 t or a train machine shall not exceed the indicated minimum distance to an advance motor vehicle of the same type."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 7 Speed Restrictions and Overdrawal Prohibitions",
+                "Section_Id": "7",
+                "Content": [
+                    {
+                        "Sign_id": "49",
+                        "Sign_number": "274",
+                        "Sign_name": "Sign 274",
+                        "image": "<img>j0367-1_1080.jpg</img>",
+                        "description": "Whoever drives a vehicle shall not drive faster than with the maximum speed indicated each. 2. If the sign allows certain speeds over 50 km/h within closed locations, this applies to vehicles of all kinds. 3. Outside closed locations the maximum speeds applicable to certain types of vehicles (<par>§ 3</par> paragraphs <sen>3</sen> paragraphs 2 letters a and b and <par>§ 18</par> paragraphs <sen>5</sen>) shall not be touched if the sign allows a higher speed."
+                    },
+                    {
+                        "Sign_id": "49.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1090.jpg</img>",
+                        "description": "The add-on sign to the sign <sign>274</sign> prohibits drivers from exceeding the specified speed on wet trains."
+                    },
+                    {
+                        "Sign_id": "50",
+                        "Sign_number": "274.1",
+                        "Sign_name": "Sign 274.1",
+                        "image": "<img>j0367-1_1100.jpg</img>",
+                        "description": "Whoever drives a vehicle must not drive within this zone faster than with the maximum speed indicated."
+                    },
+                    {
+                        "Sign_id": "51",
+                        "Sign_number": "274.2",
+                        "Sign_name": "Sign 274.2",
+                        "image": "<img>j0367-1_1110.jpg</img>",
+                        "description": "The end of a speed zone 30"
+                    },
+                    {
+                        "Sign_id": "52",
+                        "Sign_number": "275",
+                        "Sign_name": "Sign 275",
+                        "image": "<img>j0367-1_1120.jpg</img>",
+                        "description": ": Minimum speed Prohibition or prohibition Who drives a vehicle should not drive slower than with the specified minimum speed unless the road, traffic, sight or weather conditions require it. It prohibits using such a marked track with vehicles that cannot or may drive so fast. Explanation The sign may be integrated into a track table or an extension table. Then the required minimum speed refers only to the respective track for which the minimum speed is assigned."
+                    },
+                    {
+                        "Sign_id": "Zu 53, 54 und 54.4",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1120.jpg</img>",
+                        "description": "The following signs <sign>276</sign>, <sign>277</sign> prohibit motor vehicles from overcoming multi-spur motor vehicles and power carriers with submarines. If a mass is indicated on an additional sign as \"7,5 t\", the prohibition applies only to the extent that the permissible total mass of these motor vehicles, including their supporters, exceeds the specified limit. If multi-spur motor vehicles and power carriers with submarines are prohibited from overcoming single-spur vehicles, the sign <sign>277.1</sign> is ordered."
+                    },
+                    {
+                        "Sign_id": "53",
+                        "Sign_number": "276",
+                        "Sign_name": "Sign 276",
+                        "image": "<img>j0367-1_1130.jpg</img>",
+                        "description": "Vehicles of all kinds"
+                    },
+                    {
+                        "Sign_id": "54",
+                        "Sign_number": "277",
+                        "Sign_name": "Sign 277",
+                        "image": "<img>j0367-1_1140.jpg</img>",
+                        "description": ": Vehicles above 3.5 t prohibition or prohibition overtake for motor vehicles with a permissible total mass above 3.5 t, including their followers, and for train machines."
+                    },
+                    {
+                        "Sign_id": "54.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1150.jpg</img>",
+                        "description": "With the add-on sign, the exhaust prohibition set by the sign <sign>277</sign> also applies to motor vehicles above 2.8 t, including their followers."
+                    },
+                    {
+                        "Sign_id": "54.2",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1160.jpg</img>",
+                        "description": ": Prohibition or prohibition With the add-on sign, the prohibition of overtake ordered by the sign <sign>277</sign> also applies to power buses and passenger vehicles with trailers."
+                    },
+                    {
+                        "Sign_id": "54.3",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1170.jpg</img>",
+                        "description": "The add-on sign to the sign <sign>274</sign>, <sign>276</sign>, <sign>277</sign>, <sign>277.1</sign> indicates the length of a speed limit or a overflow prohibition."
+                    },
+                    {
+                        "Sign_id": "54.4",
+                        "Sign_number": "277.1",
+                        "Sign_name": "Sign 277.1",
+                        "image": "<img>j0814-1_0100.jpg</img>",
+                        "description": "Whoever drives a multi-spur motor vehicle shall not overcome one- and multi-spur vehicles."
+                    },
+                    {
+                        "Sign_id": "55",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0814-1_0100.jpg</img>",
+                        "description": "Explanation The end of a streck-related speed limit or a survival prohibition is not marked if the prohibition applies only for a short distance and on an additional sign is indicated the length of the prohibition. It is also not marked if the prohibition sign is attached together with a danger sign and is undoubtedly derived from the locality where the indicated danger no longer exists. Otherwise it is marked by the <sign>278</sign>, <sign>279</sign>, <sign>280</sign>, <sign>281</sign>, <sign>282</sign>."
+                    },
+                    {
+                        "Sign_id": "56",
+                        "Sign_number": "278",
+                        "Sign_name": "Sign 278",
+                        "image": "<img>j0367-1_1180.jpg</img>",
+                        "description": "The sign may be integrated into a traction table or an injection table or an extension table. Then the sign refers only to the respective traction lines for which the permissible maximum speed was previously arranged."
+                    },
+                    {
+                        "Sign_id": "57",
+                        "Sign_number": "279",
+                        "Sign_name": "Sign 279",
+                        "image": "<img>j0367-1_1190.jpg</img>",
+                        "description": ": Minimum speed Explanation The sign can be integrated into a trail table or an inbound table. Then the sign refers only to the respective trails for which the required minimum speed was previously arranged."
+                    },
+                    {
+                        "Sign_id": "58",
+                        "Sign_number": "280",
+                        "Sign_name": "Sign 280",
+                        "image": "<img>j0367-1_1200.jpg</img>",
+                        "description": "for vehicles of all kinds"
+                    },
+                    {
+                        "Sign_id": "59",
+                        "Sign_number": "281",
+                        "Sign_name": "Sign 281",
+                        "image": "<img>j0367-1_1210.jpg</img>",
+                        "description": "for vehicles above 3.5 t"
+                    },
+                    {
+                        "Sign_id": "59.1",
+                        "Sign_number": "281.1",
+                        "Sign_name": "Sign 281.1",
+                        "image": "<img>j0814-1_0110.jpg</img>",
+                        "description": ": and power wheels with coats"
+                    },
+                    {
+                        "Sign_id": "60",
+                        "Sign_number": "282",
+                        "Sign_name": "Sign 282",
+                        "image": "<img>j0367-1_1220.jpg</img>",
+                        "description": "The sign may be integrated into a row or extension table. Then the sign only refers to the respective row for which the row-related speed limitations and row-related prohibitions were previously ordered."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 8 Parking and stop prohibitions",
+                "Section_Id": "8",
+                "Content": [
+                    {
+                        "Sign_id": "61",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1220.jpg</img>",
+                        "description": "The stop prohibitions ordered by the following signs <sign>283</sign>, <sign>286</sign> apply only on the road side on which the signs are attached. They apply until the next cross or incrust on the same road side or until the traffic signs for the resting traffic prescribe a different arrangement. 2. Mobile, temporarily ordered stop prohibitions by the signs <sign>283</sign>, <sign>286</sign> raise the traffic signs that allow the parking. Explanation The beginning of the stop can be made by a trail to a weaker white pile in the same road side or until the traffic signs for the resting traffic is specified a different arrangement."
+                    },
+                    {
+                        "Sign_id": "62",
+                        "Sign_number": "283",
+                        "Sign_name": "Sign 283",
+                        "image": "<img>j0367-1_1230.jpg</img>",
+                        "description": ": Absolute stop prohibition or prohibition The stop on the trail is prohibited."
+                    },
+                    {
+                        "Sign_id": "62.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1240.jpg</img>",
+                        "description": "The add-on sign set with the <sign>283</sign> prohibits the holding of vehicles also on the side strip."
+                    },
+                    {
+                        "Sign_id": "62.2",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1250.jpg</img>",
+                        "description": "The add-on mark set with the <sign>283</sign> prohibits the holding of vehicles only on the side strip."
+                    },
+                    {
+                        "Sign_id": "63",
+                        "Sign_number": "286",
+                        "Sign_name": "Sign 286",
+                        "image": "<img>j0367-1_1260.jpg</img>",
+                        "description": "(1) Whoever drives a vehicle shall not be allowed to stay on the trail for more than three minutes, except for entering or descending or charging or discharge."
+                    },
+                    {
+                        "Sign_id": "63.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1270.jpg</img>",
+                        "description": "The add-on sign to the sign <sign>286</sign> may also be kept on the side strip for no longer than three minutes, except for entering or leaving or charging or discharge."
+                    },
+                    {
+                        "Sign_id": "63.2",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1280.jpg</img>",
+                        "description": "The add-on to the sign <sign>286</sign> may only be kept on the side strip for no longer than three minutes, except for entering or descending or to load or discharge."
+                    },
+                    {
+                        "Sign_id": "63.3",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1290.jpg</img>",
+                        "description": "The add-on sign to the sign <sign>286</sign> excludes people with severe disabilities with extraordinary walking disability, bilateral amelia or phokomelia or with similar functional limitations as well as blind people, each with special parking card number ..., from the stop."
+                    },
+                    {
+                        "Sign_id": "63.4",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1300.jpg</img>",
+                        "description": "The additional sign to the sign <sign>286</sign> excludes residents with a special parking card from the stop prohibition."
+                    },
+                    {
+                        "Sign_id": "63.5",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j1573-1_0050.jpg</img>",
+                        "description": "Prohibition or prohibition"
+                    },
+                    {
+                        "Sign_id": "63.6",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0814-1_0120.jpg</img>",
+                        "description": "By adding the sign to the sign <sign>286</sign> the parking for carsharing vehicles (<par>§ 39</par> paragraph <sen>11</sen>) is allowed within the marked areas."
+                    },
+                    {
+                        "Sign_id": "64",
+                        "Sign_number": "290.1",
+                        "Sign_name": "Sign 290.1",
+                        "image": "<img>j0367-1_1310.jpg</img>",
+                        "description": "The person who drives a vehicle shall not be allowed to stay within the designated zone for more than three minutes, except for entering or ascending or descending or discharge. within the designated zone, the restricted stop prohibition applies to all public transport areas, unless distinctive arrangements have been made by traffic signs or traffic facilities. 3. by additional signs, the parking for residents may be allowed with a parking card or with a parking permit or a parking place (Figure 318) within the designated areas. 4. by additional signs, the parking with a parking place or a parking place (Figure 318) within the designated areas."
+                    },
+                    {
+                        "Sign_id": "64.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j1573-1_0060.jpg</img>",
+                        "description": "Prohibition or prohibition"
+                    },
+                    {
+                        "Sign_id": "64.2",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0814-1_0130.jpg</img>",
+                        "description": "By adding the sign to the sign <sign>290.1</sign> the parking for carsharing vehicles (<par>§ 39</par> paragraph <sen>11</sen>) is allowed within the marked areas."
+                    },
+                    {
+                        "Sign_id": "65",
+                        "Sign_number": "290.2",
+                        "Sign_name": "Sign 290.2",
+                        "image": "<img>j0367-1_1320.jpg</img>",
+                        "description": "for a zone"
+                    }
+                ]
+            },
+            {
+                "Section": "Section 9 Marking",
+                "Section_Id": "9",
+                "Content": [
+                    {
+                        "Sign_id": "66",
+                        "Sign_number": "293",
+                        "Sign_name": "Sign 293",
+                        "image": "<img>j0367-1_1330.jpg</img>",
+                        "description": "Whoever drives a vehicle may not stand on pedestrian passes as well as up to 5 meters ahead."
+                    },
+                    {
+                        "Sign_id": "67",
+                        "Sign_number": "294",
+                        "Sign_name": "Sign 294",
+                        "image": "<img>j0367-1_1340.jpg</img>",
+                        "description": "Additionally to stop or warning offers given by <sign>206</sign>, by police officers, light signs or barriers, they order: Whoever drives a vehicle must stop here."
+                    },
+                    {
+                        "Sign_id": "68",
+                        "Sign_number": "295",
+                        "Sign_name": "Sign 295",
+                        "image": "<img>j0367-1_1350.jpg</img>",
+                        "description": "On the other hand, it is not permissible to pass on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line as on the same line."
+                    },
+                    {
+                        "Sign_id": "69",
+                        "Sign_number": "296",
+                        "Sign_name": "Sign 296",
+                        "image": "<img>j0367-1_1360.jpg</img>",
+                        "description": "(1) Whoever drives a vehicle shall not cross the continuous line or drive on it. (2) Whoever drives a vehicle shall not park on the trail if there is no trail of at least 3 m between the parking vehicle and the continuous trail limit line. (3) For vehicles on the trail B, the marking shall be arranged: Vehicles on the trail B shall not pass the marking if this does not endanger the traffic."
+                    },
+                    {
+                        "Sign_id": "70",
+                        "Sign_number": "297",
+                        "Sign_name": "Sign 297",
+                        "image": "<img>j0367-1_1370.jpg</img>",
+                        "description": "Whoever drives a vehicle must follow the direction on the following cross or mount if between the trails are marked guidelines (sign>340</sign>) or trail limitations (sign>295</sign>). 2. Whoever drives a vehicle must not keep on the trail marked with trails (<par>§ 12</par> paragraph <sen>1</sen>)."
+                    },
+                    {
+                        "Sign_id": "71",
+                        "Sign_number": "297.1",
+                        "Sign_name": "Sign 297.1",
+                        "image": "<img>j0367-1_1380.jpg</img>",
+                        "description": ": Pre-announcement thread Explanation With the pre-announcement thread, a range limit is announced or the end of a range is displayed."
+                    },
+                    {
+                        "Sign_id": "72",
+                        "Sign_number": "298",
+                        "Sign_name": "Sign 298",
+                        "image": "<img>j0367-1_1390.jpg</img>",
+                        "description": ": Blocking area Prohibition or Prohibition Who drives a vehicle may not use blocking areas."
+                    },
+                    {
+                        "Sign_id": "73",
+                        "Sign_number": "299",
+                        "Sign_name": "Sign 299",
+                        "image": "<img>j0367-1_1400.jpg</img>",
+                        "description": "Whoever drives a vehicle may not hold or park within a border mark for stop or parking prohibitions. explanation border markers indicate, extend or shorten a forced stop or parking prohibition elsewhere."
+                    },
+                    {
+                        "Sign_id": "74",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1400.jpg</img>",
+                        "description": "A parking area marking allows parking; on walking roads, however, only vehicles with a permissible total mass of up to 2.8 t. The layout ordered by the parking area marking must be followed. Where it is marked with continuous lines, it may be passed over. Explanation If parking areas are recognizable on the streets, it is ordered how to place vehicles."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "table_name": "Annex 3(to <par>§ 42</par> paragraph <sen>2</sen>)Rightmark",
+        "table_id": "3",
+        "table_data": [
+            {
+                "Section": "Section 1 Priorities",
+                "Section_Id": "1",
+                "Content": [
+                    {
+                        "Sign_id": "1",
+                        "Sign_number": "301",
+                        "Sign_name": "Sign 301",
+                        "image": "<img>j0367-1_1410.jpg</img>",
+                        "description": "The sign indicates that there is a pre-pass on the next cruise or inmunition."
+                    },
+                    {
+                        "Sign_id": "2",
+                        "Sign_number": "306",
+                        "Sign_name": "Sign 306",
+                        "image": "<img>j0367-1_1420.jpg</img>",
+                        "description": "Whoever drives a vehicle shall not park on trains of the pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre"
+                    },
+                    {
+                        "Sign_id": "2.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1430.jpg</img>",
+                        "description": "Whoever wants to drive a vehicle and follow the course of the off-road road must notify it in time and clearly; the direction indicators must be used. 2. on pedestrian traffic must be taken special attention. if necessary, it must be waited. Explanation The additional sign to the <sign>306</sign> indicates the course of the road."
+                    },
+                    {
+                        "Sign_id": "3",
+                        "Sign_number": "307",
+                        "Sign_name": "Sign 307",
+                        "image": "<img>j0367-1_1440.jpg</img>",
+                        "description": "The end of the road"
+                    },
+                    {
+                        "Sign_id": "4",
+                        "Sign_number": "308",
+                        "Sign_name": "Sign 308",
+                        "image": "<img>j0367-1_1450.jpg</img>",
+                        "description": "Priority before the counter-traffic Prohibition or prohibition Who drives a vehicle has priority before the counter-traffic."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 2 Local Standards",
+                "Section_Id": "2",
+                "Content": [
+                    {
+                        "Sign_id": "zu 5 und 6",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1450.jpg</img>",
+                        "description": "Explanation From the local tables apply the rules existing for traffic within or outside closed locations."
+                    },
+                    {
+                        "Sign_id": "5",
+                        "Sign_number": "310",
+                        "Sign_name": "Sign 310",
+                        "image": "<img>j0367-1_1460.jpg</img>",
+                        "description": ": Local table Front The local table determines: Here a closed town begins."
+                    },
+                    {
+                        "Sign_id": "6",
+                        "Sign_number": "311",
+                        "Sign_name": "Sign 311",
+                        "image": "<img>j0367-1_1470.jpg</img>",
+                        "description": ": Local table Back The local table determines: Here a closed town ends."
+                    }
+                ]
+            },
+            {
+                "Section": "Part 3 Parking",
+                "Section_Id": "3",
+                "Content": [
+                    {
+                        "Sign_id": "7",
+                        "Sign_number": "314",
+                        "Sign_name": "Sign 314",
+                        "image": "<img>j0367-1_1480.jpg</img>",
+                        "description": "Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking"
+                    },
+                    {
+                        "Sign_id": "8",
+                        "Sign_number": "314.1",
+                        "Sign_name": "Sign 314.1",
+                        "image": "<img>j0367-1_1490.jpg</img>",
+                        "description": "Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking: Parking"
+                    },
+                    {
+                        "Sign_id": "9",
+                        "Sign_number": "314.2",
+                        "Sign_name": "Sign 314.2",
+                        "image": "<img>j0367-1_1500.jpg</img>",
+                        "description": "Parking area management"
+                    },
+                    {
+                        "Sign_id": "10",
+                        "Sign_number": "315",
+                        "Sign_name": "Sign 315",
+                        "image": "<img>j0367-1_1510.jpg</img>",
+                        "description": "Parks are not allowed to be parked against the ordered type of setting of the sign or against the restrictions of the sign of the sign of the sign of the sign of the sign of the sign of the sign of the sign of the sign of the sign of the sign of the sign of the sign of the sign of the sign of the sign."
+                    },
+                    {
+                        "Sign_id": "11",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1520.jpg</img>",
+                        "description": "Figure 318 : Parking dish Prohibition or prohibition If the parking time is limited for electrically operated vehicles, the proof must be provided by expanding the parking dish."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 4 Traffic calming area",
+                "Section_Id": "4",
+                "Content": [
+                    {
+                        "Sign_id": "12",
+                        "Sign_number": "325.1",
+                        "Sign_name": "Sign 325.1",
+                        "image": "<img>j0367-1_1530.jpg</img>",
+                        "description": "Whoever drives a vehicle must drive at a step speed; whoever drives a vehicle must not endanger or hinder the pedestrian traffic; if necessary, must be watched; whoever goes on foot must not unnecessarily hinder the traffic; whoever drives a vehicle must not park outside the area designated for it, except for entering or leaving, and for landing or discharge; whoever drives a vehicle must not use the road throughout its width; children's games are permitted everywhere."
+                    },
+                    {
+                        "Sign_id": "13",
+                        "Sign_number": "325.2",
+                        "Sign_name": "Sign 325.2",
+                        "image": "<img>j0367-1_1540.jpg</img>",
+                        "description": ": Traffic-calmed area Explanation When leaving is to note <par>§ 10</par>."
+                    }
+                ]
+            },
+            {
+                "Section": "5th Tunnel",
+                "Section_Id": "5",
+                "Content": [
+                    {
+                        "Sign_id": "14",
+                        "Sign_number": "327",
+                        "Sign_name": "Sign 327",
+                        "image": "<img>j0367-1_1550.jpg</img>",
+                        "description": "(1) Whoever drives a vehicle must use a blend light when passing the tunnel and must not turn in the tunnel. (2) In the event of an emergency or disruption only existing emergency and panne bills shall be used."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 6 Emergency and Pannenbuch",
+                "Section_Id": "6",
+                "Content": [
+                    {
+                        "Sign_id": "15",
+                        "Sign_number": "328",
+                        "Sign_name": "Sign 328",
+                        "image": "<img>j0367-1_1560.jpg</img>",
+                        "description": "Whoever drives a vehicle may only keep in a emergency and emergency book in a emergency or emergency case."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 7 Highways and motorways",
+                "Section_Id": "7",
+                "Content": [
+                    {
+                        "Sign_id": "16",
+                        "Sign_number": "330.1",
+                        "Sign_name": "Sign 330.1",
+                        "image": "<img>j0367-1_1570.jpg</img>",
+                        "description": ": Highway Explanation From this sign the rules for traffic on highways apply."
+                    },
+                    {
+                        "Sign_id": "17",
+                        "Sign_number": "330.2",
+                        "Sign_name": "Sign 330.2",
+                        "image": "<img>j0367-1_1580.jpg</img>",
+                        "description": "The end of the highway"
+                    },
+                    {
+                        "Sign_id": "18",
+                        "Sign_number": "331.1",
+                        "Sign_name": "Sign 331.1",
+                        "image": "<img>j0367-1_1590.jpg</img>",
+                        "description": ": Highway Explanation From this sign the rules for traffic on highway are applicable."
+                    },
+                    {
+                        "Sign_id": "19",
+                        "Sign_number": "331.2",
+                        "Sign_name": "Sign 331.2",
+                        "image": "<img>j0367-1_1600.jpg</img>",
+                        "description": "The end of the motorway"
+                    },
+                    {
+                        "Sign_id": "20",
+                        "Sign_number": "333",
+                        "Sign_name": "Sign 333",
+                        "image": "<img>j0367-1_1610.jpg</img>",
+                        "description": ": Exit from the highway Explanation On motorway roads or motorway-like roads the corresponding sign with a black letter on a yellow ground indicates the exit."
+                    },
+                    {
+                        "Sign_id": "21",
+                        "Sign_number": "450",
+                        "Sign_name": "Sign 450",
+                        "image": "<img>j0367-1_1620.jpg</img>",
+                        "description": "The sign stands 300 m, 200 m (as illustrated) and 100 m in front of a highway nod point (a highway connection point, a highway cross or a highway triangle). It also stands in front of a managed rail station."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 8 Marking",
+                "Section_Id": "8",
+                "Content": [
+                    {
+                        "Sign_id": "22",
+                        "Sign_number": "340",
+                        "Sign_name": "Sign 340",
+                        "image": "<img>j0367-1_1630.jpg</img>",
+                        "description": "(1) Whoever drives a vehicle shall not transcend guidelines if this endorses the traffic. (2) Whoever drives a vehicle shall only transcend on the trail by guidelines marked protective stripes for cycling if necessary, in particular in order to avoid counter-traffic. (3) Cycling cannot be endorsed. (3) Cycling protective stripes marked by guidelines shall not be kept. (1) Section 1 shall not apply to bicycles and electrical vehicles within the meaning of the eCFV. Explanation The cycling protective stripes shall be marked in regular intervals with the symbol \"traffic\" on the trail."
+                    },
+                    {
+                        "Sign_id": "23",
+                        "Sign_number": "341",
+                        "Sign_name": "Sign 341",
+                        "image": "<img>j0367-1_1640.jpg</img>",
+                        "description": ": Waiting line Explanation The waiting line recommends the waiting person to wait here."
+                    },
+                    {
+                        "Sign_id": "23.1",
+                        "Sign_number": "342",
+                        "Sign_name": "Sign 342",
+                        "image": "<img>j0814-1_0140.jpg</img>",
+                        "description": "The marking highlights a waiting obligation as a result of an existing right-for-left regulation away from the federal, national and circular roads as well as other main traffic roads and a sign <sign>205</sign>, <sign>206</sign> ordered pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 9 Indications",
+                "Section_Id": "9",
+                "Content": [
+                    {
+                        "Sign_id": "24",
+                        "Sign_number": "350",
+                        "Sign_name": "Sign 350",
+                        "image": "<img>j0367-1_1650.jpg</img>",
+                        "description": "The pedestrian passage"
+                    },
+                    {
+                        "Sign_id": "24.1",
+                        "Sign_number": "350.1",
+                        "Sign_name": "Sign 350.1",
+                        "image": "<img>j0814-1_0150.jpg</img>",
+                        "description": "The sign stands on highways. It serves to inform about the beginning of highways and the guidance of highways at nodes."
+                    },
+                    {
+                        "Sign_id": "24.2",
+                        "Sign_number": "350.2",
+                        "Sign_name": "Sign 350.2",
+                        "image": "<img>j0814-1_0160.jpg</img>",
+                        "description": "The end of the fast road"
+                    },
+                    {
+                        "Sign_id": "25",
+                        "Sign_number": "354",
+                        "Sign_name": "Sign 354",
+                        "image": "<img>j0367-1_1660.jpg</img>",
+                        "description": "Water Protection Area"
+                    },
+                    {
+                        "Sign_id": "26",
+                        "Sign_number": "356",
+                        "Sign_name": "Sign 356",
+                        "image": "<img>j0367-1_1670.jpg</img>",
+                        "description": "The Traffic Assistant"
+                    },
+                    {
+                        "Sign_id": "27",
+                        "Sign_number": "357",
+                        "Sign_name": "Sign 357",
+                        "image": "<img>j0367-1_1680.jpg</img>",
+                        "description": "In the upper part of the roadmap, the passivity of the roadmap for cycling and/or pedestrian traffic can be shown by pictograms."
+                    },
+                    {
+                        "Sign_id": "zu 28 und 29",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1680.jpg</img>",
+                        "description": "Explanation 1.These signs with corresponding signs may also provide other indications, such as on pedestrian down or transfer, remote speakers, emergency call columns, pan-help stations, celt and residential parking stations, highway hotel, highway station, highway kiosk. 2.Hotels, hostels and kiosks are noted only on highway stations and only when it comes to highway facilities or highway parking stations."
+                    },
+                    {
+                        "Sign_id": "28",
+                        "Sign_number": "358",
+                        "Sign_name": "Sign 358",
+                        "image": "<img>j0367-1_1690.jpg</img>",
+                        "description": "First Aid"
+                    },
+                    {
+                        "Sign_id": "29",
+                        "Sign_number": "363",
+                        "Sign_name": "Sign 363",
+                        "image": "<img>j0367-1_1700.jpg</img>",
+                        "description": "The Police"
+                    },
+                    {
+                        "Sign_id": "30",
+                        "Sign_number": "385",
+                        "Sign_name": "Sign 385",
+                        "image": "<img>j0367-1_1710.jpg</img>",
+                        "description": "The local tables"
+                    },
+                    {
+                        "Sign_id": "zu 31 und 32",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1710.jpg</img>",
+                        "description": "Explanation The signs are outside the highways. They serve to indicate tourist-important destinations and to mark the course of tourist routes. They can also be carried out as a guide."
+                    },
+                    {
+                        "Sign_id": "31",
+                        "Sign_number": "386.1",
+                        "Sign_name": "Sign 386.1",
+                        "image": "<img>j0367-1_1720.jpg</img>",
+                        "description": "The tourist indication"
+                    },
+                    {
+                        "Sign_id": "32",
+                        "Sign_number": "386.2",
+                        "Sign_name": "Sign 386.2",
+                        "image": "<img>j0367-1_1730.jpg</img>",
+                        "description": "The Tourist Route"
+                    },
+                    {
+                        "Sign_id": "33",
+                        "Sign_number": "386.3",
+                        "Sign_name": "Sign 386.3",
+                        "image": "<img>j0367-1_1740.jpg</img>",
+                        "description": ": Tourist information table Explanation The sign stands on the highway. It serves to inform about touristically significant destinations."
+                    },
+                    {
+                        "Sign_id": "34",
+                        "Sign_number": "390",
+                        "Sign_name": "Sign 390",
+                        "image": "<img>j0367-1_1750.jpg</img>",
+                        "description": "Federal Remote Traffic Law"
+                    },
+                    {
+                        "Sign_id": "35",
+                        "Sign_number": "391",
+                        "Sign_name": "Sign 391",
+                        "image": "<img>j0367-1_1760.jpg</img>",
+                        "description": "The obligatory route"
+                    },
+                    {
+                        "Sign_id": "36",
+                        "Sign_number": "392",
+                        "Sign_name": "Sign 392",
+                        "image": "<img>j0367-1_1770.jpg</img>",
+                        "description": "The Customs"
+                    },
+                    {
+                        "Sign_id": "37",
+                        "Sign_number": "393",
+                        "Sign_name": "Sign 393",
+                        "image": "<img>j0367-1_1780.jpg</img>",
+                        "description": "The border transition"
+                    },
+                    {
+                        "Sign_id": "38",
+                        "Sign_number": "394",
+                        "Sign_name": "Sign 394",
+                        "image": "<img>j0367-1_1790.jpg</img>",
+                        "description": "The sign marks within closed locations lights that don’t shine all night. In the red field can be indicated in white writing when the lights disappear."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 10 Guidelines",
+                "Section_Id": "10",
+                "Content": [
+                    {
+                        "Sign_id": "39",
+                        "Sign_number": "401",
+                        "Sign_name": "Sign 401",
+                        "image": "<img>j0367-1_1800.jpg</img>",
+                        "description": "The Bundesstraßen"
+                    },
+                    {
+                        "Sign_id": "40",
+                        "Sign_number": "405",
+                        "Sign_name": "Sign 405",
+                        "image": "<img>j0367-1_1810.jpg</img>",
+                        "description": "The Highway"
+                    },
+                    {
+                        "Sign_id": "41",
+                        "Sign_number": "406",
+                        "Sign_name": "Sign 406",
+                        "image": "<img>j0367-1_1820.jpg</img>",
+                        "description": ": Highway nodes Explanation So are indicated highway nodes (autobahn exits, highway crossings and highway triangles)."
+                    },
+                    {
+                        "Sign_id": "42",
+                        "Sign_number": "410",
+                        "Sign_name": "Sign 410",
+                        "image": "<img>j0367-1_1830.jpg</img>",
+                        "description": "European roads"
+                    },
+                    {
+                        "Sign_id": "43",
+                        "Sign_number": "438",
+                        "Sign_name": "Sign 438",
+                        "image": "<img>j0367-1_1840.jpg</img>",
+                        "description": "by :"
+                    },
+                    {
+                        "Sign_id": "44",
+                        "Sign_number": "439",
+                        "Sign_name": "Sign 439",
+                        "image": "<img>j0367-1_1850.jpg</img>",
+                        "description": "by :"
+                    },
+                    {
+                        "Sign_id": "45",
+                        "Sign_number": "440",
+                        "Sign_name": "Sign 440",
+                        "image": "<img>j0367-1_1860.jpg</img>",
+                        "description": "by :"
+                    },
+                    {
+                        "Sign_id": "46",
+                        "Sign_number": "441",
+                        "Sign_name": "Sign 441",
+                        "image": "<img>j0367-1_1870.jpg</img>",
+                        "description": "by :"
+                    },
+                    {
+                        "Sign_id": "zu 47 bis 49",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1870.jpg</img>",
+                        "description": "Explanation The add-on “Low Trail” or the add-on “Low Trail” in the roadmap indicates a road connection of subordinate significance."
+                    },
+                    {
+                        "Sign_id": "47",
+                        "Sign_number": "415",
+                        "Sign_name": "Sign 415",
+                        "image": "<img>j0367-1_1880.jpg</img>",
+                        "description": "Explanation of Pillwegweiser on Bundesstraßen"
+                    },
+                    {
+                        "Sign_id": "48",
+                        "Sign_number": "418",
+                        "Sign_name": "Sign 418",
+                        "image": "<img>j0367-1_1890.jpg</img>",
+                        "description": "Explanation of trails on other roads"
+                    },
+                    {
+                        "Sign_id": "49",
+                        "Sign_number": "419",
+                        "Sign_name": "Sign 419",
+                        "image": "<img>j0367-1_1900.jpg</img>",
+                        "description": "Explanation of trailways on other roads with less traffic significance"
+                    },
+                    {
+                        "Sign_id": "50",
+                        "Sign_number": "430",
+                        "Sign_name": "Sign 430",
+                        "image": "<img>j0367-1_1910.jpg</img>",
+                        "description": "Explanation of the road to the highway"
+                    },
+                    {
+                        "Sign_id": "51",
+                        "Sign_number": "432",
+                        "Sign_name": "Sign 432",
+                        "image": "<img>j0367-1_1920.jpg</img>",
+                        "description": ": Explanation of trail routes for targets with significant traffic importance."
+                    },
+                    {
+                        "Sign_id": "52",
+                        "Sign_number": "434",
+                        "Sign_name": "Sign 434",
+                        "image": "<img>j0367-1_1930.jpg</img>",
+                        "description": ": Explanation The table roadmap can also be summarized on a table. The target details in one direction can also be displayed on separate tables."
+                    },
+                    {
+                        "Sign_id": "53",
+                        "Sign_number": "332.1",
+                        "Sign_name": "Sign 332.1",
+                        "image": "<img>j0367-1_1940.jpg</img>",
+                        "description": ": Explanation exit from the motorway or an automotive-like road. The sign can be executed within closed locations even with a white ground."
+                    },
+                    {
+                        "Sign_id": "54",
+                        "Sign_number": "437",
+                        "Sign_name": "Sign 437",
+                        "image": "<img>j0367-1_1950.jpg</img>",
+                        "description": "The sign has either white writing on a dark ground or black writing on a bright ground."
+                    },
+                    {
+                        "Sign_id": "zu 55 und 58",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1950.jpg</img>",
+                        "description": "Explanation The number (sign <sign>406</sign>) is the current number of the highway outputs, highway crosses and highway triangles of the just run highway. It serves the better orientation."
+                    },
+                    {
+                        "Sign_id": "55",
+                        "Sign_number": "448",
+                        "Sign_name": "Sign 448",
+                        "image": "<img>j0367-1_1960.jpg</img>",
+                        "description": "The sign indicates a highway exit, a highway cross or a highway triangle. It includes the sign <sign>406</sign>."
+                    },
+                    {
+                        "Sign_id": "56",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1970.jpg</img>",
+                        "description": ": Explanation The meaning picture indicates an exit."
+                    },
+                    {
+                        "Sign_id": "57",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_1980.jpg</img>",
+                        "description": "The signs image indicates a highway cross or highway triangle; it also indicates crosses and triangles of highways with autobah similarly developed roads of the subordinate network."
+                    },
+                    {
+                        "Sign_id": "58",
+                        "Sign_number": "448.1",
+                        "Sign_name": "Sign 448.1",
+                        "image": "<img>j0367-1_1990.jpg</img>",
+                        "description": ": Explanation 1. with the sign a station is announced in the immediate vicinity of a highway exit. 2. the station is announced once on the right edge of the railway 500 to 1 000 m before the sign <sign>448</sign>."
+                    },
+                    {
+                        "Sign_id": "59",
+                        "Sign_number": "449",
+                        "Sign_name": "Sign 449",
+                        "image": "<img>j0367-1_2000.jpg</img>",
+                        "description": "by :"
+                    },
+                    {
+                        "Sign_id": "60",
+                        "Sign_number": "332",
+                        "Sign_name": "Sign 332",
+                        "image": "<img>j0367-1_2010.jpg</img>",
+                        "description": "by :"
+                    },
+                    {
+                        "Sign_id": "61",
+                        "Sign_number": "453",
+                        "Sign_name": "Sign 453",
+                        "image": "<img>j0367-1_2020.jpg</img>",
+                        "description": ": Explanation The distance table indicates the distance targets and the distance to the respective centre. the targets that are to be reached through another than the current highway are indicated below the wave line."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 11 Conversion Description",
+                "Section_Id": "11",
+                "Content": [
+                    {
+                        "Sign_id": "62",
+                        "Sign_number": "442",
+                        "Sign_name": "Sign 442",
+                        "image": "<img>j0367-1_2030.jpg</img>",
+                        "description": "Preview Explanation Preview for certain types of traffic"
+                    },
+                    {
+                        "Sign_id": "63",
+                        "Sign_number": "421",
+                        "Sign_name": "Sign 421",
+                        "image": "<img>j0367-1_2040.jpg</img>",
+                        "description": "Explanation of trail routes for certain types of traffic"
+                    },
+                    {
+                        "Sign_id": "64",
+                        "Sign_number": "422",
+                        "Sign_name": "Sign 422",
+                        "image": "<img>j0367-1_2050.jpg</img>",
+                        "description": "Explanation of guidelines for certain types of traffic"
+                    },
+                    {
+                        "Sign_id": "65",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_2050.jpg</img>",
+                        "description": "Explanation The course of the conversion route can be marked by"
+                    },
+                    {
+                        "Sign_id": "66",
+                        "Sign_number": "454",
+                        "Sign_name": "Sign 454",
+                        "image": "<img>j0367-1_2060.jpg</img>",
+                        "description": "Explanation of the route or"
+                    },
+                    {
+                        "Sign_id": "67",
+                        "Sign_number": "455.1",
+                        "Sign_name": "Sign 455.1",
+                        "image": "<img>j0367-1_2070.jpg</img>",
+                        "description": ": Explanation Continuation of the conversion"
+                    },
+                    {
+                        "Sign_id": "zu 66 und 67",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_2070.jpg</img>",
+                        "description": "Explanation The signs <sign>454</sign>, <sign>455.1</sign> may be supplemented by a target indication on a mark over the mark. If only certain types of traffic are redirected, they are indicated on a additional mark over the mark."
+                    },
+                    {
+                        "Sign_id": "68",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_2070.jpg</img>",
+                        "description": "Explanation The temporary conversion may be announced by sign <sign>455.1</sign> or"
+                    },
+                    {
+                        "Sign_id": "69",
+                        "Sign_number": "457.1",
+                        "Sign_name": "Sign 457.1",
+                        "image": "<img>j0367-1_2080.jpg</img>",
+                        "description": "Explanation of redirect announcement"
+                    },
+                    {
+                        "Sign_id": "70",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_2080.jpg</img>",
+                        "description": "Explanation, however, only with a distance indication on an additional sign and, if necessary, with a target indication on an additional sign above the sign. If the announcement applies only to certain types of traffic, these are indicated on an additional sign above the sign."
+                    },
+                    {
+                        "Sign_id": "71",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_2080.jpg</img>",
+                        "description": "The announcement can also be made by"
+                    },
+                    {
+                        "Sign_id": "72",
+                        "Sign_number": "458",
+                        "Sign_name": "Sign 458",
+                        "image": "<img>j0367-1_2090.jpg</img>",
+                        "description": "Explanation of a plan"
+                    },
+                    {
+                        "Sign_id": "73",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_2090.jpg</img>",
+                        "description": "Explanation The end of the conversion can be displayed by"
+                    },
+                    {
+                        "Sign_id": "74",
+                        "Sign_number": "457.2",
+                        "Sign_name": "Sign 457.2",
+                        "image": "<img>j0367-1_2100.jpg</img>",
+                        "description": "Explanation of the end of the conversion or"
+                    },
+                    {
+                        "Sign_id": "75",
+                        "Sign_number": "455.2",
+                        "Sign_name": "Sign 455.2",
+                        "image": "<img>j0367-1_2110.jpg</img>",
+                        "description": "Explanation of the end of the conversion"
+                    },
+                    {
+                        "Sign_id": "76",
+                        "Sign_number": "460",
+                        "Sign_name": "Sign 460",
+                        "image": "<img>j0367-1_2120.jpg</img>",
+                        "description": "The sign marks an alternative route guidance in the subordinated road network between highway connections."
+                    },
+                    {
+                        "Sign_id": "77",
+                        "Sign_number": "466",
+                        "Sign_name": "Sign 466",
+                        "image": "<img>j0367-1_2130.jpg</img>",
+                        "description": "If the redirected traffic is not yet redirected to the highway at the point of connection provided by the <sign>460</sign> sign, it will be redirected through the next need guide by this sign."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 12 Other transportation",
+                "Section_Id": "12",
+                "Content": [
+                    {
+                        "Sign_id": "78",
+                        "Sign_number": "467.1",
+                        "Sign_name": "Sign 467.1",
+                        "image": "<img>j0367-1_2140.jpg</img>",
+                        "description": "The sign marks alternative routes on highways, the use of which is recommended in case of need (route recommendation)."
+                    },
+                    {
+                        "Sign_id": "79",
+                        "Sign_number": "467.2",
+                        "Sign_name": "Sign 467.2",
+                        "image": "<img>j0367-1_2150.jpg</img>",
+                        "description": "The sign marks the end of a track recommendation."
+                    },
+                    {
+                        "Sign_id": "80",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_2150.jpg</img>",
+                        "description": "Traffic slowing tables indicate the course and the number of tracks, such as:"
+                    },
+                    {
+                        "Sign_id": "81",
+                        "Sign_number": "501",
+                        "Sign_name": "Sign 501",
+                        "image": "<img>j0367-1_2160.jpg</img>",
+                        "description": ": Transmission table Explanation The sign announces the transfer of traffic to the counterway."
+                    },
+                    {
+                        "Sign_id": "82",
+                        "Sign_number": "531",
+                        "Sign_name": "Sign 531",
+                        "image": "<img>j0367-1_2170.jpg</img>",
+                        "description": ": integration tables"
+                    },
+                    {
+                        "Sign_id": "82.1",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_2180.jpg</img>",
+                        "description": "Explanation In the case of unification tables, the add-on sign will indicate the place where the shift will be changed according to the closure procedure (<par>§ 7</par> paragraph <sen>4</sen>)."
+                    },
+                    {
+                        "Sign_id": "83",
+                        "Sign_number": "590",
+                        "Sign_name": "Sign 590",
+                        "image": "<img>j0367-1_2190.jpg</img>",
+                        "description": "The sign announces a traffic guidance indicated by the signs “Prepared Route” (signs <sign>209</sign>, <sign>210</sign>, <sign>211</sign>, <sign>212</sign>, <sign>213</sign>, <sign>214</sign>)."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "table_name": "Annex 4(to <par>§ 43</par> paragraph <sen>3</sen>)Traffic facilities",
+        "table_id": "4",
+        "table_data": [
+            {
+                "Section": "Section 1 Facilities for labelling of jobs and accidents or other temporary obstacles",
+                "Section_Id": "1",
+                "Content": [
+                    {
+                        "Sign_id": "1",
+                        "Sign_number": "600",
+                        "Sign_name": "Sign 600",
+                        "image": "<img>j0367-1_2200.jpg</img>",
+                        "description": "The blockage"
+                    },
+                    {
+                        "Sign_id": "2",
+                        "Sign_number": "605",
+                        "Sign_name": "Sign 605",
+                        "image": "<img>j0367-1_2200.jpg</img>",
+                        "description": " "
+                    },
+                    {
+                        "Sign_id": "3",
+                        "Sign_number": "628",
+                        "Sign_name": "Sign 628",
+                        "image": "<img>j0367-1_2220.jpg</img>",
+                        "description": "Tagged with: pfeilbake pfeilbake"
+                    },
+                    {
+                        "Sign_id": "4",
+                        "Sign_number": "629",
+                        "Sign_name": "Sign 629",
+                        "image": "<img>j0367-1_2240.jpg</img>",
+                        "description": ": Leitschwelle with pfeilbake with shraffenbake"
+                    },
+                    {
+                        "Sign_id": "5",
+                        "Sign_number": "610",
+                        "Sign_name": "Sign 610",
+                        "image": "<img>j0367-1_2270.jpg</img>",
+                        "description": ": : Leading board with pipe bag with shrimp bag : Leading kegel"
+                    },
+                    {
+                        "Sign_id": "6",
+                        "Sign_number": "615",
+                        "Sign_name": "Sign 615",
+                        "image": "<img>j0367-1_2280.jpg</img>",
+                        "description": ": Drivable Absperrtafel"
+                    },
+                    {
+                        "Sign_id": "7",
+                        "Sign_number": "616",
+                        "Sign_name": "Sign 616",
+                        "image": "<img>j0367-1_2290.jpg</img>",
+                        "description": ": Drivable Absperrtafel with Blinkpile"
+                    },
+                    {
+                        "Sign_id": "zu 1 bis 7",
+                        "Sign_number": "",
+                        "Sign_name": "Sign ",
+                        "image": "<img>j0367-1_2290.jpg</img>",
+                        "description": "Prohibition or prohibition The facilities prohibit the circulation of the so-called road surface and guide the traffic across that area. Explanation 1. Warning lights to these facilities show red light when the entire trail is blocked, otherwise yellow light or yellow blink light. 2. Together with the blinking table can be used transitable warning waves that are designed around the direction of the road before the blinking table."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 2 Facilities for the identification of permanent obstacles or other dangerous places",
+                "Section_Id": "2",
+                "Content": [
+                    {
+                        "Sign_id": "8",
+                        "Sign_number": "625",
+                        "Sign_name": "Sign 625",
+                        "image": "<img>j0367-1_2300.jpg</img>",
+                        "description": "Direction table in curves The direction table in curves can also be adjusted in dissolved form."
+                    },
+                    {
+                        "Sign_id": "9",
+                        "Sign_number": "626",
+                        "Sign_name": "Sign 626",
+                        "image": "<img>j0367-1_2310.jpg</img>",
+                        "description": "The lead plate"
+                    },
+                    {
+                        "Sign_id": "10",
+                        "Sign_number": "627",
+                        "Sign_name": "Sign 627",
+                        "image": "<img>j0367-1_2320.jpg</img>",
+                        "description": ": Leading guidelines typically mark the traffic restrictive objects. their execution is aimed at the directional, wave-right or woven installation, for example, on buildings, components and roofs."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 3 Facilities for the labelling of the road",
+                "Section_Id": "3",
+                "Content": [
+                    {
+                        "Sign_id": "11",
+                        "Sign_number": "620",
+                        "Sign_name": "Sign 620",
+                        "image": "<img>j0367-1_2330.jpg</img>",
+                        "description": ": (left) (right) In order to make the course of the road noticeable, on the road sides, guiding positions can usually stand at a distance of 50 m and in curves."
+                    }
+                ]
+            },
+            {
+                "Section": "Section 4 Warning tables for labelling vehicles and attachments in darkness",
+                "Section_Id": "4",
+                "Content": [
+                    {
+                        "Sign_id": "12",
+                        "Sign_number": "630",
+                        "Sign_name": "Sign 630",
+                        "image": "<img>j0367-1_2350.jpg</img>",
+                        "description": "The parking warning table"
+                    }
+                ]
+            }
+        ]
+    }
+]

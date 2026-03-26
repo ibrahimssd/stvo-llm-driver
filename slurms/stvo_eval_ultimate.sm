@@ -1,0 +1,313 @@
+#!/bin/bash
+#ultimate job
+#SBATCH --job-name=STvO-eval
+#SBATCH --output=out/ultimate-eval-JOB-%j.out
+#SBATCH --error=err/ultimate-eval-JOB-%j.err
+#SBATCH --nodes=1 # As we have single node it should be always set as 1
+#SBATCH --cpus-per-task=10 # Number of CPUs # max = 80
+#SBATCH --gres=gpu:7g.79gb:1  # Allocate 1 GPU resources with specified configurations
+#SBATCH --mem=100G  # Specify the total amount of memory # max = 300G
+#SBATCH --time=40:00:00  # Set the time limit to maximum 96 hours
+#SBATCH --partition=ultimate
+#SBATCH --qos=ultimate
+#SBATCH --account=ultimate
+
+
+
+# Save echo device info into CSV file
+mkdir -p ./MIG-IDs
+mkdir -p out err
+echo $SLURM_JOB_ID, $CUDA_VISIBLE_DEVICES > ./MIG-IDs/STvO-eval-ultimate-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi -L >> ./MIG-IDs/STvO-eval-ultimate-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi >> ./MIG-IDs/STvO-eval-ultimate-monitor-JOBID-$SLURM_JOB_ID.csv
+
+
+ROOT_DIR_SUPER_FAST="/super_fast_storage/siddig"
+# Paths and parameters
+ROOT_DIR_FAST="/fast_storage/siddig"
+DATA_DIR="$ROOT_DIR_FAST/driving-license"
+HF_DIR="$ROOT_DIR_FAST/driving-license/HF_models"
+
+
+
+
+mkdir -p $DATA_DIR
+mkdir -p $HF_DIR
+
+
+# Create and activate the virtual environment if it doesn't already exist
+if [ ! -d "$DATA_DIR/driving-env" ]; then
+    python3 -m venv $DATA_DIR/driving-env
+    source $DATA_DIR/driving-env/bin/activate
+    bash ./install.sh
+fi 
+
+source $DATA_DIR/driving-env/bin/activate
+# bash ./install.sh
+
+# =====================================================================================
+# MODEL_CHECKPOINT_DIR="$DATA_DIR/multitask_models" STVo_PRLM_PY_hierarchical_models_final/
+MODEL_CHECKPOINT_DIR="$ROOT_DIR_FAST/driving-license/STVo_PRLM_PY_hierarchical_models_test_20_epochs_5_segments_cls"
+# /fast_storage/siddig/driving-license/STVo_PRLM_PY_hierarchical_models_test_20_epochs_5_segments_all/
+mkdir -p $MODEL_CHECKPOINT_DIR
+
+
+
+MASKED_MODELS=(
+    nlpaueb/legal-bert-base-uncased
+    nlpaueb/legal-bert-small-uncased
+    casehold/custom-legalbert
+    google-bert/bert-base-uncased
+    microsoft/deberta-base
+    avichr/Legal-heBERT
+    dlicari/Italian-Legal-BERT
+    
+    
+)
+
+CAUSAL_MODELS=(
+    Qwen/Qwen3-Embedding-0.6B
+    google/gemma-3-270m
+    google/gemma-3-270m-it
+    mistralai/Mistral-7B-v0.1
+    Qwen/Qwen-7B
+    jpacifico/Chocolatine-14B-Instruct-DPO-v1.2
+    # openai-community/gpt2
+
+    # ibm-granite/granite-3.1-1b-a400m-instruct
+    # Gensyn/Qwen2.5-0.5B-Instruct
+    # Qwen/Qwen3-Embedding-0.6B
+    # meta-llama/Llama-3.2-1B
+    # deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B
+    # Qwen/Qwen2.5-Math-1.5B
+
+)
+
+CLM_LAMBDAS=(0.0)
+CLS_LAMBDAS=(1.0)
+
+TRANSLATORS=(
+    m2m100_418M
+    # opus-mt-de-en
+)
+
+SIMILARITY_THRESHOLD_VALUES=(0.5 0.6 0.7 0.8 0.9)
+SIMILARITY_THRESHOLD=${SIMILARITY_THRESHOLD_VALUES[1]}
+
+# Iterate Over MASKED MODELS
+for BASE_MODEL_NAME in "${MASKED_MODELS[@]}"; do
+    echo "==================================================================="
+    echo "--- 1.EVALUATING BASELINE: ${BASE_MODEL_NAME} ---"
+    echo "==================================================================="
+
+    python ../eval.py --data_path "../data/test-sets/austrian-driving-license/fragen"\
+                --paragraph_embeddings_file "../transE_embeddings/m2m100_418M_STvO/paragraph_embeddings_lists.json"\
+                --data_name "austrian"\
+                --baseline_model $BASE_MODEL_NAME\
+                --seed 42\
+                --decoding "combine"\
+                --batch_samples 20\
+                --similarity_threshold $SIMILARITY_THRESHOLD\
+                --skip_images \
+                --skip_category "direct_answer"\
+                --eval_base \
+                --modeling_type "masked"\
+                --task_type "cls"\
+                --num_cls_labels 2 \
+                --max_seq_length_clm 128\
+                --max_seq_length_clu 128\
+                --max_seq_length_cls 128\
+                --max_seq_length_nsp 128\
+                --max_num_segments 20\
+                --max_seq_length 2048\
+                --max_new_tokens 2\
+                --top_p 1\
+                --top_k 40\
+                --temperature 0.2\
+                --prompt_version 555\
+                --temperatures 0.2\
+                --repetition_penalty 1.2\
+                --skip_images \
+                --results_file "../results/model-performance-clm_mlm_clu_cls-austrian-$SLURM_JOB_ID-final-stvo-20_epoch_5_segments_cls.csv"\
+                --cache_dir $HF_DIR \
+
+    echo "==================================================================="
+    echo "--- Finished EVALUATING BASELINE: ${BASE_MODEL_NAME} ---"
+    echo "==================================================================="
+
+    # Iterate over each combination of lambda weights
+    for CLM_LAMBDA in "${CLM_LAMBDAS[@]}"; do
+        for CLS_LAMBDA in "${CLS_LAMBDAS[@]}"; do
+            # Iterate over each translator model
+            for TRANSLATOR in "${TRANSLATORS[@]}"; do
+                # Skip if the sum of CLM and clu lambda is greater than or equal to 1.0
+                # Calculate the sum of CLM and clu lambdas
+                
+                # calculate triplet the format is 1 - (CLM + clu) with 2 decimal places
+                CLU_LAMBDA=$(echo "scale=1; 1 - ($CLM_LAMBDA + $CLS_LAMBDA)" | bc)
+                if (( $(echo "$CLU_LAMBDA < 0" | bc -l) )); then
+                    echo "Skipping combination: CLM=${CLM_LAMBDA}, cls=${CLS_LAMBDA}, clu would be negative."
+                    continue
+                fi
+                
+                # make sure the value is approximated to .2 decimal places
+                CLM_LAMBDA=$(printf "%.1f" $CLM_LAMBDA)
+                CLU_LAMBDA=$(printf "%.1f" $CLU_LAMBDA)
+                CLS_LAMBDA=$(printf "%.1f" $CLS_LAMBDA)
+
+
+                MODEL_CHECKPOINT="${TRANSLATOR}_clm_mlm_${CLM_LAMBDA}_clu_${CLU_LAMBDA}_cls_${CLS_LAMBDA}_final.pt"
+                echo "-------------------------------------------------------------------"
+                echo "--- Starting EVALUATING TUNED MODEL: ${MODEL_CHECKPOINT} ---"
+                echo "--- Base Model: ${BASE_MODEL_NAME}"
+                echo "--- Lambdas: CLM=${CLM_LAMBDA}, clu=${CLU_LAMBDA}, cls=${CLS_LAMBDA}"
+                echo "-------------------------------------------------------------------"
+
+                python ../eval.py --data_path "../data/test-sets/austrian-driving-license/fragen"\
+                            --paragraph_embeddings_file "../transE_embeddings/${TRANSLATOR}_STvO/paragraph_embeddings_lists.json"\
+                            --data_name "austrian"\
+                            --baseline_model $BASE_MODEL_NAME \
+                            --model_checkpoint_dir $MODEL_CHECKPOINT_DIR\
+                            --model_checkpoint $MODEL_CHECKPOINT\
+                            --seed 42\
+                            --decoding "combine"\
+                            --batch_samples 20\
+                            --similarity_threshold $SIMILARITY_THRESHOLD\
+                            --skip_images \
+                            --modeling_type "masked"\
+                            --task_type "cls"\
+                            --num_cls_labels 2 \
+                            --max_seq_length_clm 128\
+                            --max_seq_length_clu 128\
+                            --max_seq_length_cls 128\
+                            --max_seq_length_nsp 128\
+                            --max_num_segments 20\
+                            --max_seq_length 2048\
+                            --max_new_tokens 2\
+                            --top_p 1\
+                            --top_k 40\
+                            --temperature 0.2\
+                            --prompt_version 555\
+                            --temperatures 0.2\
+                            --repetition_penalty 1.1\
+                            --skip_images \
+                            --results_file "../results/model-performance-clm_mlm_clu_cls-austrian-$SLURM_JOB_ID-final-stvo-20_epoch_5_segments_cls.csv"\
+                            --cache_dir $HF_DIR \
+
+                echo "-------------------------------------------------------------------"
+                echo "--- Finished EVALUATING TUNED MODEL: ${MODEL_CHECKPOINT} ---"
+                echo "-------------------------------------------------------------------"
+            done
+    done
+done
+done    
+
+
+#################################################  CAUSAL MODELS  ##########################################################
+
+
+
+# Iterate Over CAUSAL MODELS
+for BASE_MODEL_NAME in "${CAUSAL_MODELS[@]}"; do
+    echo "==================================================================="
+    echo "--- 1.EVALUATING BASELINE: ${BASE_MODEL_NAME} ---"
+    echo "==================================================================="
+
+    python ../eval.py --data_path "../data/test-sets/austrian-driving-license/fragen"\
+                --paragraph_embeddings_file "../transE_embeddings/m2m100_418M_STvO/paragraph_embeddings_lists.json"\
+                --data_name "austrian"\
+                --baseline_model $BASE_MODEL_NAME\
+                --seed 42\
+                --decoding "combine"\
+                --batch_samples 20\
+                --similarity_threshold $SIMILARITY_THRESHOLD\
+                --skip_images \
+                --skip_category "direct_answer"\
+                --eval_base \
+                --modeling_type "causal"\
+                --task_type "cls"\
+                --num_cls_labels 2 \
+                --max_seq_length_clm 128\
+                --max_seq_length_clu 128\
+                --max_seq_length_cls 128\
+                --max_num_segments 20\
+                --max_seq_length 2048\
+                --max_new_tokens 2\
+                --top_p 1\
+                --top_k 40\
+                --temperature 0.2\
+                --prompt_version 555\
+                --temperatures 0.2\
+                --repetition_penalty 1.2\
+                --skip_images \
+                --results_file "../results/model-performance-clm_mlm_clu_cls-austrian-$SLURM_JOB_ID-final-stvo-20_epoch_5_segments_cls.csv"\
+                --cache_dir $HF_DIR \
+
+echo "==================================================================="
+echo "--- Finished EVALUATING BASELINE: ${BASE_MODEL_NAME} ---"
+echo "==================================================================="
+
+# Iterate over each combination of lambda weights
+for CLM_LAMBDA in "${CLM_LAMBDAS[@]}"; do
+    for CLS_LAMBDA in "${CLS_LAMBDAS[@]}"; do
+        # Iterate over each translator model
+        for TRANSLATOR in "${TRANSLATORS[@]}"; do
+            # Skip if the sum of CLM and clu lambda is greater than or equal to 1.0
+            # Calculate the sum of CLM and clu lambdas
+            
+            # calculate triplet the format is 1 - (CLM + clu) with 2 decimal places
+            CLU_LAMBDA=$(echo "scale=1; 1 - ($CLM_LAMBDA + $CLS_LAMBDA)" | bc)
+            if (( $(echo "$CLU_LAMBDA < 0" | bc -l) )); then
+                echo "Skipping combination: CLM=${CLM_LAMBDA}, cls=${CLS_LAMBDA}, clu would be negative."
+                continue
+            fi
+            # make sure the value is approximated to .2 decimal places
+            CLM_LAMBDA=$(printf "%.1f" $CLM_LAMBDA)
+            CLU_LAMBDA=$(printf "%.1f" $CLU_LAMBDA)
+            CLS_LAMBDA=$(printf "%.1f" $CLS_LAMBDA)
+
+
+            MODEL_CHECKPOINT="${TRANSLATOR}_clm_mlm_${CLM_LAMBDA}_clu_${CLU_LAMBDA}_cls_${CLS_LAMBDA}_final.pt"
+            echo "-------------------------------------------------------------------"
+            echo "--- Starting EVALUATING TUNED MODEL: ${MODEL_CHECKPOINT} ---"
+            echo "--- Base Model: ${BASE_MODEL_NAME}"
+            echo "--- Lambdas: CLM=${CLM_LAMBDA}, clu=${CLU_LAMBDA}, cls=${CLS_LAMBDA}"
+            echo "-------------------------------------------------------------------"
+
+            python ../eval.py --data_path "../data/test-sets/austrian-driving-license/fragen"\
+                        --paragraph_embeddings_file "../transE_embeddings/${TRANSLATOR}_STvO/paragraph_embeddings_lists.json"\
+                        --data_name "austrian"\
+                        --baseline_model $BASE_MODEL_NAME \
+                        --model_checkpoint_dir $MODEL_CHECKPOINT_DIR\
+                        --model_checkpoint $MODEL_CHECKPOINT\
+                        --seed 42\
+                        --decoding "combine"\
+                        --batch_samples 20\
+                        --similarity_threshold $SIMILARITY_THRESHOLD\
+                        --skip_images \
+                        --modeling_type "causal"\
+                        --task_type "cls"\
+                        --num_cls_labels 2 \
+                        --max_seq_length_clm 128\
+                        --max_seq_length_clu 128\
+                        --max_seq_length_cls 128\
+                        --max_num_segments 20\
+                        --max_seq_length 2048\
+                        --max_new_tokens 2\
+                        --top_p 1\
+                        --top_k 40\
+                        --temperature 0.2\
+                        --prompt_version 555\
+                        --temperatures 0.2\
+                        --repetition_penalty 1.1\
+                        --skip_images \
+                        --results_file "../results/model-performance-clm_mlm_clu_cls-austrian-$SLURM_JOB_ID-final-stvo-20_epoch_5_segments_cls.csv"\
+                        --cache_dir $HF_DIR \
+
+            echo "-------------------------------------------------------------------"
+            echo "--- Finished EVALUATING TUNED MODEL: ${MODEL_CHECKPOINT} ---"
+            echo "-------------------------------------------------------------------"
+        done
+    done
+done
+done    

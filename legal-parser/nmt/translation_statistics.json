@@ -1,0 +1,11 @@
+{
+  "model_name": "Helsinki-NLP/opus-mt-de-en",
+  "timestamp": "2025-11-07T23:34:49.872832",
+  "statistics": {
+    "total_translations": 608,
+    "successful_translations": 608,
+    "failed_translations": 0,
+    "fallback_used": 599
+  },
+  "success_rate": 100.0
+}

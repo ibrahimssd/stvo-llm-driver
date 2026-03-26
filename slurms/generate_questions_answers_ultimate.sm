@@ -1,0 +1,166 @@
+#!/bin/bash
+#ultimate job
+#SBATCH --job-name=STvO_QA
+#SBATCH --output=out/ultimate-STvO-QA-JOB-%j.out
+#SBATCH --error=err/ultimate-STvO-QA-JOB-%j.err
+#SBATCH --nodes=1 # As we have single node it should be always set as 1
+#SBATCH --cpus-per-task=40 # Number of CPUs # max = 80
+#SBATCH --gres=gpu:7g.79gb:1  # Allocate 1 GPU resources with specified configurations
+#SBATCH --mem=300G  # Specify the total amount of memory # max = 300G
+#SBATCH --time=96:00:00  # Set the time limit to 1 minute
+#SBATCH --partition=ultimate
+#SBATCH --qos=ultimate
+#SBATCH --account=ultimate
+
+ 
+
+# Save echo device info into CSV file
+mkdir -p ./MIG-IDs
+echo $SLURM_JOB_ID, $CUDA_VISIBLE_DEVICES > ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi -L >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+
+
+
+# Paths and parameters
+ROOT_DIR="/fast_storage/siddig/"
+DATA_DIR="$ROOT_DIR/driving-license"
+OUT_DIR="$ROOT_DIR/driving-license/multitask_models"
+HF_DIR="$ROOT_DIR/driving-license/HF_models"
+
+mkdir -p $DATA_DIR
+
+# Create and activate the virtual environment if it doesn't already exist
+if [ ! -d "$DATA_DIR/driving-env" ]; then
+    python3 -m venv $DATA_DIR/driving-env
+    source $DATA_DIR/driving-env/bin/activate
+    bash ./install.sh
+fi 
+
+source $DATA_DIR/driving-env/bin/activate
+# bash ./install.sh
+     
+
+
+
+#################################################### PREPARING DATA FOR BGB ####################################################
+# YES NO QA DATA GENERATION
+# python ../generate_questions_answers.py \
+#     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+#     --hf_cache_dir $HF_DIR \
+#     --output_file "../data/synthetic-data/BGB/generated_yes_no_qa_data_m2m100_418M_mistral.jsonl" \
+#     --clm_data_path "../data/BGB/m2m100_418M_translated_BGB_graph_raw.txt"
+    
+# python ../generate_questions_answers.py \
+#     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+#     --hf_cache_dir $HF_DIR \
+#     --output_file "../data/synthetic-data/BGB/generated_yes_no_qa_data_opus-mt-de-en_mistral.jsonl" \
+#     --clm_data_path "../data/BGB/opus-mt-de-en_translated_BGB_graph_raw.txt"
+
+
+
+# # CITATION QA DATA GENERATION
+# python ../generate_citation_qa_data.py \
+#     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+#     --hf_cache_dir $HF_DIR \
+#     --input_file "../data/BGB/m2m100_418M_translated_main_content_BGB.json" \
+#     --output_file "../data/synthetic-data/BGB/citation_qa_m2m100_418M_mistral.jsonl" \
+
+# python ../generate_citation_qa_data.py \
+#     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+#     --hf_cache_dir $HF_DIR \
+#     --input_file ../data/BGB/opus-mt-de-en_translated_main_content_BGB.json \
+#     --output_file ../data/synthetic-data/BGB/citation_qa_opus-mt-de-en_mistral.jsonl \
+
+
+
+
+#################################################### PREPARING DATA FOR STVO #################################################### 
+
+# MISTRAL 7B INSTRUCT V0.2
+# GERMAN
+python ../generate_citation_qa_data.py \
+    --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+    --num_samples 5000 \
+    --hf_token "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" \
+    --input_file "../data/stvo/parsed_main_content_Straßenverkehrs_Ordnung_de.json" \
+    --output_file "../data/synthetic-data/stvo/citations/citation_qa_stvo_mistral_german.jsonl" \
+    --language "de" \
+    --shuffle_sentences
+
+
+
+# ENGLISH TRANSLATION VIA M2M100_418M
+# python ../generate_citation_qa_data.py \
+#     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+#     --num_samples 5000 \
+#     --hf_token "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" \
+#     --input_file "../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung.json" \
+#     --output_file "../data/synthetic-data/stvo/citations/citation_qa_m2m100_418M_mistral_english.jsonl" \
+#     --language "en"
+
+# python ../generate_citation_qa_data.py \
+#     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+#     --num_samples 5000 \
+#     --hf_token "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" \
+#     --input_file ../data/stvo/opus-mt-de-en_translated_main_content_Straßenverkehrs_Ordnung.json \
+#     --output_file ../data/synthetic-data/stvo/citation_qa_opus-mt-de-en_mistral_english.jsonl \
+#     --language "en"
+
+
+
+# YES NO QA DATA GENERATION
+#### m2m100_418M translation
+
+# python ../generate_questions_answers.py --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+#                  --num_samples 1000 \
+#                  --hf_token "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" \
+#                  --clm_data_path "../data/stvo/m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph_raw.txt" \
+#                  --output_file "../data/synthetic-data/stvo/citations/generated_yes_no_qa_data_m2m100_418M_mistral_test.jsonl" \
+
+
+# python ../generate_questions_answers.py \
+#     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+#     --hf_cache_dir $HF_DIR \
+#     --output_file "../data/synthetic-data/stvo/citations/generated_yes_no_qa_data_m2m100_418M_mistral.jsonl" \
+#     --clm_data_path "../data/stvo/m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph_raw.txt"
+
+
+# ### OPUS MT ###
+# python ../generate_questions_answers.py \
+#     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+#     --hf_cache_dir $HF_DIR \
+#     --output_file "../data/synthetic-data/stvo/citations/generated_yes_no_qa_data_opus-mt-de-en_mistral.jsonl" \
+#     --clm_data_path "../data/stvo/opus-mt-de-en_translated_integrated_Straßenverkehrs_Ordnung_graph_raw.txt"
+
+
+
+# # CITATION QA DATA GENERATION
+# python ../generate_citation_qa_data.py \
+#     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+#     --hf_cache_dir $HF_DIR \
+#     --input_file ../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung.json \
+#     --output_file ../data/synthetic-data/stvo/citation_qa_m2m100_418M_mistral.jsonl \
+
+
+# python ../generate_citation_qa_data.py \
+#     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
+#     --hf_cache_dir $HF_DIR \
+#     --input_file ../data/stvo/opus-mt-de-en_translated_main_content_Straßenverkehrs_Ordnung.json \
+#     --output_file ../data/synthetic-data/stvo/citation_qa_opus-mt-de-en_mistral.jsonl \
+    
+
+
+
+# python ../generate_questions_answers.py \
+#     --model_name "openai/gpt-oss-20b" \
+#     --hf_cache_dir $HF_DIR \
+#     --output_file "../data/synthetic-data/stvo/citations/generated_yes_no_qa_data_opus-mt-de-en_openai.jsonl" \
+#     --clm_data_path "../data/opus-mt-de-en_translated_integrated_Straßenverkehrs_Ordnung_graph_raw.txt"
+
+# python ../generate_questions_answers.py \
+#     --model_name "openai/gpt-oss-20b" \
+#     --hf_cache_dir $HF_DIR \
+#     --output_file "../data/synthetic-data/stvo/citations/generated_yes_no_qa_data_m2m100_418M_openai.jsonl" \
+#     --clm_data_path "../data/stvo/m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph_raw.txt"
+    

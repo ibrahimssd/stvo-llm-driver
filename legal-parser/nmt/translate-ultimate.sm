@@ -1,0 +1,58 @@
+#!/bin/bash
+#ultimate job
+#SBATCH --job-name=deepseek-translate
+#SBATCH --output=out/ultimate-deepseeek-trnslate-JOB-%j.out
+#SBATCH --error=err/ultimate-deepseek-translate-JOB-%j.err
+#SBATCH --nodes=1 # As we have single node it should be always set as 1
+#SBATCH --cpus-per-task=40 # Number of CPUs # max = 80
+#SBATCH --gres=gpu:7g.79gb:1  # Allocate 1 GPU resources with specified configurations
+#SBATCH --mem=300G  # Specify the total amount of memory # max = 300G
+#SBATCH --time=96:00:00  # Set the time limit to 1 minute
+#SBATCH --partition=ultimate
+#SBATCH --qos=ultimate
+#SBATCH --account=ultimate
+
+ 
+# Save echo device info into CSV file
+mkdir -p ./MIG-IDs
+echo $SLURM_JOB_ID, $CUDA_VISIBLE_DEVICES > ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi -L >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+nvidia-smi >> ./MIG-IDs/advance-monitor-JOBID-$SLURM_JOB_ID.csv
+
+
+# Paths and parameters
+DATA_DIR="/fast_storage/siddig/driving-license"
+ENV_DIR="$DATA_DIR/driving-env"
+mkdir -p $DATA_DIR
+
+# Create and activate the virtual environment if it doesn't already exist
+if [ ! -d "$ENV_DIR" ]; then
+    python3 -m venv $ENV_DIR
+    source $ENV_DIR/bin/activate
+    bash ./install.sh
+fi 
+
+source $ENV_DIR/bin/activate
+# bash ./install.sh
+
+
+export HF_HOME="/fast_storage/siddig/driving-license/HF_models"
+
+
+
+# deepseek-ai/DeepSeek-R1-Distill-Qwen-32B
+# python translate-de-en.py   --model_name 'deepseek-ai/DeepSeek-R1-Distill-Qwen-32B' \
+#                             --parsed_main "parsed_main_content_Straßenverkehrs_Ordnung.json" \
+#                             --parsed_table "parsed_table_content_Straßenverkehrs_Ordnung.json" \
+#                             --translated_main "en_main_content_Straßenverkehrs_Ordnung.json" \
+#                             --translated_table "en_table_content_Straßenverkehrs_Ordnung.json" \
+#                             --max_length 512 \
+
+# deepseek-ai/DeepSeek-R1-Distill-Qwen-14B
+# deepseek-ai/DeepSeek-R1-Distill-Qwen-14B
+python translate-de-en.py   --model_name 'deepseek-ai/DeepSeek-R1-Distill-Qwen-14B' \
+                            --parsed_main "parsed_main_content_Straßenverkehrs_Ordnung.json" \
+                            --parsed_table "parsed_table_content_Straßenverkehrs_Ordnung.json" \
+                            --translated_main "en_main_content_Straßenverkehrs_Ordnung.json" \
+                            --translated_table "en_table_content_Straßenverkehrs_Ordnung.json" \
+                            --max_length 512 \

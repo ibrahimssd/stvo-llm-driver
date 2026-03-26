@@ -1,0 +1,14 @@
+# Exclude data and results
+data/
+results/
+plots/
+stats/
+benchmark/
+
+# Exclude cache and system files
+__pycache__/
+.DS_Store
+
+# Exclude outdated or specific environment scripts
+stvo_scripts_outdated/
+MIG-IDs/

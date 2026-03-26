@@ -1,0 +1,44 @@
+
+digraph ParserWorkflow {
+    rankdir=LR;
+    node [shape=rectangle, style=filled, color=lightblue, fontname=Helvetica];
+
+    Pi [label="Parser (Π)"];
+    Psi [label="Predefined Syntax Patterns (Ψ)"];
+    P1 [label="Part (Π₁)"];
+    P2 [label="Part (Π₂)"];
+    Xi [label="Entities Extraction (Ξ)"];
+    T [label="Building a Tree (ᴱ)"];
+    Theta [label="Entity Tagging (Θ)"];
+    Phi [label="Entity Translation (Φ) (Optional)"];
+    KG [label="Knowledge Graph Construction (ᵊ)"];
+
+    subgraph cluster_extraction {
+        label="Entities Extracted (ε)";
+        style=dotted;
+        AB [label="Absätze (ᴬᴫ)"];
+        C [label="Categories (ᵋ)"];
+        P [label="Paragraphs (ᵏ)"];
+        S [label="Sentences (ᵎ)"];
+        CH [label="Abschnitt (ᴬᴹ)"];
+        A [label="Appendices (ᴬᴀₙ)"];
+    }
+
+    Pi -> Psi [label="Customization"];
+    Psi -> P1 [label="Parse"];
+    Psi -> P2 [label="Parse"];
+    P1 -> Xi;
+    P2 -> Xi;
+    Xi -> T [label="Hierarchical Syntax"];
+    T -> Theta [label="Tag Nodes"];
+    Theta -> Phi [label="Optional Translation"];
+    Phi -> KG [label="Cross-Lingual Usability"];
+    Theta -> KG [label="Tree-to-KG Conversion"];
+    
+    Xi -> AB [label="Extract"];
+    Xi -> C [label="Extract"];
+    Xi -> P [label="Extract"];
+    Xi -> S [label="Extract"];
+    Xi -> CH [label="Extract"];
+    Xi -> A [label="Extract"];
+}
