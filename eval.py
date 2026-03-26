@@ -8,7 +8,7 @@ import numpy as np
 from driving_license_data_loader import DrivingLicenseDataHandler
 from driving_examiner import DrivingLicenseExaminer
 
-
+# Ibrahim
 # Configure logging
 # logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
