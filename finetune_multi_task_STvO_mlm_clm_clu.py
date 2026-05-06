@@ -416,7 +416,10 @@ def main():
         print(f"{key}: {value}")
     print("##############")
 
-    
+    # if no gpu found raise error
+    if not torch.cuda.is_available():
+        raise EnvironmentError("No GPU found. Please ensure that a compatible GPU is available and properly configured.")
+
     for clm_nsp_lambda in args.clm_nsp_lambdas:
         for cls_lambda in args.cls_lambdas:
             args.clm_nsp_lambda = clm_nsp_lambda

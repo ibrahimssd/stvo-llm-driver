@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Configuration for the Tmux Session
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 LOG_OUT="out/tmux-STVO-train-$TIMESTAMP.out"
@@ -20,7 +19,8 @@ mkdir -p $DATA_DIR
 # --- GPU SETUP ---
 # Since we are not using Slurm, we manually specify the GPU ID (0-based)
 # Use 'nvidia-smi' to find available indices.
-export CUDA_VISIBLE_DEVICES=0  # Change this to the appropriate GPU ID if you have multiple GPUs
+
+GPU_ID=1  # Change this to the appropriate GPU ID if you have multiple GPUs
 
 # --- ENVIRONMENT VARIABLES ---
 export HF_HOME=$HF_DIR
@@ -56,10 +56,10 @@ MASKED_MODELS=(
     nlpaueb/bert-base-uncased-echr
     casehold/custom-legalbert
     dlicari/Italian-Legal-BERT   
-    # google-bert/bert-base-uncased
-    # nlpaueb/legal-bert-base-uncased
-    # nlpaueb/legal-bert-small-uncased
-    # avichr/Legal-heBERT
+    google-bert/bert-base-uncased
+    nlpaueb/legal-bert-base-uncased
+    nlpaueb/legal-bert-small-uncased
+    avichr/Legal-heBERT
     
     # microsoft/deberta-base #exceeding memory
 ) 
@@ -78,7 +78,20 @@ MASKED_MODELS=(
 out_DIR_TRanse="${OUT_DIR}_transe"
 HUGG_OUT_DIR_TRanse="${HUGG_OUT_DIR}_transe"
 for BASE_MODEL in "${MASKED_MODELS[@]}"; do
-        python ../finetune_multi_task_STvO_mlm_clm_clu.py \
+        # 1. Assign Hyperparameters based on the model name
+        case "$BASE_MODEL" in
+            "nlpaueb/bert-base-uncased-eurlex")    NSP_LAMBDA=0.4; CLS_LAMBDA=0.4 ;;
+            "nlpaueb/bert-base-uncased-contracts") NSP_LAMBDA=0.3; CLS_LAMBDA=0.7 ;;
+            "nlpaueb/bert-base-uncased-echr")      NSP_LAMBDA=0.3; CLS_LAMBDA=0.4 ;;
+            "casehold/custom-legalbert")           NSP_LAMBDA=0.4; CLS_LAMBDA=0.5 ;;
+            "dlicari/Italian-Legal-BERT")          NSP_LAMBDA=0.5; CLS_LAMBDA=0.1 ;;
+            "google-bert/bert-base-uncased")       NSP_LAMBDA=0.3; CLS_LAMBDA=0.6 ;;
+            "nlpaueb/legal-bert-base-uncased")     NSP_LAMBDA=0.2; CLS_LAMBDA=0.2 ;;
+            "nlpaueb/legal-bert-small-uncased")    NSP_LAMBDA=0.6; CLS_LAMBDA=0.1 ;;
+            "avichr/Legal-heBERT")                 NSP_LAMBDA=0.0; CLS_LAMBDA=1.0 ;;
+            *) echo "No specific hyperparameters for $BASE_MODEL, using defaults." ;;
+        esac
+        CUDA_VISIBLE_DEVICES=${GPU_ID} python ../finetune_multi_task_STvO_mlm_clm_clu.py \
             --translator_model_name "m2m100_418M" \
             --clm_data_path ../data/stvo/de/integrated_Straßenverkehrs_Ordnung_graph_de.dot \
             --nsp_data_path ../data/stvo/de/main_content_Straßenverkehrs_Ordnung_graph_de_nsp_dataset.json \
@@ -98,8 +111,8 @@ for BASE_MODEL in "${MASKED_MODELS[@]}"; do
             --batch_size_nsp 16\
             --batch_size_cls 16\
             --learning_rate 5e-5\
-            --clm_nsp_lambdas 0.4\
-            --cls_lambdas 0.5\
+            --clm_nsp_lambdas $NSP_LAMBDA\
+            --cls_lambdas $CLS_LAMBDA\
             --gradient_accumulation_steps 2\
             --clm_block_size 512\
             --max_seq_length_clu 128\
@@ -108,8 +121,6 @@ for BASE_MODEL in "${MASKED_MODELS[@]}"; do
             --max_segments 10\
             --seed 42 >> "$LOG_OUT" 2>> "$LOG_ERR"
 done
-
-
 
 
 
