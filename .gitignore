@@ -5,9 +5,25 @@ plots/
 stats/
 benchmark/
 
+# Exclude job logs (tmux / SLURM runners)
+tmux/err/
+tmux/out/
+slurms/err/
+slurms/out/
+*.err
+*.out
+
 # Exclude cache and system files
 __pycache__/
+*.py[cod]
 .DS_Store
+
+# Exclude environments and experiment tracking
+envs/
+.venv/
+venv/
+wandb/
+.matplotlib/
 
 # Exclude outdated or specific environment scripts
 stvo_scripts_outdated/

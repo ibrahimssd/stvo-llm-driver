@@ -12,8 +12,6 @@ mkdir -p out err
 # --- PATHS AND PARAMETERS ---
 ROOT_DIR="/temp/siddig"
 DATA_DIR="$ROOT_DIR/driving-license"
-HUGG_OUT_DIR="$DATA_DIR/STVo_PRLM_HF_hierarchical_models_20_epochs_10_segments"
-OUT_DIR="$DATA_DIR/STVo_PRLM_PY_hierarchical_models_20_epochs_10_segments"
 HF_DIR="$ROOT_DIR/HF_models"
 
 mkdir -p $DATA_DIR 
@@ -21,7 +19,7 @@ mkdir -p $DATA_DIR
 # --- GPU SETUP ---
 # Since we are not using Slurm, we manually specify the GPU ID (0-based)
 # Use 'nvidia-smi' to find available indices.
-export CUDA_VISIBLE_DEVICES=1
+export CUDA_VISIBLE_DEVICES=4
 
 # --- ENVIRONMENT VARIABLES ---
 export HF_HOME=$HF_DIR
@@ -52,7 +50,6 @@ source $DATA_DIR/envs/driving-env/bin/activate
 
 # =====================================================================================
 MODEL_CHECKPOINT_DIR="$DATA_DIR/STVo_PRLM_PY_hierarchical_models_20_epochs_10_segments_transe"  
-# /fast_storage/siddig/driving-license/STVo_PRLM_PY_hierarchical_models_test_20_epochs_5_segments_all/
 mkdir -p $MODEL_CHECKPOINT_DIR
 
 
@@ -60,23 +57,14 @@ mkdir -p $MODEL_CHECKPOINT_DIR
 MASKED_MODELS=(
 
     nlpaueb/bert-base-uncased-eurlex
-    # bert-base-uncased-eurlex_m2m100_418M_clm_nsp_0.4_clu_0.2_cls_0.4
     nlpaueb/bert-base-uncased-contracts
-    # bert-base-uncased-contracts_m2m100_418M_clm_nsp_0.3_clu_0.0_cls_0.7
     nlpaueb/bert-base-uncased-echr
-    # bert-base-uncased-echr_m2m100_418M_clm_nsp_0.3_clu_0.3_cls_0.4
     casehold/custom-legalbert
-    # custom-legalbert_m2m100_418M_clm_nsp_0.4_clu_0.1_cls_0.5
-    dlicari/Italian-Legal-BERT
-    # Italian-Legal-BERT_m2m100_418M_clm_nsp_0.5_clu_0.4_cls_0.1
-    google-bert bert-base-uncased
-    # bert-base-uncased_m2m100_418M_clm_nsp_0.3_clu_0.1_cls_0.6
+    dlicari/Italian-Legal-BERT   
+    google-bert/bert-base-uncased
     nlpaueb/legal-bert-base-uncased
-    # legal-bert-base-uncased_m2m100_418M_clm_nsp_0.2_clu_0.6_cls_0.2
     nlpaueb/legal-bert-small-uncased
-    # legal-bert-small-uncased_m2m100_418M_clm_nsp_0.6_clu_0.3_cls_0.1
     avichr/Legal-heBERT
-    # Legal-heBERT_m2m100_418M_clm_nsp_0.0_clu_0.0_cls_1.0
 )
 
 
@@ -117,9 +105,9 @@ for BASE_MODEL_NAME in "${MASKED_MODELS[@]}"; do
     echo "==================================================================="
     
 
-    python ../eval.py --data_path "../data/test-sets/austrian-driving-license/fragen"\
+    python ../eval.py --data_path "../data/test-sets/irish-driving-license.json"\
                 --paragraph_embeddings_file "../legal-KGE/embeddings/transe/m2m100_418M_STvO/transe_paragraph_embeddings_best.json"\
-                --data_name "austrian"\
+                --data_name "irish"\
                 --baseline_model $BASE_MODEL_NAME\
                 --seed 42\
                 --decoding "combine"\
@@ -145,7 +133,7 @@ for BASE_MODEL_NAME in "${MASKED_MODELS[@]}"; do
                 --temperatures 0.2\
                 --repetition_penalty 1.2\
                 --skip_images \
-                --results_file "../results/model-performance-clm_nsp_clu_cls-austrian-$SLURM_JOB_ID-stvo-20_epoch_10_segments_transe.csv"\
+                --results_file "../results/model-performance-clm_nsp_clu_cls-irish-$SLURM_JOB_ID-stvo-20_epoch_10_segments_transe_final.csv"\
                 --cache_dir $HF_DIR  >> $LOG_OUT 2>> $LOG_ERR
 
     echo "==================================================================="
@@ -182,9 +170,9 @@ for BASE_MODEL_NAME in "${MASKED_MODELS[@]}"; do
                 echo "--- Lambdas: CLM=${CLM_LAMBDA}, clu=${CLU_LAMBDA}, cls=${CLS_LAMBDA}"
                 echo "-------------------------------------------------------------------"
 
-                python ../eval.py --data_path "../data/test-sets/austrian-driving-license/fragen"\
+                python ../eval.py --data_path "../data/test-sets/irish-driving-license.json"\
                             --paragraph_embeddings_file "../legal-KGE/embeddings/transe/${TRANSLATOR}_STvO/transe_paragraph_embeddings_best.json"\
-                            --data_name "austrian"\
+                            --data_name "irish"\
                             --baseline_model $BASE_MODEL_NAME \
                             --model_checkpoint_dir $MODEL_CHECKPOINT_DIR\
                             --model_checkpoint $MODEL_CHECKPOINT\
@@ -210,7 +198,7 @@ for BASE_MODEL_NAME in "${MASKED_MODELS[@]}"; do
                             --temperatures 0.2\
                             --repetition_penalty 1.1\
                             --skip_images \
-                            --results_file "../results/model-performance-clm_nsp_clu_cls-austrian-$SLURM_JOB_ID-stvo-20_epoch_10_segments_transe.csv"\
+                            --results_file "../results/model-performance-clm_nsp_clu_cls-irish-$SLURM_JOB_ID-stvo-20_epoch_10_segments_transe_final.csv"\
                             --cache_dir $HF_DIR  >> $LOG_OUT 2>> $LOG_ERR
 
                 echo "-------------------------------------------------------------------"
@@ -232,9 +220,9 @@ done
 #     echo "--- 1.EVALUATING BASELINE: ${BASE_MODEL_NAME} ---"
 #     echo "==================================================================="
 
-#     python ../eval.py --data_path "../data/test-sets/austrian-driving-license/fragen"\
+#     python ../eval.py --data_path "../data/test-sets/irish-driving-license/fragen"\
 #                 --paragraph_embeddings_file "../transE_embeddings/m2m100_418M_STvO/paragraph_embeddings_lists.json"\
-#                 --data_name "austrian"\
+#                 --data_name "irish"\
 #                 --baseline_model $BASE_MODEL_NAME\
 #                 --seed 42\
 #                 --decoding "combine"\
@@ -259,7 +247,7 @@ done
 #                 --temperatures 0.2\
 #                 --repetition_penalty 1.2\
 #                 --skip_images \
-#                 --results_file "../results/model-performance-clm_mlm_clu_cls-austrian-$SLURM_JOB_ID-stvo-20_epoch_5_segments_cls.csv"\
+#                 --results_file "../results/model-performance-clm_mlm_clu_cls-irish-$SLURM_JOB_ID-stvo-20_epoch_5_segments_cls.csv"\
 #                 --cache_dir $HF_DIR \
 
 # echo "==================================================================="
@@ -293,9 +281,9 @@ done
 #             echo "--- Lambdas: CLM=${CLM_LAMBDA}, clu=${CLU_LAMBDA}, cls=${CLS_LAMBDA}"
 #             echo "-------------------------------------------------------------------"
 
-#             python ../eval.py --data_path "../data/test-sets/austrian-driving-license/fragen"\
+#             python ../eval.py --data_path "../data/test-sets/irish-driving-license/fragen"\
 #                         --paragraph_embeddings_file "../transE_embeddings/${TRANSLATOR}_STvO/paragraph_embeddings_lists.json"\
-#                         --data_name "austrian"\
+#                         --data_name "irish"\
 #                         --baseline_model $BASE_MODEL_NAME \
 #                         --model_checkpoint_dir $MODEL_CHECKPOINT_DIR\
 #                         --model_checkpoint $MODEL_CHECKPOINT\
@@ -320,7 +308,7 @@ done
 #                         --temperatures 0.2\
 #                         --repetition_penalty 1.1\
 #                         --skip_images \
-#                         --results_file "../results/model-performance-clm_mlm_clu_cls-austrian-$SLURM_JOB_ID-stvo-20_epoch_5_segments_cls.csv"\
+#                         --results_file "../results/model-performance-clm_mlm_clu_cls-irish-$SLURM_JOB_ID-stvo-20_epoch_5_segments_cls.csv"\
 #                         --cache_dir $HF_DIR \
 
 #             echo "-------------------------------------------------------------------"

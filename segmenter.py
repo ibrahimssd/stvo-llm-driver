@@ -4,7 +4,7 @@ class LegalTextSegmenter:
     """
     Combines structural markers with semantic understanding.
     """
-    def __init__(self, tokenizer, max_segment_length=128):
+    def __init__(self, tokenizer=None, max_segment_length=128):
         self.tokenizer = tokenizer
         self.max_segment_length = max_segment_length
 

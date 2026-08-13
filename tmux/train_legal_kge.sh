@@ -50,6 +50,10 @@ python ../legal-KGE/train_legal_kge.py \
     --use_wandb \
     --wandb_project legal-kge-stvo >> "$LOG_OUT" 2>> "$LOG_ERR"
 
+
+
+
+
 # ENGLISH TRANSLATED DATASETS
 
 # python ../legal-KGE/train_legal_kge.py \
