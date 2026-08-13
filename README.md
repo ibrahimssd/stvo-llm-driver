@@ -248,6 +248,33 @@ python legal_qa_generation_multi_lingual.py \
 
 ---
 
+## Reproducibility
+
+Every experiment is seeded (`--seed`, default `42`) with deterministic CuDNN, and runs are tracked in **Weights & Biases**. When reporting results, record the base model and revision, the λ combination, the KGE model behind the paragraph embeddings, the decoding settings, and the similarity threshold — results shift measurably across all five.
+
+---
+
+## Limitations
+
+- Theory-question performance does **not** imply safe real-world driving behavior.
+- Results are sensitive to prompt version, decoding parameters, and base-model revision.
+- Legal interpretation is jurisdiction- and time-dependent; the StVO corpus is a snapshot.
+- Image-based exam questions are skipped by default (`--skip_images`) — reported scores cover the textual subset only.
+
+---
+
+## Contributing
+
+Contributions are welcome. Useful directions include additional non-German exam sets, alternative KG embedding models or fusion mechanisms, ablations isolating the contribution of KG-aware attention, and stronger causal-LM baselines.
+
+---
+
+## License
+
+No license file is currently present, so default copyright applies. Add a `LICENSE` file to clarify reuse terms.
+
+---
+
 ## Citation
 
 If this work is useful in your research, please cite the repository:
