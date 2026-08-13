@@ -5,6 +5,7 @@ import torch
 from functools import lru_cache
 import logging
 import argparse
+import os
 import re
 
 
@@ -15,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 ################ THIS SCRIPT HAS BEEN TESTED WITH THE FOLLOWING MODEL ADND IT IS WORKING FINE ################
 class Translator:
     def __init__(self, model_name, device="cuda", max_length=512, custom_cache_dir=None):
-        self.access_token = "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"
+        self.access_token = os.environ.get("HF_TOKEN")
         self.translator = pipeline("translation_de_to_en",
                                    model=model_name,
                                    token=self.access_token,

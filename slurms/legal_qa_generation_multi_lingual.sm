@@ -58,7 +58,7 @@ source $DATA_DIR/driving-env/bin/activate
 #     --min_quality_score 0.60 \
 #     --max_retries 4\
 #     --shuffle_sentences \
-#     --hf_token "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" \
+#     --hf_token "$HF_TOKEN" \
 #     --input_file "../data/stvo/parsed_main_content_Straßenverkehrs_Ordnung_de.json" \
 #     --output_file "../data/synthetic-data/stvo/qa_mistral_fast_de.jsonl"
 
@@ -72,7 +72,7 @@ source $DATA_DIR/driving-env/bin/activate
 #     --min_quality_score 0.65 \
 #     --max_retries 3 \
 #     --shuffle_sentences \
-#     --hf_token "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" \
+#     --hf_token "$HF_TOKEN" \
 #     --input_file "../data/stvo/parsed_main_content_Straßenverkehrs_Ordnung_de.json" \
 #     --output_file "../data/synthetic-data/stvo/qa_llama_highquality_de.jsonl"
 
@@ -86,7 +86,7 @@ source $DATA_DIR/driving-env/bin/activate
 #     --min_quality_score 0.65 \
 #     --max_retries 4\
 #     --shuffle_sentences \
-#     --hf_token "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" \
+#     --hf_token "$HF_TOKEN" \
 #     --input_file "../data/stvo/parsed_main_content_Straßenverkehrs_Ordnung_de.json" \
 #     --output_file "../data/synthetic-data/stvo/qa_chocolatine_balanced_de.jsonl"
 
@@ -110,7 +110,7 @@ source $DATA_DIR/driving-env/bin/activate
 #     --min_quality_score 0.65 \
 #     --max_retries 3 \
 #     --shuffle_sentences \
-#     --hf_token "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" \
+#     --hf_token "$HF_TOKEN" \
 #     --input_file "../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung.json" \
 #     --output_file "../data/synthetic-data/stvo/qa_llama_highquality.jsonl"
 
@@ -133,7 +133,7 @@ source $DATA_DIR/driving-env/bin/activate
 #     --min_quality_score 0.60 \
 #     --max_retries 4\
 #     --shuffle_sentences \
-#     --hf_token "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" \
+#     --hf_token "$HF_TOKEN" \
 #     --input_file "../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung.json" \
 #     --output_file "../data/synthetic-data/stvo/qa_mistral_fast.jsonl"
 
@@ -156,7 +156,7 @@ source $DATA_DIR/driving-env/bin/activate
 #     --min_quality_score 0.65 \
 #     --max_retries 4\
 #     --shuffle_sentences \
-#     --hf_token "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" \
+#     --hf_token "$HF_TOKEN" \
 #     --input_file "../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung.json" \
 #     --output_file "../data/synthetic-data/stvo/qa_chocolatine_balanced.jsonl"
 
@@ -179,7 +179,7 @@ source $DATA_DIR/driving-env/bin/activate
 #         --language "en" \
 #         --min_quality_score $threshold \
 #         --max_retries 4\
-#         --hf_token "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" \
+#         --hf_token "$HF_TOKEN" \
 #         --input_file "../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung.json" \
 #         --output_file "../data/synthetic-data/stvo/qa_threshold_${threshold}_mistral.jsonl"
 # done
@@ -202,7 +202,7 @@ source $DATA_DIR/driving-env/bin/activate
 #         --language "en" \
 #         --min_quality_score 0.65 \
 #         --max_retries 4\
-#         --hf_token "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" \
+#         --hf_token "$HF_TOKEN" \
 #         --input_file "../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung.json" \
 #         --output_file "../data/synthetic-data/stvo/qa_domain_${domain}.jsonl"
 # done
@@ -232,7 +232,7 @@ for ((i=0; i<num_batches; i++)); do
         --min_quality_score 0.65 \
         --max_retries 4\
         --shuffle_sentences \
-        --hf_token "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" \
+        --hf_token "$HF_TOKEN" \
         --input_file "../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung.json" \
         --output_file "../data/synthetic-data/stvo/qa_batch_${i}.jsonl"
     

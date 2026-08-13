@@ -31,7 +31,7 @@ class Translator:
             custom_cache_dir (str, optional): Directory to cache Hugging Face models.
         """
         # --- SECURITY IMPROVEMENT: Use environment variable for token ---
-        self.access_token = "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"
+        self.access_token = os.environ.get("HF_TOKEN")
         if not self.access_token:
             logging.warning("Hugging Face access token not found in HF_TOKEN environment variable. Proceeding without token.")
 

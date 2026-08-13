@@ -32,7 +32,7 @@ class DrivingLicenseExaminer:
             args: Configuration arguments containing model paths, decoding strategies, etc.
         """
         self.args = args
-        self.access_token = "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"
+        self.access_token = os.environ.get("HF_TOKEN")
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.cls_num_labels = self.args.num_cls_labels 
         self.model, self.tokenizer = self._load_models()
@@ -62,7 +62,7 @@ class DrivingLicenseExaminer:
         """Loads the model and tokenizer from pretrained weights."""
         try:
             # --- Tokenizer ---
-            tokenizer_manager = TokenizerManager(access_token="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")
+            tokenizer_manager = TokenizerManager(access_token=os.environ.get("HF_TOKEN"))
             tokenizer = tokenizer_manager.initialize_tokenizer(self.args.baseline_model,self.args.cache_dir,
                                                                 self.args.modeling_type)
             
@@ -75,7 +75,7 @@ class DrivingLicenseExaminer:
             
             # model = MultiTaskModelClustering(
             #     base_model_name=self.args.baseline_model,
-            #     access_token="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",
+            #     access_token=os.environ.get("HF_TOKEN"),
             #     embedding_dim=embedding_dim,
             #     tokenizer_len=len(tokenizer),
             #     mask_token_id=tokenizer.mask_token_id,

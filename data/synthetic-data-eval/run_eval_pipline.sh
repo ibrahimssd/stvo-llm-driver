@@ -40,11 +40,11 @@ echo "=========================================="
 
 # Configuration
 # MODEL_NAME="bert-base-uncased"
-HF_TOKEN="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"  # Replace with actual token
+HF_TOKEN="${HF_TOKEN:?Set HF_TOKEN in your environment before running}"
 CUURENT_DATE_TIME=$(date +"%Y%m%d_%H%M%S")
 EVALUATION_DIR="./results/kg_ablation/evaluation_$CUURENT_DATE_TIME"
 cache_dir="$DATA_DIR/HF_models/"
-access_token="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"
+access_token="$HF_TOKEN"
 ARGS_OUT="$DATA_DIR/LLM_evaluator"
 
 

@@ -82,7 +82,7 @@ source $DATA_DIR/driving-env/bin/activate
 python ../generate_citation_qa_data.py \
     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
     --num_samples 5000 \
-    --hf_token "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" \
+    --hf_token "$HF_TOKEN" \
     --input_file "../data/stvo/parsed_main_content_Straßenverkehrs_Ordnung_de.json" \
     --output_file "../data/synthetic-data/stvo/citations/citation_qa_stvo_mistral_german.jsonl" \
     --language "de" \
@@ -94,7 +94,7 @@ python ../generate_citation_qa_data.py \
 # python ../generate_citation_qa_data.py \
 #     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
 #     --num_samples 5000 \
-#     --hf_token "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" \
+#     --hf_token "$HF_TOKEN" \
 #     --input_file "../data/stvo/m2m100_418M_translated_main_content_Straßenverkehrs_Ordnung.json" \
 #     --output_file "../data/synthetic-data/stvo/citations/citation_qa_m2m100_418M_mistral_english.jsonl" \
 #     --language "en"
@@ -102,7 +102,7 @@ python ../generate_citation_qa_data.py \
 # python ../generate_citation_qa_data.py \
 #     --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
 #     --num_samples 5000 \
-#     --hf_token "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" \
+#     --hf_token "$HF_TOKEN" \
 #     --input_file ../data/stvo/opus-mt-de-en_translated_main_content_Straßenverkehrs_Ordnung.json \
 #     --output_file ../data/synthetic-data/stvo/citation_qa_opus-mt-de-en_mistral_english.jsonl \
 #     --language "en"
@@ -114,7 +114,7 @@ python ../generate_citation_qa_data.py \
 
 # python ../generate_questions_answers.py --model_name "mistralai/Mistral-7B-Instruct-v0.2" \
 #                  --num_samples 1000 \
-#                  --hf_token "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" \
+#                  --hf_token "$HF_TOKEN" \
 #                  --clm_data_path "../data/stvo/m2m100_418M_translated_integrated_Straßenverkehrs_Ordnung_graph_raw.txt" \
 #                  --output_file "../data/synthetic-data/stvo/citations/generated_yes_no_qa_data_m2m100_418M_mistral_test.jsonl" \
 

@@ -681,7 +681,7 @@ def main():
                        help="Number of samples for human evaluation")
     parser.add_argument('--cache_dir', type=str, default='./fast_storage/siddig/driving-license/HF_models/',
                        help="Cache directory for Hugging Face models")
-    parser.add_argument('--access_token', type=str, default="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",
+    parser.add_argument('--access_token', type=str, default=os.environ.get("HF_TOKEN"),
                        help="Hugging Face access token for private models")
     parser.add_argument('--add_paragraph', action='store_true',
                        help="Whether to add paragraph context during fine-tuning")

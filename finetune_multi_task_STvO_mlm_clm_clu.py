@@ -476,7 +476,7 @@ def main():
             os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
             # --- Tokenizer ---
-            tokenizer_manager = TokenizerManager(access_token="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")
+            tokenizer_manager = TokenizerManager(access_token=os.environ.get("HF_TOKEN"))
             tokenizer = tokenizer_manager.initialize_tokenizer(args.base_model_name, args.hf_cache_dir, args.modeling_type)
 
             # --- Load Pre-trained Embeddings (Prerequisite) ---

@@ -283,7 +283,7 @@ index 0d1ec25..9c8a7f7 100644
      # Load pretrained model and tokenizer
      # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
      # download model & vocab.
-+    auth_token= "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"
++    auth_token= os.environ.get("HF_TOKEN")
      config = AutoConfig.from_pretrained(
          model_args.config_name if model_args.config_name else model_args.model_name_or_path,
          num_labels=num_labels,
@@ -440,7 +440,7 @@ index 8acf0dd..f87a338 100644
      label_list = list(range(100))
      num_labels = len(label_list)
 -
-+    auth_token= "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"
++    auth_token= os.environ.get("HF_TOKEN")
      # Load pretrained model and tokenizer
      # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
      # download model & vocab.
@@ -574,7 +574,7 @@ index 7f3a98f..074b23f 100644
      # Load pretrained model and tokenizer
      # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
      # download model & vocab.
-+    auth_token= "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"
++    auth_token= os.environ.get("HF_TOKEN")
      config = AutoConfig.from_pretrained(
          model_args.config_name if model_args.config_name else model_args.model_name_or_path,
          num_labels=num_labels,
@@ -705,7 +705,7 @@ index e37662d..c60cd98 100644
      label_list = list(range(14))
      num_labels = len(label_list)
 -
-+    auth_token= "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"
++    auth_token= os.environ.get("HF_TOKEN")
      # Load pretrained model and tokenizer
      # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
      # download model & vocab.
@@ -853,7 +853,7 @@ index c1ddfdb..e2dd4c2 100644
      label_list = list(range(8))
      num_labels = len(label_list)
 -
-+    auth_token= "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"
++    auth_token= os.environ.get("HF_TOKEN")
      # Load pretrained model and tokenizer
      # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
      # download model & vocab.
