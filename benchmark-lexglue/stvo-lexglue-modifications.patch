@@ -1,0 +1,3535 @@
+diff --git a/experiments/case_hold.py b/experiments/case_hold.py
+index 085ec48..1b90800 100644
+--- a/experiments/case_hold.py
++++ b/experiments/case_hold.py
+@@ -11,6 +11,8 @@ import numpy as np
+ import random
+ import shutil
+ import glob
++import sys
++import torch
+ 
+ import transformers
+ from transformers import (
+@@ -23,6 +25,18 @@ from transformers import (
+ 	TrainingArguments,
+ 	set_seed,
+ )
++
++# Get the absolute path of the directory containing case_hold.py (experiments/)
++current_dir = os.path.dirname(os.path.abspath(__file__))
++
++# Get the path to the parent directory (lex-glue/)
++parent_dir = os.path.dirname(current_dir)
++
++# Add the parent directory to sys.path so Python can see the 'models' folder
++if parent_dir not in sys.path:
++    sys.path.append(parent_dir)
++
++
+ from transformers.trainer_utils import is_main_process
+ from transformers import EarlyStoppingCallback
+ from casehold_helpers import MultipleChoiceDataset, Split
+@@ -105,21 +119,26 @@ def main():
+ 	# See all possible arguments in src/transformers/training_args.py
+ 	# or by passing the --help flag to this script.
+ 	# We now keep distinct sets of args, for a cleaner separation of concerns.
++	if not torch.cuda.is_available():
++		raise ValueError("No GPU found. This script requires a GPU to run.")
+ 
+ 	parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
+ 	# Add custom arguments for computing pre-train loss
+ 	parser.add_argument("--ptl", type=bool, default=False)
+-	model_args, data_args, training_args, custom_args = parser.parse_args_into_dataclasses()
+-
+-	if (
+-		os.path.exists(training_args.output_dir)
+-		and os.listdir(training_args.output_dir)
+-		and training_args.do_train
+-		and not training_args.overwrite_output_dir
+-	):
+-		raise ValueError(
+-			f"Output directory ({training_args.output_dir}) already exists and is not empty. Use --overwrite_output_dir to overcome."
+-		)
++	# model_args, data_args, training_args, custom_args = parser.parse_args_into_dataclasses()
++	model_args, data_args, training_args,custom_args , _ = parser.parse_args_into_dataclasses(return_remaining_strings=True)
++
++	#print args 
++
++	# if (
++	# 	os.path.exists(training_args.output_dir)
++	# 	and os.listdir(training_args.output_dir)
++	# 	and training_args.do_train
++	# 	# and not training_args.overwrite_output_dir
++	# ):
++	# 	raise ValueError(
++	# 		f"Output directory ({training_args.output_dir}) already exists and is not empty. Use --overwrite_output_dir to overcome."
++	# 	)
+ 
+ 	# Setup logging
+ 	logging.basicConfig(
+@@ -248,16 +267,32 @@ def main():
+ 		callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
+ 	)
+ 
+-	# Training
++	# # Training
++	# if training_args.do_train:
++	# 	trainer.train(
++	# 		model_path=model_args.model_name_or_path if os.path.isdir(model_args.model_name_or_path) else None
++	# 	)
++
++	# Correct/Modern way
+ 	if training_args.do_train:
+-		trainer.train(
+-			model_path=model_args.model_name_or_path if os.path.isdir(model_args.model_name_or_path) else None
+-		)
++		# checkpoint = None
++		# # 1. Check if we explicitly passed a checkpoint via CLI
++		# if training_args.resume_from_checkpoint is not None:
++		# 	checkpoint = training_args.resume_from_checkpoint
++		# # 2. Otherwise, check if the model_name_or_path is actually a local directory
++		# elif os.path.isdir(model_args.model_name_or_path):
++		# 	checkpoint = model_args.model_name_or_path
++		checkpoint = training_args.resume_from_checkpoint
++
++		# This handles both starting from scratch and resuming
++		trainer.train(resume_from_checkpoint=checkpoint)
++
++
+ 		trainer.save_model()
+ 		# Re-save the tokenizer for model sharing
+ 		if trainer.is_world_process_zero():
+ 			tokenizer.save_pretrained(training_args.output_dir)
+-
++	
+ 	# Evaluation on eval_dataset
+ 	if training_args.do_eval:
+ 		logger.info("*** Evaluate ***")
+@@ -290,6 +325,18 @@ def main():
+ 					pred_line = '\t'.join([f'{pred:.5f}' for pred in pred_list])
+ 					writer.write(f"{index}\t{pred_line}\n")
+ 
++		# output_predict_file = os.path.join(training_args.output_dir, "test_predictions.csv")
++        # if trainer.is_world_process_zero():
++        #     # predictions can sometimes be a tuple (logits, hidden_states)
++        #     logits = predictions[0] if isinstance(predictions, tuple) else predictions
++            
++        #     with open(output_predict_file, "w") as writer:
++        #         for index, sample_logits in enumerate(logits):
++        #             # Ensure we are iterating over the logits of a single sample
++        #             pred_line = '\t'.join([f'{pred:.5f}' for pred in sample_logits])
++        #             writer.write(f"{index}\t{pred_line}\n")
++
++
+ 	# Clean up checkpoints
+ 	checkpoints = [filepath for filepath in glob.glob(f'{training_args.output_dir}/*/') if '/checkpoint' in filepath]
+ 	for checkpoint in checkpoints:
+diff --git a/experiments/casehold_helpers.py b/experiments/casehold_helpers.py
+index 0db4adf..366260d 100644
+--- a/experiments/casehold_helpers.py
++++ b/experiments/casehold_helpers.py
+@@ -8,11 +8,32 @@ import tqdm
+ import re
+ 
+ from filelock import FileLock
+-from transformers import PreTrainedTokenizer, is_tf_available, is_torch_available
++from transformers import PreTrainedTokenizer
++# from transformers.utils import is_tf_available, is_torch_available
++	# (1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
++	# (2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
++	# WeightsUnpickler error: Unsupported global: GLOBAL casehold_helpers.InputFeatures was not an allowed global by default. Please use `torch.serialization.add_safe_globals([InputFeatures])` or the `torch.serialization.safe_globals([InputFeatures])` context manager to allowlist this global if you trust this class/function.
++
++
++
+ import datasets
+ 
+ logger = logging.getLogger(__name__)
+ 
++# Manual implementation - compatible with all Transformers versions
++def is_torch_available():
++    try:
++        import torch
++        return True
++    except ImportError:
++        return False
++
++def is_tf_available():
++    try:
++        import tensorflow
++        return True
++    except ImportError:
++        return False
+ 
+ @dataclass(frozen=True)
+ class InputFeatures:
+@@ -55,7 +76,8 @@ if is_torch_available():
+             dataset = datasets.load_dataset('lex_glue', task)
+             tokenizer_name = re.sub('[^a-z]+', ' ', tokenizer.name_or_path).title().replace(' ', '')
+             cached_features_file = os.path.join(
+-                '.cache',
++                # '.cache',
++                "/temp/siddig/driving-license/cache/case_hold",
+                 task,
+                 "cached_{}_{}_{}_{}".format(
+                     mode.value,
+@@ -76,7 +98,8 @@ if is_torch_available():
+ 
+                 if os.path.exists(cached_features_file) and not overwrite_cache:
+                     logger.info(f"Loading features from cached file {cached_features_file}")
+-                    self.features = torch.load(cached_features_file)
++                    # self.features = torch.load(cached_features_file)
++                    self.features = torch.load(cached_features_file, weights_only=False)
+                 else:
+                     logger.info(f"Creating features from dataset file at {task}")
+                     if mode == Split.dev:
+diff --git a/experiments/ecthr.py b/experiments/ecthr.py
+index 0d1ec25..9c8a7f7 100644
+--- a/experiments/ecthr.py
++++ b/experiments/ecthr.py
+@@ -14,10 +14,12 @@ import numpy as np
+ from datasets import load_dataset
+ from sklearn.metrics import f1_score
+ from trainer import MultilabelTrainer
++from transformers import Trainer
+ from scipy.special import expit
+ from torch import nn
+ import glob
+ import shutil
++import torch
+ 
+ import transformers
+ from transformers import (
+@@ -32,6 +34,17 @@ from transformers import (
+     set_seed,
+     EarlyStoppingCallback,
+ )
++
++# Get the absolute path of the directory containing case_hold.py (experiments/)
++current_dir = os.path.dirname(os.path.abspath(__file__))
++
++# Get the path to the parent directory (lex-glue/)
++parent_dir = os.path.dirname(current_dir)
++
++# Add the parent directory to sys.path so Python can see the 'models' folder
++if parent_dir not in sys.path:
++    sys.path.append(parent_dir)
++
+ from transformers.trainer_utils import get_last_checkpoint
+ from transformers.utils import check_min_version
+ from transformers.utils.versions import require_version
+@@ -166,7 +179,9 @@ def main():
+     # See all possible arguments in src/transformers/training_args.py
+     # or by passing the --help flag to this script.
+     # We now keep distinct sets of args, for a cleaner separation of concerns.
+-
++    if not torch.cuda.is_available():
++        raise EnvironmentError("No GPU found. This script requires a GPU to run.")
++        
+     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
+     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+ 
+@@ -213,18 +228,18 @@ def main():
+ 
+     # Detecting last checkpoint.
+     last_checkpoint = None
+-    if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
+-        last_checkpoint = get_last_checkpoint(training_args.output_dir)
+-        if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
+-            raise ValueError(
+-                f"Output directory ({training_args.output_dir}) already exists and is not empty. "
+-                "Use --overwrite_output_dir to overcome."
+-            )
+-        elif last_checkpoint is not None:
+-            logger.info(
+-                f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
+-                "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
+-            )
++    # if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
++    #     last_checkpoint = get_last_checkpoint(training_args.output_dir)
++    #     if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
++    #         raise ValueError(
++    #             f"Output directory ({training_args.output_dir}) already exists and is not empty. "
++    #             "Use --overwrite_output_dir to overcome."
++    #         )
++    #     elif last_checkpoint is not None:
++    #         logger.info(
++    #             f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
++    #             "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
++    #         )
+ 
+     # Set seed before initializing model.
+     set_seed(training_args.seed)
+@@ -232,14 +247,15 @@ def main():
+     # In distributed training, the load_dataset function guarantees that only one local process can concurrently
+     # download the dataset.
+     # Downloading and loading eurlex dataset from the hub.
++    print(f"Loading dataset {data_args.task}...")
+     if training_args.do_train:
+-        train_dataset = load_dataset("lex_glue", name=data_args.task, split="train", data_dir='data', cache_dir=model_args.cache_dir)
++        train_dataset = load_dataset("lex_glue", name=data_args.task, split="train", cache_dir=model_args.cache_dir)
+ 
+     if training_args.do_eval:
+-        eval_dataset = load_dataset("lex_glue", name=data_args.task, split="validation", data_dir='data', cache_dir=model_args.cache_dir)
++        eval_dataset = load_dataset("lex_glue", name=data_args.task, split="validation", cache_dir=model_args.cache_dir)
+ 
+     if training_args.do_predict:
+-        predict_dataset = load_dataset("lex_glue", name=data_args.task, split="test", data_dir='data', cache_dir=model_args.cache_dir)
++        predict_dataset = load_dataset("lex_glue", name=data_args.task, split="test", cache_dir=model_args.cache_dir)
+ 
+     # Labels
+     label_list = list(range(10))
+@@ -248,13 +264,14 @@ def main():
+     # Load pretrained model and tokenizer
+     # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
+     # download model & vocab.
++    auth_token= "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"
+     config = AutoConfig.from_pretrained(
+         model_args.config_name if model_args.config_name else model_args.model_name_or_path,
+         num_labels=num_labels,
+         finetuning_task=f"{data_args.task}",
+         cache_dir=model_args.cache_dir,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+     tokenizer = AutoTokenizer.from_pretrained(
+         model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
+@@ -262,7 +279,7 @@ def main():
+         cache_dir=model_args.cache_dir,
+         use_fast=model_args.use_fast_tokenizer,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+     if config.model_type == 'deberta' and model_args.hierarchical:
+         model = DebertaForSequenceClassification.from_pretrained(
+@@ -271,7 +288,7 @@ def main():
+             config=config,
+             cache_dir=model_args.cache_dir,
+             revision=model_args.model_revision,
+-            use_auth_token=True if model_args.use_auth_token else None,
++            token=auth_token if model_args.use_auth_token else None,
+         )
+     else:
+         model = AutoModelForSequenceClassification.from_pretrained(
+@@ -280,7 +297,7 @@ def main():
+             config=config,
+             cache_dir=model_args.cache_dir,
+             revision=model_args.model_revision,
+-            use_auth_token=True if model_args.use_auth_token else None,
++            token=auth_token if model_args.use_auth_token else None,
+         )
+ 
+     if model_args.hierarchical:
+@@ -424,6 +441,26 @@ def main():
+         micro_f1 = f1_score(y_true=y_true, y_pred=y_pred, average='micro', zero_division=0)
+         return {'macro-f1': macro_f1, 'micro-f1': micro_f1}
+ 
++    class MultilabelTrainer(Trainer):
++        def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
++            """
++            Custom loss for multi-label classification.
++            """
++            labels = inputs.pop("labels")
++            outputs = model(**inputs)
++            logits = outputs.get('logits')
++            
++            # Use BCEWithLogitsLoss for multi-label classification
++            loss_fct = torch.nn.BCEWithLogitsLoss()
++            loss = loss_fct(
++                logits.view(-1, self.model.config.num_labels),
++                labels.float().view(-1, self.model.config.num_labels)
++            )
++            
++            return (loss, outputs) if return_outputs else loss
++
++
++
+     # Data collator will default to DataCollatorWithPadding, so we change it if we already did the padding.
+     if data_args.pad_to_max_length:
+         data_collator = default_data_collator
+@@ -439,7 +476,7 @@ def main():
+         train_dataset=train_dataset if training_args.do_train else None,
+         eval_dataset=eval_dataset if training_args.do_eval else None,
+         compute_metrics=compute_metrics,
+-        tokenizer=tokenizer,
++        # tokenizer=tokenizer,
+         data_collator=data_collator,
+         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
+     )
+diff --git a/experiments/eurlex.py b/experiments/eurlex.py
+index 8acf0dd..f87a338 100644
+--- a/experiments/eurlex.py
++++ b/experiments/eurlex.py
+@@ -13,9 +13,11 @@ import datasets
+ from datasets import load_dataset
+ from sklearn.metrics import f1_score
+ from trainer import MultilabelTrainer
++from transformers import Trainer
+ from scipy.special import expit
+ import glob
+ import shutil
++import torch    
+ 
+ import transformers
+ from transformers import (
+@@ -127,7 +129,7 @@ class ModelArguments:
+         metadata={"help": "The specific model version to use (can be a branch name, tag name or commit id)."},
+     )
+     use_auth_token: bool = field(
+-        default=False,
++        default=True,
+         metadata={
+             "help": "Will use the token generated when running `transformers-cli login` (necessary to use this script "
+             "with private models)."
+@@ -139,9 +141,12 @@ def main():
+     # See all possible arguments in src/transformers/training_args.py
+     # or by passing the --help flag to this script.
+     # We now keep distinct sets of args, for a cleaner separation of concerns.
++    if not torch.cuda.is_available():
++        raise EnvironmentError("No GPU found. This script requires a GPU to run.")
+ 
+     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
+-    model_args, data_args, training_args = parser.parse_args_into_dataclasses()
++    # model_args, data_args, training_args = parser.parse_args_into_dataclasses()
++    model_args, data_args, training_args , _ = parser.parse_args_into_dataclasses(return_remaining_strings=True)
+ 
+     # Setup distant debugging if needed
+     if data_args.server_ip and data_args.server_port:
+@@ -180,20 +185,20 @@ def main():
+     )
+     logger.info(f"Training/evaluation parameters {training_args}")
+ 
+-    # Detecting last checkpoint.
++    # # Detecting last checkpoint.
+     last_checkpoint = None
+-    if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
+-        last_checkpoint = get_last_checkpoint(training_args.output_dir)
+-        if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
+-            raise ValueError(
+-                f"Output directory ({training_args.output_dir}) already exists and is not empty. "
+-                "Use --overwrite_output_dir to overcome."
+-            )
+-        elif last_checkpoint is not None:
+-            logger.info(
+-                f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
+-                "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
+-            )
++    # if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
++    #     last_checkpoint = get_last_checkpoint(training_args.output_dir)
++    #     if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
++    #         raise ValueError(
++    #             f"Output directory ({training_args.output_dir}) already exists and is not empty. "
++    #             "Use --overwrite_output_dir to overcome."
++    #         )
++    #     elif last_checkpoint is not None:
++    #         logger.info(
++    #             f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
++    #             "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
++    #         )
+ 
+     # Set seed before initializing model.
+     set_seed(training_args.seed)
+@@ -210,10 +215,11 @@ def main():
+     if training_args.do_predict:
+         predict_dataset = load_dataset("lex_glue", "eurlex", split="test", cache_dir=model_args.cache_dir)
+ 
++    
+     # Labels
+     label_list = list(range(100))
+     num_labels = len(label_list)
+-
++    auth_token= "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"
+     # Load pretrained model and tokenizer
+     # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
+     # download model & vocab.
+@@ -223,7 +229,7 @@ def main():
+         finetuning_task="eurlex",
+         cache_dir=model_args.cache_dir,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+ 
+     if config.model_type == 'big_bird':
+@@ -235,7 +241,7 @@ def main():
+         cache_dir=model_args.cache_dir,
+         use_fast=model_args.use_fast_tokenizer,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+     model = AutoModelForSequenceClassification.from_pretrained(
+         model_args.model_name_or_path,
+@@ -243,7 +249,7 @@ def main():
+         config=config,
+         cache_dir=model_args.cache_dir,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+ 
+     # Preprocessing the datasets
+@@ -311,6 +317,28 @@ def main():
+         micro_f1 = f1_score(y_true=p.label_ids, y_pred=preds, average='micro', zero_division=0)
+         return {'macro-f1': macro_f1, 'micro-f1': micro_f1}
+ 
++    class MultilabelTrainer(Trainer):
++        def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
++            """
++            Custom loss for multi-label classification.
++            EUR-LEX has 100 labels per example (multi-hot encoding).
++            """
++            labels = inputs.pop("labels")
++            outputs = model(**inputs)
++            logits = outputs.get('logits')
++            
++            # Use BCEWithLogitsLoss for multi-label classification
++            loss_fct = torch.nn.BCEWithLogitsLoss()
++            loss = loss_fct(
++                logits.view(-1, self.model.config.num_labels),
++                labels.float().view(-1, self.model.config.num_labels)
++            )
++            
++            return (loss, outputs) if return_outputs else loss
++
++                
++
++
+     # Data collator will default to DataCollatorWithPadding, so we change it if we already did the padding.
+     if data_args.pad_to_max_length:
+         data_collator = default_data_collator
+@@ -326,11 +354,14 @@ def main():
+         train_dataset=train_dataset if training_args.do_train else None,
+         eval_dataset=eval_dataset if training_args.do_eval else None,
+         compute_metrics=compute_metrics,
+-        tokenizer=tokenizer,
++        # tokenizer=tokenizer,
+         data_collator=data_collator,
+         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
+     )
+ 
++    
++
++
+     # Training
+     if training_args.do_train:
+         checkpoint = None
+diff --git a/experiments/ledgar.py b/experiments/ledgar.py
+index 7f3a98f..074b23f 100644
+--- a/experiments/ledgar.py
++++ b/experiments/ledgar.py
+@@ -15,6 +15,7 @@ from sklearn.metrics import f1_score
+ import numpy as np
+ import glob
+ import shutil
++import torch
+ 
+ import transformers
+ from transformers import (
+@@ -139,6 +140,10 @@ def main():
+     # See all possible arguments in src/transformers/training_args.py
+     # or by passing the --help flag to this script.
+     # We now keep distinct sets of args, for a cleaner separation of concerns.
++    if not torch.cuda.is_available():
++        raise EnvironmentError("No GPU found. This script requires a GPU to run.")
++    else:
++        print(f"CUDA available: {torch.cuda.is_available()}; Device: {torch.cuda.get_device_name(0)}")
+ 
+     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
+     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+@@ -182,18 +187,18 @@ def main():
+ 
+     # Detecting last checkpoint.
+     last_checkpoint = None
+-    if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
+-        last_checkpoint = get_last_checkpoint(training_args.output_dir)
+-        if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
+-            raise ValueError(
+-                f"Output directory ({training_args.output_dir}) already exists and is not empty. "
+-                "Use --overwrite_output_dir to overcome."
+-            )
+-        elif last_checkpoint is not None:
+-            logger.info(
+-                f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
+-                "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
+-            )
++    # if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
++    #     last_checkpoint = get_last_checkpoint(training_args.output_dir)
++    #     if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
++    #         raise ValueError(
++    #             f"Output directory ({training_args.output_dir}) already exists and is not empty. "
++    #             "Use --overwrite_output_dir to overcome."
++    #         )
++    #     elif last_checkpoint is not None:
++    #         logger.info(
++    #             f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
++    #             "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
++    #         )
+ 
+     # Set seed before initializing model.
+     set_seed(training_args.seed)
+@@ -217,13 +222,14 @@ def main():
+     # Load pretrained model and tokenizer
+     # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
+     # download model & vocab.
++    auth_token= "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"
+     config = AutoConfig.from_pretrained(
+         model_args.config_name if model_args.config_name else model_args.model_name_or_path,
+         num_labels=num_labels,
+         finetuning_task="eurlex",
+         cache_dir=model_args.cache_dir,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+ 
+     if config.model_type == 'big_bird':
+@@ -235,7 +241,7 @@ def main():
+         cache_dir=model_args.cache_dir,
+         use_fast=model_args.use_fast_tokenizer,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+     model = AutoModelForSequenceClassification.from_pretrained(
+         model_args.model_name_or_path,
+@@ -243,7 +249,7 @@ def main():
+         config=config,
+         cache_dir=model_args.cache_dir,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+ 
+     # Preprocessing the datasets
+@@ -326,7 +332,7 @@ def main():
+         train_dataset=train_dataset if training_args.do_train else None,
+         eval_dataset=eval_dataset if training_args.do_eval else None,
+         compute_metrics=compute_metrics,
+-        tokenizer=tokenizer,
++        # tokenizer=tokenizer,
+         data_collator=data_collator,
+         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
+     )
+diff --git a/experiments/scotus.py b/experiments/scotus.py
+index e37662d..c60cd98 100644
+--- a/experiments/scotus.py
++++ b/experiments/scotus.py
+@@ -1,19 +1,18 @@
+ #!/usr/bin/env python
+ # coding=utf-8
+ """ Finetuning models on SCOTUS (e.g. Bert, RoBERTa, LEGAL-BERT)."""
+-
+ import logging
+ import os
+ import random
+ import re
+ import sys
++import torch
+ from dataclasses import dataclass, field
+ from typing import Optional
+ 
+ import datasets
+ from datasets import load_dataset
+ from sklearn.metrics import f1_score
+-from models.hierbert import HierarchicalBert
+ import numpy as np
+ from torch import nn
+ import glob
+@@ -36,6 +35,21 @@ from transformers import (
+ from transformers.trainer_utils import get_last_checkpoint
+ from transformers.utils import check_min_version
+ from transformers.utils.versions import require_version
++
++
++
++# Get the absolute path of the directory containing case_hold.py (experiments/)
++current_dir = os.path.dirname(os.path.abspath(__file__))
++
++# Get the path to the parent directory (lex-glue/)
++parent_dir = os.path.dirname(current_dir)
++
++# Add the parent directory to sys.path so Python can see the 'models' folder
++if parent_dir not in sys.path:
++    sys.path.append(parent_dir)
++    
++
++from models.hierbert import HierarchicalBert
+ from models.deberta import DebertaForSequenceClassification
+ 
+ 
+@@ -160,6 +174,8 @@ def main():
+     # See all possible arguments in src/transformers/training_args.py
+     # or by passing the --help flag to this script.
+     # We now keep distinct sets of args, for a cleaner separation of concerns.
++    if not torch.cuda.is_available():
++        raise EnvironmentError("No GPU found. This script requires a GPU to run.")
+ 
+     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
+     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+@@ -207,18 +223,18 @@ def main():
+ 
+     # Detecting last checkpoint.
+     last_checkpoint = None
+-    if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
+-        last_checkpoint = get_last_checkpoint(training_args.output_dir)
+-        if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
+-            raise ValueError(
+-                f"Output directory ({training_args.output_dir}) already exists and is not empty. "
+-                "Use --overwrite_output_dir to overcome."
+-            )
+-        elif last_checkpoint is not None:
+-            logger.info(
+-                f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
+-                "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
+-            )
++    # if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
++    #     last_checkpoint = get_last_checkpoint(training_args.output_dir)
++    #     if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
++    #         raise ValueError(
++    #             f"Output directory ({training_args.output_dir}) already exists and is not empty. "
++    #             "Use --overwrite_output_dir to overcome."
++    #         )
++    #     elif last_checkpoint is not None:
++    #         logger.info(
++    #             f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
++    #             "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
++    #         )
+ 
+     # Set seed before initializing model.
+     set_seed(training_args.seed)
+@@ -238,7 +254,7 @@ def main():
+     # Labels
+     label_list = list(range(14))
+     num_labels = len(label_list)
+-
++    auth_token= "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"
+     # Load pretrained model and tokenizer
+     # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
+     # download model & vocab.
+@@ -248,7 +264,7 @@ def main():
+         finetuning_task="scotus",
+         cache_dir=model_args.cache_dir,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+     tokenizer = AutoTokenizer.from_pretrained(
+         model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
+@@ -256,7 +272,7 @@ def main():
+         cache_dir=model_args.cache_dir,
+         use_fast=model_args.use_fast_tokenizer,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+     if config.model_type == 'deberta' and model_args.hierarchical:
+         model = DebertaForSequenceClassification.from_pretrained(
+@@ -265,7 +281,7 @@ def main():
+             config=config,
+             cache_dir=model_args.cache_dir,
+             revision=model_args.model_revision,
+-            use_auth_token=True if model_args.use_auth_token else None,
++            token=auth_token if model_args.use_auth_token else None,
+         )
+     else:
+         model = AutoModelForSequenceClassification.from_pretrained(
+@@ -274,7 +290,7 @@ def main():
+             config=config,
+             cache_dir=model_args.cache_dir,
+             revision=model_args.model_revision,
+-            use_auth_token=True if model_args.use_auth_token else None,
++            token=auth_token if model_args.use_auth_token else None,
+         )
+     if model_args.hierarchical:
+         # Hack the classifier encoder to use hierarchical BERT
+@@ -407,6 +423,16 @@ def main():
+         macro_f1 = f1_score(y_true=p.label_ids, y_pred=preds, average='macro', zero_division=0)
+         micro_f1 = f1_score(y_true=p.label_ids, y_pred=preds, average='micro', zero_division=0)
+         return {'macro-f1': macro_f1, 'micro-f1': micro_f1}
++    
++    class CustomTrainer(Trainer):
++        def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
++            """
++            How the loss is computed by Trainer. By default, all models return the loss in the first element.
++            """
++            outputs = model(**inputs)
++            loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
++            return (loss, outputs) if return_outputs else loss
++
+ 
+     # Data collator will default to DataCollatorWithPadding, so we change it if we already did the padding.
+     if data_args.pad_to_max_length:
+@@ -417,13 +443,13 @@ def main():
+         data_collator = None
+ 
+     # Initialize our Trainer
+-    trainer = Trainer(
++    trainer = CustomTrainer(
+         model=model,
+         args=training_args,
+         train_dataset=train_dataset if training_args.do_train else None,
+         eval_dataset=eval_dataset if training_args.do_eval else None,
+         compute_metrics=compute_metrics,
+-        tokenizer=tokenizer,
++        # tokenizer=tokenizer,
+         data_collator=data_collator,
+         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
+     )
+diff --git a/experiments/unfair_tos.py b/experiments/unfair_tos.py
+index c1ddfdb..e2dd4c2 100644
+--- a/experiments/unfair_tos.py
++++ b/experiments/unfair_tos.py
+@@ -13,9 +13,11 @@ import datasets
+ from datasets import load_dataset
+ from sklearn.metrics import f1_score
+ from trainer import MultilabelTrainer
++from transformers import Trainer
+ from scipy.special import expit
+ import glob
+ import shutil
++import torch
+ import numpy as np
+ 
+ import transformers
+@@ -140,6 +142,8 @@ def main():
+     # See all possible arguments in src/transformers/training_args.py
+     # or by passing the --help flag to this script.
+     # We now keep distinct sets of args, for a cleaner separation of concerns.
++    if not torch.cuda.is_available():
++        raise EnvironmentError("No GPU found. This script requires a GPU to run.")
+ 
+     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
+     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+@@ -183,18 +187,18 @@ def main():
+ 
+     # Detecting last checkpoint.
+     last_checkpoint = None
+-    if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
+-        last_checkpoint = get_last_checkpoint(training_args.output_dir)
+-        if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
+-            raise ValueError(
+-                f"Output directory ({training_args.output_dir}) already exists and is not empty. "
+-                "Use --overwrite_output_dir to overcome."
+-            )
+-        elif last_checkpoint is not None:
+-            logger.info(
+-                f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
+-                "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
+-            )
++    # if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
++    #     last_checkpoint = get_last_checkpoint(training_args.output_dir)
++    #     if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
++    #         raise ValueError(
++    #             f"Output directory ({training_args.output_dir}) already exists and is not empty. "
++    #             "Use --overwrite_output_dir to overcome."
++    #         )
++    #     elif last_checkpoint is not None:
++    #         logger.info(
++    #             f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
++    #             "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
++            # )
+ 
+     # Set seed before initializing model.
+     set_seed(training_args.seed)
+@@ -203,18 +207,18 @@ def main():
+     # download the dataset.
+     # Downloading and loading eurlex dataset from the hub.
+     if training_args.do_train:
+-        train_dataset = load_dataset("lex_glue", "unfair_tos", split="train", data_dir='data', cache_dir=model_args.cache_dir)
++        train_dataset = load_dataset("lex_glue", "unfair_tos", split="train", cache_dir=model_args.cache_dir)
+ 
+     if training_args.do_eval:
+-        eval_dataset = load_dataset("lex_glue", "unfair_tos", split="validation", data_dir='data', cache_dir=model_args.cache_dir)
++        eval_dataset = load_dataset("lex_glue", "unfair_tos", split="validation", cache_dir=model_args.cache_dir)
+ 
+     if training_args.do_predict:
+-        predict_dataset = load_dataset("lex_glue", "unfair_tos", split="test", data_dir='data', cache_dir=model_args.cache_dir)
++        predict_dataset = load_dataset("lex_glue", "unfair_tos", split="test", cache_dir=model_args.cache_dir)
+ 
+     # Labels
+     label_list = list(range(8))
+     num_labels = len(label_list)
+-
++    auth_token= "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"
+     # Load pretrained model and tokenizer
+     # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
+     # download model & vocab.
+@@ -224,7 +228,7 @@ def main():
+         finetuning_task="unfair_toc",
+         cache_dir=model_args.cache_dir,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+ 
+     if config.model_type == 'big_bird':
+@@ -239,7 +243,7 @@ def main():
+         cache_dir=model_args.cache_dir,
+         use_fast=model_args.use_fast_tokenizer,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+     model = AutoModelForSequenceClassification.from_pretrained(
+         model_args.model_name_or_path,
+@@ -247,7 +251,7 @@ def main():
+         config=config,
+         cache_dir=model_args.cache_dir,
+         revision=model_args.model_revision,
+-        use_auth_token=True if model_args.use_auth_token else None,
++        token=auth_token if model_args.use_auth_token else None,
+     )
+ 
+     # Preprocessing the datasets
+@@ -325,6 +329,25 @@ def main():
+         micro_f1 = f1_score(y_true=y_true, y_pred=y_pred, average='micro', zero_division=0)
+         return {'macro-f1': macro_f1, 'micro-f1': micro_f1}
+ 
++    class MultilabelTrainer(Trainer):
++        def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
++            """
++            Custom loss for multi-label classification.
++            EUR-LEX has 100 labels per example (multi-hot encoding).
++            """
++            labels = inputs.pop("labels")
++            outputs = model(**inputs)
++            logits = outputs.get('logits')
++            
++            # Use BCEWithLogitsLoss for multi-label classification
++            loss_fct = torch.nn.BCEWithLogitsLoss()
++            loss = loss_fct(
++                logits.view(-1, self.model.config.num_labels),
++                labels.float().view(-1, self.model.config.num_labels)
++            )
++            
++            return (loss, outputs) if return_outputs else loss
++
+     # Data collator will default to DataCollatorWithPadding, so we change it if we already did the padding.
+     if data_args.pad_to_max_length:
+         data_collator = default_data_collator
+@@ -340,7 +363,7 @@ def main():
+         train_dataset=train_dataset if training_args.do_train else None,
+         eval_dataset=eval_dataset if training_args.do_eval else None,
+         compute_metrics=compute_metrics,
+-        tokenizer=tokenizer,
++        # tokenizer=tokenizer,
+         data_collator=data_collator,
+         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
+     )
+@@ -389,11 +412,26 @@ def main():
+         trainer.log_metrics("predict", metrics)
+         trainer.save_metrics("predict", metrics)
+ 
++        # output_predict_file = os.path.join(training_args.output_dir, "test_predictions.csv")
++        # if trainer.is_world_process_zero():
++        #     with open(output_predict_file, "w") as writer:
++        #         for index, pred_list in enumerate(predictions[0]):
++        #             pred_line = '\t'.join([f'{pred:.5f}' for pred in pred_list])
++        #             writer.write(f"{index}\t{pred_line}\n")
++
++        
+         output_predict_file = os.path.join(training_args.output_dir, "test_predictions.csv")
+         if trainer.is_world_process_zero():
++            # Ensure we have the logits array (sometimes it's a tuple)
++            logits = predictions[0] if isinstance(predictions, tuple) else predictions
++            
+             with open(output_predict_file, "w") as writer:
+-                for index, pred_list in enumerate(predictions[0]):
+-                    pred_line = '\t'.join([f'{pred:.5f}' for pred in pred_list])
++                # Add a header for clarity
++                writer.write("index\tpredictions\n") 
++                
++                for index, sample_logits in enumerate(logits):
++                    # sample_logits is the array of floats for one specific sample
++                    pred_line = '\t'.join([f'{pred:.5f}' for pred in sample_logits])
+                     writer.write(f"{index}\t{pred_line}\n")
+ 
+     # Clean up checkpoints
+diff --git a/requirements.txt b/requirements.txt
+index e2bddb3..744c916 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,4 +1,6 @@
+-torch>=1.9.0
++torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
++torchvision==0.21.0 
++torchaudio==2.6.0 
+ transformers>=4.9.0
+ scikit-learn>=0.24.1
+ tqdm>=4.61.1
+@@ -6,3 +8,4 @@ numpy>=1.20.1
+ datasets>=1.18.1
+ nltk>=3.5
+ scipy>=1.6.3
++accelerate>=1.1.0
+\ No newline at end of file
+diff --git a/scripts/run_case_hold.sh b/scripts/run_case_hold.sh
+old mode 100644
+new mode 100755
+index 16342b7..70ed794
+--- a/scripts/run_case_hold.sh
++++ b/scripts/run_case_hold.sh
+@@ -1,17 +1,392 @@
++# Paths and parameters
++ROOT_DIR="/temp/siddig"
++DATA_DIR="$ROOT_DIR/driving-license"
++OUT_DIR="$ROOT_DIR/driving-license/multitask_models"
++HF_DIR="$ROOT_DIR/driving-license/HF_models"
++FINE_TUNED_MODELS_DIR="$ROOT_DIR/driving-license/STVo_PRLM_HF_hierarchical_models_20_epochs_10_segments_transe"
++
++
++# GPU Configuration
+ GPU_NUMBER=0
+-MODEL_NAME='bert-base-uncased'
+-BATCH_SIZE=8
+-ACCUMULATION_STEPS=1
++LOWER_CASE='True'
++TRAIN_BATCH_SIZE=64
++EVAL_BATCH_SIZE=32
++ACCUMULATION_STEPS=2
+ TASK='case_hold'
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/case_hold.py --task_name ${TASK} --model_name_or_path ${MODEL_NAME} --output_dir logs/${TASK}/${MODEL_NAME}/seed_1 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 1 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# Configuration for the Tmux Session
++TIMESTAMP=$(date +%Y%m%d_%H%M%S)
++LOG_OUT="logs/out/$TASK/tmux-STVO-lexglue-case_hold-$TIMESTAMP.out"
++LOG_ERR="logs/err/$TASK/tmux-STVO-lexglue-case_hold-$TIMESTAMP.err"
++
++# Ensure log directories exist
++mkdir -p logs/out/$TASK logs/err/$TASK 
++mkdir -p $DATA_DIR 
++
++# Create and activate the virtual environment if it doesn't already exist
++if [ ! -d "$DATA_DIR/envs/lex-glue-env" ]; then
++    python3 -m venv $DATA_DIR/envs/lex-glue-env
++    source $DATA_DIR/envs/lex-glue-env/bin/activate
++    pip install -r ../requirements.txt
++    
++fi
++
++source $DATA_DIR/envs/lex-glue-env/bin/activate
++
++
++# =============================================================================
++# BASELINE MODELS (Standard HuggingFace models)
++# =============================================================================
++BASELINE_MODELS=(
++    "nlpaueb/bert-base-uncased-eurlex"         # BERT-EURLEX (domain baseline)
++    "nlpaueb/bert-base-uncased-contracts"      # BERT-Contracts (domain baseline)
++    "nlpaueb/bert-base-uncased-echr"           # BERT-ECHR (domain baseline)
++    "casehold/custom-legalbert"                # Custom LegalBERT (general domain)
++    "dlicari/Italian-Legal-BERT"               # Italian LegalBERT (general domain)
++    "google-bert/bert-base-uncased"            # Google BERT (general domain)
++    "nlpaueb/legal-bert-base-uncased"          # Legal BERT (general domain)
++    "nlpaueb/legal-bert-small-uncased"         # Legal BERT (general domain)
++    "avichr/Legal-heBERT"                      # Legal heBERT (general domain)
++)
++
++# =============================================================================
++# YOUR MULTI-TASK PRE-TRAINED MODELS (from FINE_TUNED_MODELS_DIR)
++# =============================================================================
++# These are your best models from multi-task pre-training experiments
++MULTITASK_MODELS=(
++    # BERT-EURLEX variants (best performing on German StVO)
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-eurlex_m2m100_418M_clm_nsp_0.4_clu_0.2_cls_0.4"
++    # BERT-Contracts variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-contracts_m2m100_418M_clm_nsp_0.3_clu_0.0_cls_0.7"
++    # BERT-ECHR variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-echr_m2m100_418M_clm_nsp_0.3_clu_0.3_cls_0.4"
++    # Custom-LegalBERT variants
++    "$FINE_TUNED_MODELS_DIR/custom-legalbert_m2m100_418M_clm_nsp_0.4_clu_0.1_cls_0.5"
++    # Italian-Legal-BERT variants
++    "$FINE_TUNED_MODELS_DIR/Italian-Legal-BERT_m2m100_418M_clm_nsp_0.5_clu_0.4_cls_0.1"
++    # Google BERT variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased_m2m100_418M_clm_nsp_0.3_clu_0.1_cls_0.6"
++    # Legal BERT base variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-base-uncased_m2m100_418M_clm_nsp_0.2_clu_0.6_cls_0.2"
++    # Legal BERT small variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-small-uncased_m2m100_418M_clm_nsp_0.6_clu_0.3_cls_0.1"
++    # Legal heBERT variants
++    "$FINE_TUNED_MODELS_DIR/Legal-heBERT_m2m100_418M_clm_nsp_0.0_clu_0.0_cls_1.0"
++)
++
++
++# =============================================================================
++# EVALUATION FUNCTION
++# =============================================================================
++evaluate_model() {
++    local MODEL_PATH=$1
++    local MODEL_CATEGORY=$2
++    local SEED=$3
++    
++    # Extract model name for logging
++    MODEL_NAME=$(basename "$MODEL_PATH")
++    
++    echo "=================================================="
++    echo "Evaluating: $MODEL_NAME"
++    echo "Path: $MODEL_PATH"
++    echo "Category: $MODEL_CATEGORY"
++    echo "Seed: $SEED"
++    echo "=================================================="
++    
++  
++    # Output directory
++    OUTPUT_DIR="$DATA_DIR/logs/${TASK}/${MODEL_CATEGORY}/${MODEL_NAME}/seed_${SEED}"
++    mkdir -p "$OUTPUT_DIR"
++    
++   
++
++    # Run evaluation
++    CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python ../experiments/case_hold.py \
++        --model_name_or_path "${MODEL_PATH}" \
++        --do_lower_case ${LOWER_CASE} \
++        --output_dir "${OUTPUT_DIR}" \
++        --do_train \
++        --do_eval \
++        --do_pred \
++        --load_best_model_at_end \
++        --metric_for_best_model micro-f1 \
++        --greater_is_better True \
++        --eval_strategy epoch \
++        --save_strategy epoch \
++        --dataloader_num_workers 2 \
++        --save_total_limit 2 \
++        --num_train_epochs 20\
++        --overwrite_output_dir \
++        --learning_rate 3e-5 \
++        --dataloader_pin_memory True\
++        --cache_dir $HF_DIR\
++        --per_device_train_batch_size ${TRAIN_BATCH_SIZE} \
++        --per_device_eval_batch_size ${EVAL_BATCH_SIZE} \
++        --seed ${SEED} \
++        --fp16 \
++        --fp16_full_eval \
++        --gradient_accumulation_steps ${ACCUMULATION_STEPS} \
++        --eval_accumulation_steps ${ACCUMULATION_STEPS} >> "$LOG_OUT" 2>> "$LOG_ERR"
++
++        
++    # Check if evaluation was successful
++    if [ $? -eq 0 ]; then
++        echo "✓ Completed: $MODEL_NAME (seed $SEED)"
++        
++        # Display results if available
++        if [ -f "${OUTPUT_DIR}/eval_results.json" ]; then
++            echo "Results preview:"
++            cat "${OUTPUT_DIR}/eval_results.json"
++        fi
++    else
++        echo "✗ FAILED: $MODEL_NAME (seed $SEED)"
++    fi
++    echo ""
++}
++
++# =============================================================================
++# LIST AVAILABLE MODELS (for verification)
++# =============================================================================
++echo "========================================================================"
++echo "LexGLUE CASE-HOLD Evaluation Script"
++echo "========================================================================"
++echo "Task: $TASK"
++echo "GPU: $GPU_NUMBER"
++echo "Timestamp: $TIMESTAMP"
++echo "Models directory: $FINE_TUNED_MODELS_DIR"
++echo "========================================================================"
++echo ""
++
++echo "Checking available models..."
++echo ""
++echo "Baseline Models (${#BASELINE_MODELS[@]}):"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    echo "  - $MODEL"
++done
++
++echo ""
++echo "Multi-Task Models (${#MULTITASK_MODELS[@]}):"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    if [ -d "$MODEL" ]; then
++        echo "  ✓ $(basename $MODEL)"
++    else
++        echo "  ✗ $(basename $MODEL) [NOT FOUND]"
++    fi
++done
++
++echo ""
++
++# =============================================================================
++# MAIN EVALUATION LOOP
++# =============================================================================
++
++# Seeds for multiple runs (use 3 for faster evaluation, 5 for full validation)
++SEEDS=(1 2 3 4 5)  # Change to (1 2 3 4 5) for full evaluation
++
++# -----------------------------------------------------------------------------
++# 1. EVALUATE BASELINE MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 1: Evaluating Baseline Models"
++echo "======================================================================"
++echo "Models: ${#BASELINE_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#BASELINE_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "baselines" "$SEED"
++    done
++done
++
++# -----------------------------------------------------------------------------
++# 2. EVALUATE YOUR MULTI-TASK MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 2: Evaluating Multi-Task Pre-Trained Models"
++echo "======================================================================"
++echo "Models: ${#MULTITASK_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#MULTITASK_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "multitask" "$SEED"
++    done
++done
++
++# =============================================================================
++# COMPUTE STATISTICS
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Computing Statistics Across Seeds"
++echo "======================================================================"
++
++
++SUMMARY_DIR="$DATA_DIR/logs/${TASK}/summary"
++mkdir -p "$SUMMARY_DIR"
++
++echo ""
++echo "Baseline Models:"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/baselines/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "baselines"\
++            > "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        cat "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    fi
++done
++
++echo ""
++echo "Multi-Task Models:"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/multitask/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "multitask"\
++            > "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        head -n 3 "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    fi
++done
++
++# =============================================================================
++# GENERATE COMPARISON TABLE
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table"
++echo "======================================================================"
++
++# Create comparison CSV
++COMPARISON_FILE="$DATA_DIR/logs/${TASK}/comparison_table.csv"
++
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE"
++
++# Add baseline results
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        echo "$MODEL_NAME,baseline,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},standard" >> "$COMPARISON_FILE"
++    fi
++done
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        
++        # Extract config from model name
++        CONFIG=$(echo "$MODEL_NAME" | grep -oP "clm_nsp_[\d.]+_clu_[\d.]+_cls_[\d.]+" || echo "unknown")
++        
++        echo "$MODEL_NAME,multitask,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},$CONFIG" >> "$COMPARISON_FILE"
++    fi
++done
++
++echo "Comparison table saved to: $COMPARISON_FILE"
++echo ""
++cat "$COMPARISON_FILE"
++
++# =============================================================================
++# FINAL SUMMARY
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Evaluation Complete!"
++echo "======================================================================"
++echo "Task: $TASK"
++echo "Total models evaluated: $((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]}))"
++echo "Seeds per model: ${#SEEDS[@]}"
++echo "Total training runs: $(($((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]})) * ${#SEEDS[@]}))"
++echo ""
++echo "Results directories:"
++echo "  - Baselines: $DATA_DIR/logs/${TASK}/baselines/"
++echo "  - Multi-task: $DATA_DIR/logs/${TASK}/multitask/"
++echo "  - Summary: $SUMMARY_DIR"
++echo ""
++echo "Comparison table: $COMPARISON_FILE"
++echo ""
++echo "Log files:"
++echo "  - stdout: $LOG_OUT"
++echo "  - stderr: $LOG_ERR"
++echo "======================================================================"
++
++# Display top 3 performing models
++echo ""
++echo "Top 3 Performing Models (by Micro-F1):"
++echo "----------------------------------------------------------------------"
++tail -n +2 "$COMPARISON_FILE" | sort -t',' -k3 -rn | head -n 10| \
++    awk -F',' '{printf "  %d. %s: %.2f (config: %s)\n", NR, $1, $3, $6}'
++echo "======================================================================"
++
++
++
++
++# =============================================================================
++# GENERATE COMPARISON TABLE 2 : standard vs multi-task (best perofrming model)
++# =============================================================================
++
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table 2: Standard vs Multi-Task (Best Performing Models) for each model"
++#  from comaprison_table.csv, extract each baseline model and its best performing multi-task variant (based on micro-f1) and create a new table with the following columns: Model, Category, Micro-F1, Macro-F1, Seeds, Config
++echo "==================================================================="
++COMPARISON_FILE_BEST="$DATA_DIR/logs/${TASK}/comparison_table_best_models.csv"
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE_BEST"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    # Extract baseline results
++    BASELINE_RESULT=$(grep "^$MODEL_NAME," "$COMPARISON_FILE")
++    if [ -n "$BASELINE_RESULT" ]; then
++        echo "$BASELINE_RESULT" >> "$COMPARISON_FILE_BEST"
++        
++        # Extract multi-task variants for this model
++        MULTITASK_VARIANTS=$(grep "^${MODEL_NAME}_" "$COMPARISON_FILE" | sort -t',' -k3 -rn)
++        if [ -n "$MULTITASK_VARIANTS" ]; then
++            BEST_MULTITASK=$(echo "$MULTITASK_VARIANTS" | head -n 1)
++            echo "$BEST_MULTITASK" >> "$COMPARISON_FILE_BEST"
++        fi
++    fi
++done
++echo "Comparison table 2 saved to: $COMPARISON_FILE_BEST"
++echo ""
++cat "$COMPARISON_FILE_BEST"
++
++
++# GPU_NUMBER=0
++# MODEL_NAME='bert-base-uncased'
++# BATCH_SIZE=8
++# ACCUMULATION_STEPS=1
++# TASK='case_hold'
++
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/case_hold.py --task_name ${TASK} --model_name_or_path ${MODEL_NAME} --output_dir logs/${TASK}/${MODEL_NAME}/seed_1 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 1 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/case_hold.py --task_name ${TASK} --model_name_or_path ${MODEL_NAME} --output_dir logs/${TASK}/${MODEL_NAME}/seed_2 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 2 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/case_hold.py --task_name ${TASK} --model_name_or_path ${MODEL_NAME} --output_dir logs/${TASK}/${MODEL_NAME}/seed_2 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 2 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/case_hold.py --task_name ${TASK} --model_name_or_path ${MODEL_NAME} --output_dir logs/${TASK}/${MODEL_NAME}/seed_3 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 3 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/case_hold.py --task_name ${TASK} --model_name_or_path ${MODEL_NAME} --output_dir logs/${TASK}/${MODEL_NAME}/seed_3 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 3 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/case_hold.py --task_name ${TASK} --model_name_or_path ${MODEL_NAME} --output_dir logs/${TASK}/${MODEL_NAME}/seed_4 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 4 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/case_hold.py --task_name ${TASK} --model_name_or_path ${MODEL_NAME} --output_dir logs/${TASK}/${MODEL_NAME}/seed_4 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 4 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/case_hold.py --task_name ${TASK} --model_name_or_path ${MODEL_NAME} --output_dir logs/${TASK}/${MODEL_NAME}/seed_5 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 5 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/case_hold.py --task_name ${TASK} --model_name_or_path ${MODEL_NAME} --output_dir logs/${TASK}/${MODEL_NAME}/seed_5 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 5 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-python statistics/compute_avg_scores.py --dataset ${TASK}
+\ No newline at end of file
++# python statistics/compute_avg_scores.py --dataset ${TASK}
+\ No newline at end of file
+diff --git a/scripts/run_ecthr.sh b/scripts/run_ecthr.sh
+old mode 100644
+new mode 100755
+index 9c06604..32ea9d0
+--- a/scripts/run_ecthr.sh
++++ b/scripts/run_ecthr.sh
+@@ -1,16 +1,394 @@
+-GPU_NUMBER=0
+-MODEL_NAME='bert-base-uncased'
++# Paths and parameters
++ROOT_DIR="/temp/siddig"
++DATA_DIR="$ROOT_DIR/driving-license"
++OUT_DIR="$ROOT_DIR/driving-license/multitask_models"
++HF_DIR="$ROOT_DIR/driving-license/HF_models"
++FINE_TUNED_MODELS_DIR="$ROOT_DIR/driving-license/STVo_PRLM_HF_hierarchical_models_20_epochs_10_segments_transe"
++
++
++
++# GPU Configuration
++GPU_NUMBER=7
+ LOWER_CASE='True'
+-BATCH_SIZE=2
+-ACCUMULATION_STEPS=4
+-TASK='ecthr_a'
++TRAIN_BATCH_SIZE=16
++EVAL_BATCH_SIZE=8
++ACCUMULATION_STEPS=2
++TASK='ecthr_b'  # Change to 'ecthr_b' for the other subset
++
++# Configuration for the Tmux Session
++TIMESTAMP=$(date +%Y%m%d_%H%M%S)
++LOG_OUT="logs/out/$TASK/tmux-STVO-lexglue-ecthr-$TIMESTAMP.out"
++LOG_ERR="logs/err/$TASK/tmux-STVO-lexglue-ecthr-$TIMESTAMP.err"
++
++# Ensure log directories exist
++mkdir -p logs/out/$TASK logs/err/$TASK 
++mkdir -p $DATA_DIR 
++
++# Create and activate the virtual environment if it doesn't already exist
++if [ ! -d "$DATA_DIR/envs/lex-glue-env" ]; then
++    python3 -m venv $DATA_DIR/envs/lex-glue-env
++    source $DATA_DIR/envs/lex-glue-env/bin/activate
++    pip install -r ../requirements.txt
++fi
++
++source $DATA_DIR/envs/lex-glue-env/bin/activate
++
++
++# =============================================================================
++# BASELINE MODELS (Standard HuggingFace models)
++# =============================================================================
++BASELINE_MODELS=(
++    "nlpaueb/bert-base-uncased-eurlex"         # BERT-EURLEX (domain baseline)
++    "nlpaueb/bert-base-uncased-contracts"      # BERT-Contracts (domain baseline)
++    "nlpaueb/bert-base-uncased-echr"           # BERT-ECHR (domain baseline)
++    "casehold/custom-legalbert"                # Custom LegalBERT (general domain)
++    "dlicari/Italian-Legal-BERT"               # Italian LegalBERT (general domain)
++    "google-bert/bert-base-uncased"            # Google BERT (general domain)
++    "nlpaueb/legal-bert-base-uncased"          # Legal BERT (general domain)
++    "nlpaueb/legal-bert-small-uncased"         # Legal BERT (general domain)
++    "avichr/Legal-heBERT"                      # Legal heBERT (general domain)
++)
++
++# =============================================================================
++# YOUR MULTI-TASK PRE-TRAINED MODELS (from FINE_TUNED_MODELS_DIR)
++# =============================================================================
++# These are your best models from multi-task pre-training experiments
++MULTITASK_MODELS=(
++    # BERT-EURLEX variants (best performing on German StVO)
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-eurlex_m2m100_418M_clm_nsp_0.4_clu_0.2_cls_0.4"
++    # BERT-Contracts variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-contracts_m2m100_418M_clm_nsp_0.3_clu_0.0_cls_0.7"
++    # BERT-ECHR variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-echr_m2m100_418M_clm_nsp_0.3_clu_0.3_cls_0.4"
++    # Custom-LegalBERT variants
++    "$FINE_TUNED_MODELS_DIR/custom-legalbert_m2m100_418M_clm_nsp_0.4_clu_0.1_cls_0.5"
++    # Italian-Legal-BERT variants
++    "$FINE_TUNED_MODELS_DIR/Italian-Legal-BERT_m2m100_418M_clm_nsp_0.5_clu_0.4_cls_0.1"
++    # Google BERT variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased_m2m100_418M_clm_nsp_0.3_clu_0.1_cls_0.6"
++    # Legal BERT base variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-base-uncased_m2m100_418M_clm_nsp_0.2_clu_0.6_cls_0.2"
++    # Legal BERT small variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-small-uncased_m2m100_418M_clm_nsp_0.6_clu_0.3_cls_0.1"
++    # Legal heBERT variants
++    "$FINE_TUNED_MODELS_DIR/Legal-heBERT_m2m100_418M_clm_nsp_0.0_clu_0.0_cls_1.0"
++)
++
++
++
++
++# =============================================================================
++# EVALUATION FUNCTION
++# =============================================================================
++evaluate_model() {
++    local MODEL_PATH=$1
++    local MODEL_CATEGORY=$2
++    local SEED=$3
++    
++    # Extract model name for logging
++    MODEL_NAME=$(basename "$MODEL_PATH")
++    
++    echo "=================================================="
++    echo "Evaluating: $MODEL_NAME"
++    echo "Path: $MODEL_PATH"
++    echo "Category: $MODEL_CATEGORY"
++    echo "Seed: $SEED"
++    echo "=================================================="
++    
++  
++    # Output directory
++    OUTPUT_DIR="$DATA_DIR/logs/${TASK}/${MODEL_CATEGORY}/${MODEL_NAME}/seed_${SEED}"
++    mkdir -p "$OUTPUT_DIR"
++
++    # Run evaluation
++    CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python ../experiments/ecthr.py \
++        --model_name_or_path "${MODEL_PATH}" \
++        --do_lower_case ${LOWER_CASE} \
++        --output_dir "${OUTPUT_DIR}" \
++        --do_train \
++        --do_eval \
++        --do_pred \
++        --load_best_model_at_end \
++        --metric_for_best_model micro-f1 \
++        --greater_is_better True \
++        --eval_strategy epoch \
++        --save_strategy epoch \
++        --dataloader_num_workers 2 \
++        --save_total_limit 2 \
++        --num_train_epochs 20\
++        --learning_rate 3e-5 \
++        --dataloader_pin_memory True\
++        --cache_dir $HF_DIR\
++        --task ${TASK} \
++        --per_device_train_batch_size ${TRAIN_BATCH_SIZE} \
++        --per_device_eval_batch_size ${EVAL_BATCH_SIZE} \
++        --seed ${SEED} \
++        --fp16 \
++        --fp16_full_eval \
++        --gradient_accumulation_steps ${ACCUMULATION_STEPS} \
++        --eval_accumulation_steps ${ACCUMULATION_STEPS} >> "$LOG_OUT" 2>> "$LOG_ERR"
++
++
++    
++    # Check if evaluation was successful
++    if [ $? -eq 0 ]; then
++        echo "✓ Completed: $MODEL_NAME (seed $SEED)"
++        
++        # Display results if available
++        if [ -f "${OUTPUT_DIR}/eval_results.json" ]; then
++            echo "Results preview:"
++            cat "${OUTPUT_DIR}/eval_results.json"
++        fi
++    else
++        echo "✗ FAILED: $MODEL_NAME (seed $SEED)"
++    fi
++    echo ""
++}
++
++# =============================================================================
++# LIST AVAILABLE MODELS (for verification)
++# =============================================================================
++echo "========================================================================"
++echo "LexGLUE EUR-LEX Evaluation Script"
++echo "========================================================================"
++echo "Task: $TASK"
++echo "GPU: $GPU_NUMBER"
++echo "Timestamp: $TIMESTAMP"
++echo "Models directory: $FINE_TUNED_MODELS_DIR"
++echo "========================================================================"
++echo ""
++
++echo "Checking available models..."
++echo ""
++echo "Baseline Models (${#BASELINE_MODELS[@]}):"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    echo "  - $MODEL"
++done
++
++echo ""
++echo "Multi-Task Models (${#MULTITASK_MODELS[@]}):"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    if [ -d "$MODEL" ]; then
++        echo "  ✓ $(basename $MODEL)"
++    else
++        echo "  ✗ $(basename $MODEL) [NOT FOUND]"
++    fi
++done
++
++echo ""
++
++# =============================================================================
++# MAIN EVALUATION LOOP
++# =============================================================================
++
++# Seeds for multiple runs (use 3 for faster evaluation, 5 for full validation)
++SEEDS=(1 2 3 4 5)  # Change to (1 2 3 4 5) for full evaluation
++
++# -----------------------------------------------------------------------------
++# 1. EVALUATE BASELINE MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 1: Evaluating Baseline Models"
++echo "======================================================================"
++echo "Models: ${#BASELINE_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#BASELINE_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "baselines" "$SEED"
++    done
++done
++
++# -----------------------------------------------------------------------------
++# 2. EVALUATE YOUR MULTI-TASK MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 2: Evaluating Multi-Task Pre-Trained Models"
++echo "======================================================================"
++echo "Models: ${#MULTITASK_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#MULTITASK_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "multitask" "$SEED"
++    done
++done
++
++# =============================================================================
++# COMPUTE STATISTICS
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Computing Statistics Across Seeds"
++echo "======================================================================"
++
++
++SUMMARY_DIR="$DATA_DIR/logs/${TASK}/summary"
++mkdir -p "$SUMMARY_DIR"
++
++echo ""
++echo "Baseline Models:"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/baselines/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "baselines"\
++            > "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        cat "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    fi
++done
++
++echo ""
++echo "Multi-Task Models:"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/multitask/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "multitask"\
++            > "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        head -n 3 "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    fi
++done
++
++# =============================================================================
++# GENERATE COMPARISON TABLE
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table"
++echo "======================================================================"
++
++# Create comparison CSV
++COMPARISON_FILE="$DATA_DIR/logs/${TASK}/comparison_table.csv"
++
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE"
++
++# Add baseline results
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        echo "$MODEL_NAME,baseline,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},standard" >> "$COMPARISON_FILE"
++    fi
++done
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        
++        # Extract config from model name
++        CONFIG=$(echo "$MODEL_NAME" | grep -oP "clm_nsp_[\d.]+_clu_[\d.]+_cls_[\d.]+" || echo "unknown")
++        
++        echo "$MODEL_NAME,multitask,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},$CONFIG" >> "$COMPARISON_FILE"
++    fi
++done
++
++echo "Comparison table saved to: $COMPARISON_FILE"
++echo ""
++cat "$COMPARISON_FILE"
++
++# =============================================================================
++# FINAL SUMMARY
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Evaluation Complete!"
++echo "======================================================================"
++echo "Task: $TASK"
++echo "Total models evaluated: $((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]}))"
++echo "Seeds per model: ${#SEEDS[@]}"
++echo "Total training runs: $(($((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]})) * ${#SEEDS[@]}))"
++echo ""
++echo "Results directories:"
++echo "  - Baselines: $DATA_DIR/logs/${TASK}/baselines/"
++echo "  - Multi-task: $DATA_DIR/logs/${TASK}/multitask/"
++echo "  - Summary: $SUMMARY_DIR"
++echo ""
++echo "Comparison table: $COMPARISON_FILE"
++echo ""
++echo "Log files:"
++echo "  - stdout: $LOG_OUT"
++echo "  - stderr: $LOG_ERR"
++echo "======================================================================"
++
++# Display top 3 performing models
++echo ""
++echo "Top 3 Performing Models (by Micro-F1):"
++echo "----------------------------------------------------------------------"
++tail -n +2 "$COMPARISON_FILE" | sort -t',' -k3 -rn | head -n 10| \
++    awk -F',' '{printf "  %d. %s: %.2f (config: %s)\n", NR, $1, $3, $6}'
++echo "======================================================================"
++
++
++# =============================================================================
++# GENERATE COMPARISON TABLE 2 : standard vs multi-task (best perofrming model)
++# =============================================================================
++
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table 2: Standard vs Multi-Task (Best Performing Models) for each model"
++#  from comaprison_table.csv, extract each baseline model and its best performing multi-task variant (based on micro-f1) and create a new table with the following columns: Model, Category, Micro-F1, Macro-F1, Seeds, Config
++echo "==================================================================="
++COMPARISON_FILE_BEST="$DATA_DIR/logs/${TASK}/comparison_table_best_models.csv"
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE_BEST"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    # Extract baseline results
++    BASELINE_RESULT=$(grep "^$MODEL_NAME," "$COMPARISON_FILE")
++    if [ -n "$BASELINE_RESULT" ]; then
++        echo "$BASELINE_RESULT" >> "$COMPARISON_FILE_BEST"
++        
++        # Extract multi-task variants for this model
++        MULTITASK_VARIANTS=$(grep "^${MODEL_NAME}_" "$COMPARISON_FILE" | sort -t',' -k3 -rn)
++        if [ -n "$MULTITASK_VARIANTS" ]; then
++            BEST_MULTITASK=$(echo "$MULTITASK_VARIANTS" | head -n 1)
++            echo "$BEST_MULTITASK" >> "$COMPARISON_FILE_BEST"
++        fi
++    fi
++done
++echo "Comparison table 2 saved to: $COMPARISON_FILE_BEST"
++echo ""
++cat "$COMPARISON_FILE_BEST"
++
++
++
++
++
++
++# GPU_NUMBER=0
++# MODEL_NAME='bert-base-uncased'
++# LOWER_CASE='True'
++# BATCH_SIZE=2
++# ACCUMULATION_STEPS=4
++# TASK='ecthr_a'
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ecthr.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --task ${TASK} --output_dir logs/${TASK}/${MODEL_NAME}/seed_1 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 1 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ecthr.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --task ${TASK} --output_dir logs/${TASK}/${MODEL_NAME}/seed_1 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 1 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ecthr.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --task ${TASK} --output_dir logs/${TASK}/${MODEL_NAME}/seed_2 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 2 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ecthr.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --task ${TASK} --output_dir logs/${TASK}/${MODEL_NAME}/seed_2 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 2 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ecthr.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --task ${TASK} --output_dir logs/${TASK}/${MODEL_NAME}/seed_3 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 3 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ecthr.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --task ${TASK} --output_dir logs/${TASK}/${MODEL_NAME}/seed_3 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 3 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ecthr.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --task ${TASK} --output_dir logs/${TASK}/${MODEL_NAME}/seed_4 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 4 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ecthr.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --task ${TASK} --output_dir logs/${TASK}/${MODEL_NAME}/seed_4 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 4 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ecthr.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --task ${TASK} --output_dir logs/${TASK}/${MODEL_NAME}/seed_5 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 5 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ecthr.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --task ${TASK} --output_dir logs/${TASK}/${MODEL_NAME}/seed_5 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 5 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+diff --git a/scripts/run_eurlex.sh b/scripts/run_eurlex.sh
+old mode 100644
+new mode 100755
+index 8980820..d999ce3
+--- a/scripts/run_eurlex.sh
++++ b/scripts/run_eurlex.sh
+@@ -1,18 +1,385 @@
+-GPU_NUMBER=6
+-MODEL_NAME='bert-base-uncased'
++# Paths and parameters
++ROOT_DIR="/temp/siddig"
++DATA_DIR="$ROOT_DIR/driving-license"
++OUT_DIR="$ROOT_DIR/driving-license/multitask_models"
++HF_DIR="$ROOT_DIR/driving-license/HF_models"
++FINE_TUNED_MODELS_DIR="$ROOT_DIR/driving-license/STVo_PRLM_HF_hierarchical_models_20_epochs_10_segments_transe"
++
++
++
++# GPU Configuration
++GPU_NUMBER=1
+ LOWER_CASE='True'
+-BATCH_SIZE=8
+-ACCUMULATION_STEPS=1
++TRAIN_BATCH_SIZE=64
++EVAL_BATCH_SIZE=32
++ACCUMULATION_STEPS=2
+ TASK='eurlex'
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/eurlex.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE}  --output_dir logs/${TASK}/${MODEL_NAME}/seed_1 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 2 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 1 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# Configuration for the Tmux Session
++TIMESTAMP=$(date +%Y%m%d_%H%M%S)
++LOG_OUT="logs/out/$TASK/tmux-STVO-lexglue-eurlex-$TIMESTAMP.out"
++LOG_ERR="logs/err/$TASK/tmux-STVO-lexglue-eurlex-$TIMESTAMP.err"
++
++# Ensure log directories exist
++mkdir -p logs/out/$TASK logs/err/$TASK 
++mkdir -p $DATA_DIR 
++
++# Create and activate the virtual environment if it doesn't already exist
++if [ ! -d "$DATA_DIR/envs/lex-glue-env" ]; then
++    python3 -m venv $DATA_DIR/envs/lex-glue-env
++    source $DATA_DIR/envs/lex-glue-env/bin/activate
++    pip install -r ../requirements.txt
++fi
++
++source $DATA_DIR/envs/lex-glue-env/bin/activate
++
++
++# =============================================================================
++# BASELINE MODELS (Standard HuggingFace models)
++# =============================================================================
++BASELINE_MODELS=(
++    "nlpaueb/bert-base-uncased-eurlex"         # BERT-EURLEX (domain baseline)
++    "nlpaueb/bert-base-uncased-contracts"      # BERT-Contracts (domain baseline)
++    "nlpaueb/bert-base-uncased-echr"           # BERT-ECHR (domain baseline)
++    "casehold/custom-legalbert"                # Custom LegalBERT (general domain)
++    "dlicari/Italian-Legal-BERT"               # Italian LegalBERT (general domain)
++    "google-bert/bert-base-uncased"            # Google BERT (general domain)
++    "nlpaueb/legal-bert-base-uncased"          # Legal BERT (general domain)
++    "nlpaueb/legal-bert-small-uncased"         # Legal BERT (general domain)
++    "avichr/Legal-heBERT"                      # Legal heBERT (general domain)
++)
++
++# =============================================================================
++# YOUR MULTI-TASK PRE-TRAINED MODELS (from FINE_TUNED_MODELS_DIR)
++# =============================================================================
++# These are your best models from multi-task pre-training experiments
++MULTITASK_MODELS=(
++    # BERT-EURLEX variants (best performing on German StVO)
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-eurlex_m2m100_418M_clm_nsp_0.4_clu_0.2_cls_0.4"
++    # BERT-Contracts variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-contracts_m2m100_418M_clm_nsp_0.3_clu_0.0_cls_0.7"
++    # BERT-ECHR variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-echr_m2m100_418M_clm_nsp_0.3_clu_0.3_cls_0.4"
++    # Custom-LegalBERT variants
++    "$FINE_TUNED_MODELS_DIR/custom-legalbert_m2m100_418M_clm_nsp_0.4_clu_0.1_cls_0.5"
++    # Italian-Legal-BERT variants
++    "$FINE_TUNED_MODELS_DIR/Italian-Legal-BERT_m2m100_418M_clm_nsp_0.5_clu_0.4_cls_0.1"
++    # Google BERT variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased_m2m100_418M_clm_nsp_0.3_clu_0.1_cls_0.6"
++    # Legal BERT base variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-base-uncased_m2m100_418M_clm_nsp_0.2_clu_0.6_cls_0.2"
++    # Legal BERT small variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-small-uncased_m2m100_418M_clm_nsp_0.6_clu_0.3_cls_0.1"
++    # Legal heBERT variants
++    "$FINE_TUNED_MODELS_DIR/Legal-heBERT_m2m100_418M_clm_nsp_0.0_clu_0.0_cls_1.0"
++)
++
++
++# =============================================================================
++# AUTO-DISCOVER ALL MODELS (Optional: automatically find all models)
++# =============================================================================
++# # Uncomment this section to automatically discover all models in the directory
++
++# echo "Auto-discovering models in: $FINE_TUNED_MODELS_DIR"
++# MULTITASK_MODELS=()
++# for MODEL_DIR in "$FINE_TUNED_MODELS_DIR"/*; do
++#     if [ -d "$MODEL_DIR" ] && [ -f "$MODEL_DIR/config.json" ]; then
++#         MULTITASK_MODELS+=("$MODEL_DIR")
++#         echo "Found model: $(basename $MODEL_DIR)"
++#     fi
++# done
++# echo "Total models found: ${#MULTITASK_MODELS[@]}"
++
++
++# =============================================================================
++# EVALUATION FUNCTION
++# =============================================================================
++evaluate_model() {
++    local MODEL_PATH=$1
++    local MODEL_CATEGORY=$2
++    local SEED=$3
++    
++    # Extract model name for logging
++    MODEL_NAME=$(basename "$MODEL_PATH")
++    
++    echo "=================================================="
++    echo "Evaluating: $MODEL_NAME"
++    echo "Path: $MODEL_PATH"
++    echo "Category: $MODEL_CATEGORY"
++    echo "Seed: $SEED"
++    echo "=================================================="
++    
++  
++    # Output directory
++    OUTPUT_DIR="$DATA_DIR/logs/${TASK}/${MODEL_CATEGORY}/${MODEL_NAME}/seed_${SEED}"
++    mkdir -p "$OUTPUT_DIR"
++
++    # Run evaluation
++    CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python ../experiments/eurlex.py \
++        --model_name_or_path "${MODEL_PATH}" \
++        --do_lower_case ${LOWER_CASE} \
++        --output_dir "${OUTPUT_DIR}" \
++        --do_train \
++        --do_eval \
++        --do_pred \
++        --load_best_model_at_end \
++        --metric_for_best_model micro-f1 \
++        --greater_is_better True \
++        --eval_strategy epoch \
++        --save_strategy epoch \
++        --dataloader_num_workers 2 \
++        --save_total_limit 2 \
++        --num_train_epochs 20\
++        --learning_rate 3e-5 \
++        --dataloader_pin_memory True\
++        --cache_dir $HF_DIR\
++        --per_device_train_batch_size ${TRAIN_BATCH_SIZE} \
++        --per_device_eval_batch_size ${EVAL_BATCH_SIZE} \
++        --seed ${SEED} \
++        --fp16 \
++        --fp16_full_eval \
++        --gradient_accumulation_steps ${ACCUMULATION_STEPS} \
++        --eval_accumulation_steps ${ACCUMULATION_STEPS} >> "$LOG_OUT" 2>> "$LOG_ERR"
++
++
++    
++    # Check if evaluation was successful
++    if [ $? -eq 0 ]; then
++        echo "✓ Completed: $MODEL_NAME (seed $SEED)"
++        
++        # Display results if available
++        if [ -f "${OUTPUT_DIR}/eval_results.json" ]; then
++            echo "Results preview:"
++            cat "${OUTPUT_DIR}/eval_results.json"
++        fi
++    else
++        echo "✗ FAILED: $MODEL_NAME (seed $SEED)"
++    fi
++    echo ""
++}
++
++# =============================================================================
++# LIST AVAILABLE MODELS (for verification)
++# =============================================================================
++echo "========================================================================"
++echo "LexGLUE EUR-LEX Evaluation Script"
++echo "========================================================================"
++echo "Task: $TASK"
++echo "GPU: $GPU_NUMBER"
++echo "Timestamp: $TIMESTAMP"
++echo "Models directory: $FINE_TUNED_MODELS_DIR"
++echo "========================================================================"
++echo ""
++
++echo "Checking available models..."
++echo ""
++echo "Baseline Models (${#BASELINE_MODELS[@]}):"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    echo "  - $MODEL"
++done
++
++echo ""
++echo "Multi-Task Models (${#MULTITASK_MODELS[@]}):"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    if [ -d "$MODEL" ]; then
++        echo "  ✓ $(basename $MODEL)"
++    else
++        echo "  ✗ $(basename $MODEL) [NOT FOUND]"
++    fi
++done
++
++echo ""
++
++# =============================================================================
++# MAIN EVALUATION LOOP
++# =============================================================================
++
++# Seeds for multiple runs (use 3 for faster evaluation, 5 for full validation)
++SEEDS=(1 2 3 4 5)  # Change to (1 2 3 4 5) for full evaluation
++
++# -----------------------------------------------------------------------------
++# 1. EVALUATE BASELINE MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 1: Evaluating Baseline Models"
++echo "======================================================================"
++echo "Models: ${#BASELINE_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#BASELINE_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "baselines" "$SEED"
++    done
++done
++
++# -----------------------------------------------------------------------------
++# 2. EVALUATE YOUR MULTI-TASK MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 2: Evaluating Multi-Task Pre-Trained Models"
++echo "======================================================================"
++echo "Models: ${#MULTITASK_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#MULTITASK_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "multitask" "$SEED"
++    done
++done
++
++# =============================================================================
++# COMPUTE STATISTICS
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Computing Statistics Across Seeds"
++echo "======================================================================"
++
++
++SUMMARY_DIR="$DATA_DIR/logs/${TASK}/summary"
++mkdir -p "$SUMMARY_DIR"
++
++echo ""
++echo "Baseline Models:"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/baselines/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "baselines"\
++            > "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        cat "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    fi
++done
++
++echo ""
++echo "Multi-Task Models:"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/multitask/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "multitask"\
++            > "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        head -n 3 "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    fi
++done
++
++# =============================================================================
++# GENERATE COMPARISON TABLE
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table"
++echo "======================================================================"
++
++# Create comparison CSV
++COMPARISON_FILE="$DATA_DIR/logs/${TASK}/comparison_table.csv"
++
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE"
++
++# Add baseline results
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        echo "$MODEL_NAME,baseline,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},standard" >> "$COMPARISON_FILE"
++    fi
++done
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        
++        # Extract config from model name
++        CONFIG=$(echo "$MODEL_NAME" | grep -oP "clm_nsp_[\d.]+_clu_[\d.]+_cls_[\d.]+" || echo "unknown")
++        
++        echo "$MODEL_NAME,multitask,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},$CONFIG" >> "$COMPARISON_FILE"
++    fi
++done
++
++echo "Comparison table saved to: $COMPARISON_FILE"
++echo ""
++cat "$COMPARISON_FILE"
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/eurlex.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_2 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 2 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 2 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# =============================================================================
++# FINAL SUMMARY
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Evaluation Complete!"
++echo "======================================================================"
++echo "Task: $TASK"
++echo "Total models evaluated: $((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]}))"
++echo "Seeds per model: ${#SEEDS[@]}"
++echo "Total training runs: $(($((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]})) * ${#SEEDS[@]}))"
++echo ""
++echo "Results directories:"
++echo "  - Baselines: $DATA_DIR/logs/${TASK}/baselines/"
++echo "  - Multi-task: $DATA_DIR/logs/${TASK}/multitask/"
++echo "  - Summary: $SUMMARY_DIR"
++echo ""
++echo "Comparison table: $COMPARISON_FILE"
++echo ""
++echo "Log files:"
++echo "  - stdout: $LOG_OUT"
++echo "  - stderr: $LOG_ERR"
++echo "======================================================================"
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/eurlex.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_3 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 2 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 3 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# Display top 3 performing models
++echo ""
++echo "Top 3 Performing Models (by Micro-F1):"
++echo "----------------------------------------------------------------------"
++tail -n +2 "$COMPARISON_FILE" | sort -t',' -k3 -rn | head -n 10| \
++    awk -F',' '{printf "  %d. %s: %.2f (config: %s)\n", NR, $1, $3, $6}'
++echo "======================================================================"
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/eurlex.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_4 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 2 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 4 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/eurlex.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_5 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 2 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 5 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# =============================================================================
++# GENERATE COMPARISON TABLE 2 : standard vs multi-task (best perofrming model)
++# =============================================================================
+ 
+-python statistics/compute_avg_scores.py --dataset ${TASK}
+\ No newline at end of file
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table 2: Standard vs Multi-Task (Best Performing Models) for each model"
++#  from comaprison_table.csv, extract each baseline model and its best performing multi-task variant (based on micro-f1) and create a new table with the following columns: Model, Category, Micro-F1, Macro-F1, Seeds, Config
++echo "==================================================================="
++COMPARISON_FILE_BEST="$DATA_DIR/logs/${TASK}/comparison_table_best_models.csv"
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE_BEST"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    # Extract baseline results
++    BASELINE_RESULT=$(grep "^$MODEL_NAME," "$COMPARISON_FILE")
++    if [ -n "$BASELINE_RESULT" ]; then
++        echo "$BASELINE_RESULT" >> "$COMPARISON_FILE_BEST"
++        
++        # Extract multi-task variants for this model
++        MULTITASK_VARIANTS=$(grep "^${MODEL_NAME}_" "$COMPARISON_FILE" | sort -t',' -k3 -rn)
++        if [ -n "$MULTITASK_VARIANTS" ]; then
++            BEST_MULTITASK=$(echo "$MULTITASK_VARIANTS" | head -n 1)
++            echo "$BEST_MULTITASK" >> "$COMPARISON_FILE_BEST"
++        fi
++    fi
++done
++echo "Comparison table 2 saved to: $COMPARISON_FILE_BEST"
++echo ""
++cat "$COMPARISON_FILE_BEST"
+\ No newline at end of file
+diff --git a/scripts/run_ledgar.sh b/scripts/run_ledgar.sh
+old mode 100644
+new mode 100755
+index 992cc28..59c4387
+--- a/scripts/run_ledgar.sh
++++ b/scripts/run_ledgar.sh
+@@ -1,18 +1,406 @@
+-GPU_NUMBER=0
+-MODEL_NAME='bert-base-uncased'
++# Paths and parameters
++ROOT_DIR="/temp/siddig"
++DATA_DIR="$ROOT_DIR/driving-license"
++OUT_DIR="$ROOT_DIR/driving-license/multitask_models"
++HF_DIR="$ROOT_DIR/driving-license/HF_models"
++FINE_TUNED_MODELS_DIR="$ROOT_DIR/driving-license/STVo_PRLM_HF_hierarchical_models_20_epochs_10_segments_transe"
++
++
++
++# GPU Configuration
++GPU_NUMBER=2
+ LOWER_CASE='True'
+-BATCH_SIZE=8
+-ACCUMULATION_STEPS=1
++TRAIN_BATCH_SIZE=64
++EVAL_BATCH_SIZE=32
++ACCUMULATION_STEPS=4
+ TASK='ledgar'
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ledgar.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE}  --output_dir logs/${TASK}/${MODEL_NAME}/seed_1 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 1 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# Configuration for the Tmux Session
++TIMESTAMP=$(date +%Y%m%d_%H%M%S)
++LOG_OUT="logs/out/$TASK/tmux-STVO-lexglue-ledgar-$TIMESTAMP.out"
++LOG_ERR="logs/err/$TASK/tmux-STVO-lexglue-ledgar-$TIMESTAMP.err"
++
++# Ensure log directories exist
++mkdir -p logs/out/$TASK logs/err/$TASK 
++mkdir -p $DATA_DIR 
++
++# Create and activate the virtual environment if it doesn't already exist
++if [ ! -d "$DATA_DIR/envs/lex-glue-env" ]; then
++    python3 -m venv $DATA_DIR/envs/lex-glue-env
++    source $DATA_DIR/envs/lex-glue-env/bin/activate
++    pip install -r ../requirements.txt
++fi
++
++source $DATA_DIR/envs/lex-glue-env/bin/activate
++
++
++# =============================================================================
++# BASELINE MODELS (Standard HuggingFace models)
++# =============================================================================
++BASELINE_MODELS=(
++    "nlpaueb/bert-base-uncased-eurlex"         # BERT-EURLEX (domain baseline)
++    "nlpaueb/bert-base-uncased-contracts"      # BERT-Contracts (domain baseline)
++    "nlpaueb/bert-base-uncased-echr"           # BERT-ECHR (domain baseline)
++    "casehold/custom-legalbert"                # Custom LegalBERT (general domain)
++    "dlicari/Italian-Legal-BERT"               # Italian LegalBERT (general domain)
++    "google-bert/bert-base-uncased"            # Google BERT (general domain)
++    "nlpaueb/legal-bert-base-uncased"          # Legal BERT (general domain)
++    "nlpaueb/legal-bert-small-uncased"         # Legal BERT (general domain)
++    "avichr/Legal-heBERT"                      # Legal heBERT (general domain)
++)
++
++# =============================================================================
++# YOUR MULTI-TASK PRE-TRAINED MODELS (from FINE_TUNED_MODELS_DIR)
++# =============================================================================
++# These are your best models from multi-task pre-training experiments
++MULTITASK_MODELS=(
++    # BERT-EURLEX variants (best performing on German StVO)
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-eurlex_m2m100_418M_clm_nsp_0.4_clu_0.2_cls_0.4"
++    # BERT-Contracts variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-contracts_m2m100_418M_clm_nsp_0.3_clu_0.0_cls_0.7"
++    # BERT-ECHR variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-echr_m2m100_418M_clm_nsp_0.3_clu_0.3_cls_0.4"
++    # Custom-LegalBERT variants
++    "$FINE_TUNED_MODELS_DIR/custom-legalbert_m2m100_418M_clm_nsp_0.4_clu_0.1_cls_0.5"
++    # Italian-Legal-BERT variants
++    "$FINE_TUNED_MODELS_DIR/Italian-Legal-BERT_m2m100_418M_clm_nsp_0.5_clu_0.4_cls_0.1"
++    # Google BERT variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased_m2m100_418M_clm_nsp_0.3_clu_0.1_cls_0.6"
++    # Legal BERT base variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-base-uncased_m2m100_418M_clm_nsp_0.2_clu_0.6_cls_0.2"
++    # Legal BERT small variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-small-uncased_m2m100_418M_clm_nsp_0.6_clu_0.3_cls_0.1"
++    # Legal heBERT variants
++    "$FINE_TUNED_MODELS_DIR/Legal-heBERT_m2m100_418M_clm_nsp_0.0_clu_0.0_cls_1.0"
++)
++
++# =============================================================================
++# AUTO-DISCOVER ALL MODELS (Optional: automatically find all models)
++# =============================================================================
++# Uncomment this section to automatically discover all models in the directory
++
++# echo "Auto-discovering models in: $FINE_TUNED_MODELS_DIR"
++# MULTITASK_MODELS=()
++# for MODEL_DIR in "$FINE_TUNED_MODELS_DIR"/*; do
++#     if [ -d "$MODEL_DIR" ] && [ -f "$MODEL_DIR/config.json" ]; then
++#         MULTITASK_MODELS+=("$MODEL_DIR")
++#         echo "Found model: $(basename $MODEL_DIR)"
++#     fi
++# done
++# echo "Total models found: ${#MULTITASK_MODELS[@]}"
++
++
++
++# =============================================================================
++# EVALUATION FUNCTION
++# =============================================================================
++evaluate_model() {
++    local MODEL_PATH=$1
++    local MODEL_CATEGORY=$2
++    local SEED=$3
++    
++    # Extract model name for logging
++    MODEL_NAME=$(basename "$MODEL_PATH")
++    
++    echo "=================================================="
++    echo "Evaluating: $MODEL_NAME"
++    echo "Path: $MODEL_PATH"
++    echo "Category: $MODEL_CATEGORY"
++    echo "Seed: $SEED"
++    echo "=================================================="
++    
++  
++    # Output directory
++    OUTPUT_DIR="$DATA_DIR/logs/${TASK}/${MODEL_CATEGORY}/${MODEL_NAME}/seed_${SEED}"
++    mkdir -p "$OUTPUT_DIR"
++
++    # Run evaluation
++    CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python ../experiments/ledgar.py \
++        --model_name_or_path "${MODEL_PATH}" \
++        --do_lower_case ${LOWER_CASE} \
++        --output_dir "${OUTPUT_DIR}" \
++        --do_train \
++        --do_eval \
++        --do_pred \
++        --load_best_model_at_end \
++        --metric_for_best_model micro-f1 \
++        --greater_is_better True \
++        --eval_strategy epoch \
++        --save_strategy epoch \
++        --dataloader_num_workers 2 \
++        --save_total_limit 2 \
++        --num_train_epochs 20\
++        --learning_rate 3e-5 \
++        --dataloader_pin_memory True\
++        --cache_dir $HF_DIR\
++        --per_device_train_batch_size ${TRAIN_BATCH_SIZE} \
++        --per_device_eval_batch_size ${EVAL_BATCH_SIZE} \
++        --seed ${SEED} \
++        --fp16 \
++        --fp16_full_eval \
++        --gradient_accumulation_steps ${ACCUMULATION_STEPS} \
++        --eval_accumulation_steps ${ACCUMULATION_STEPS} >> "$LOG_OUT" 2>> "$LOG_ERR"
++
++
++    
++    # Check if evaluation was successful
++    if [ $? -eq 0 ]; then
++        echo "✓ Completed: $MODEL_NAME (seed $SEED)"
++        
++        # Display results if available
++        if [ -f "${OUTPUT_DIR}/eval_results.json" ]; then
++            echo "Results preview:"
++            cat "${OUTPUT_DIR}/eval_results.json"
++        fi
++    else
++        echo "✗ FAILED: $MODEL_NAME (seed $SEED)"
++    fi
++    echo ""
++}
++
++# =============================================================================
++# LIST AVAILABLE MODELS (for verification)
++# =============================================================================
++echo "========================================================================"
++echo "LexGLUE EUR-LEX Evaluation Script"
++echo "========================================================================"
++echo "Task: $TASK"
++echo "GPU: $GPU_NUMBER"
++echo "Timestamp: $TIMESTAMP"
++echo "Models directory: $FINE_TUNED_MODELS_DIR"
++echo "========================================================================"
++echo ""
++
++echo "Checking available models..."
++echo ""
++echo "Baseline Models (${#BASELINE_MODELS[@]}):"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    echo "  - $MODEL"
++done
++
++echo ""
++echo "Multi-Task Models (${#MULTITASK_MODELS[@]}):"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    if [ -d "$MODEL" ]; then
++        echo "  ✓ $(basename $MODEL)"
++    else
++        echo "  ✗ $(basename $MODEL) [NOT FOUND]"
++    fi
++done
++
++echo ""
++
++# =============================================================================
++# MAIN EVALUATION LOOP
++# =============================================================================
++
++# Seeds for multiple runs (use 3 for faster evaluation, 5 for full validation)
++SEEDS=(1 2 3 4 5)  # Change to (1 2 3 4 5) for full evaluation
++
++# -----------------------------------------------------------------------------
++# 1. EVALUATE BASELINE MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 1: Evaluating Baseline Models"
++echo "======================================================================"
++echo "Models: ${#BASELINE_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#BASELINE_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "baselines" "$SEED"
++    done
++done
++
++# -----------------------------------------------------------------------------
++# 2. EVALUATE YOUR MULTI-TASK MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 2: Evaluating Multi-Task Pre-Trained Models"
++echo "======================================================================"
++echo "Models: ${#MULTITASK_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#MULTITASK_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "multitask" "$SEED"
++    done
++done
++
++# =============================================================================
++# COMPUTE STATISTICS
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Computing Statistics Across Seeds"
++echo "======================================================================"
++
++
++SUMMARY_DIR="$DATA_DIR/logs/${TASK}/summary"
++mkdir -p "$SUMMARY_DIR"
++
++echo ""
++echo "Baseline Models:"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/baselines/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "baselines"\
++            > "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        cat "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    fi
++done
++
++echo ""
++echo "Multi-Task Models:"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/multitask/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "multitask"\
++            > "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        head -n 3 "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    fi
++done
++
++# =============================================================================
++# GENERATE COMPARISON TABLE
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table"
++echo "======================================================================"
++
++# Create comparison CSV
++COMPARISON_FILE="$DATA_DIR/logs/${TASK}/comparison_table.csv"
++
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE"
++
++# Add baseline results
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        echo "$MODEL_NAME,baseline,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},standard" >> "$COMPARISON_FILE"
++    fi
++done
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        
++        # Extract config from model name
++        CONFIG=$(echo "$MODEL_NAME" | grep -oP "clm_nsp_[\d.]+_clu_[\d.]+_cls_[\d.]+" || echo "unknown")
++        
++        echo "$MODEL_NAME,multitask,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},$CONFIG" >> "$COMPARISON_FILE"
++    fi
++done
++
++echo "Comparison table saved to: $COMPARISON_FILE"
++echo ""
++cat "$COMPARISON_FILE"
++
++# =============================================================================
++# FINAL SUMMARY
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Evaluation Complete!"
++echo "======================================================================"
++echo "Task: $TASK"
++echo "Total models evaluated: $((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]}))"
++echo "Seeds per model: ${#SEEDS[@]}"
++echo "Total training runs: $(($((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]})) * ${#SEEDS[@]}))"
++echo ""
++echo "Results directories:"
++echo "  - Baselines: $DATA_DIR/logs/${TASK}/baselines/"
++echo "  - Multi-task: $DATA_DIR/logs/${TASK}/multitask/"
++echo "  - Summary: $SUMMARY_DIR"
++echo ""
++echo "Comparison table: $COMPARISON_FILE"
++echo ""
++echo "Log files:"
++echo "  - stdout: $LOG_OUT"
++echo "  - stderr: $LOG_ERR"
++echo "======================================================================"
++
++# Display top 3 performing models
++echo ""
++echo "Top 3 Performing Models (by Micro-F1):"
++echo "----------------------------------------------------------------------"
++tail -n +2 "$COMPARISON_FILE" | sort -t',' -k3 -rn | head -n 10| \
++    awk -F',' '{printf "  %d. %s: %.2f (config: %s)\n", NR, $1, $3, $6}'
++echo "======================================================================"
++
++
++# =============================================================================
++# GENERATE COMPARISON TABLE 2 : standard vs multi-task (best perofrming model)
++# =============================================================================
++
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table 2: Standard vs Multi-Task (Best Performing Models) for each model"
++#  from comaprison_table.csv, extract each baseline model and its best performing multi-task variant (based on micro-f1) and create a new table with the following columns: Model, Category, Micro-F1, Macro-F1, Seeds, Config
++echo "==================================================================="
++COMPARISON_FILE_BEST="$DATA_DIR/logs/${TASK}/comparison_table_best_models.csv"
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE_BEST"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    # Extract baseline results
++    BASELINE_RESULT=$(grep "^$MODEL_NAME," "$COMPARISON_FILE")
++    if [ -n "$BASELINE_RESULT" ]; then
++        echo "$BASELINE_RESULT" >> "$COMPARISON_FILE_BEST"
++        
++        # Extract multi-task variants for this model
++        MULTITASK_VARIANTS=$(grep "^${MODEL_NAME}_" "$COMPARISON_FILE" | sort -t',' -k3 -rn)
++        if [ -n "$MULTITASK_VARIANTS" ]; then
++            BEST_MULTITASK=$(echo "$MULTITASK_VARIANTS" | head -n 1)
++            echo "$BEST_MULTITASK" >> "$COMPARISON_FILE_BEST"
++        fi
++    fi
++done
++echo "Comparison table 2 saved to: $COMPARISON_FILE_BEST"
++echo ""
++cat "$COMPARISON_FILE_BEST"
++
++
++
++# GPU_NUMBER=0
++# MODEL_NAME='bert-base-uncased'
++# LOWER_CASE='True'
++# BATCH_SIZE=8
++# ACCUMULATION_STEPS=1
++# TASK='ledgar'
++
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ledgar.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE}  --output_dir logs/${TASK}/${MODEL_NAME}/seed_1 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 1 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ledgar.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_2 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 2 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ledgar.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_2 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 2 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ledgar.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_3 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 3 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ledgar.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_3 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 3 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ledgar.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_4 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 4 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ledgar.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_4 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 4 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ledgar.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_5 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 5 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/ledgar.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_5 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 5 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-python statistics/compute_avg_scores.py --dataset ${TASK}
+\ No newline at end of file
++# python statistics/compute_avg_scores.py --dataset ${TASK}
+\ No newline at end of file
+diff --git a/scripts/run_scotus.sh b/scripts/run_scotus.sh
+old mode 100644
+new mode 100755
+index c0e4494..33c226d
+--- a/scripts/run_scotus.sh
++++ b/scripts/run_scotus.sh
+@@ -1,18 +1,408 @@
+-GPU_NUMBER=0
+-MODEL_NAME='bert-base-uncased'
++# Paths and parameters
++ROOT_DIR="/temp/siddig"
++DATA_DIR="$ROOT_DIR/driving-license"
++OUT_DIR="$ROOT_DIR/driving-license/multitask_models"
++HF_DIR="$ROOT_DIR/driving-license/HF_models"
++FINE_TUNED_MODELS_DIR="$ROOT_DIR/driving-license/STVo_PRLM_HF_hierarchical_models_20_epochs_10_segments_transe"
++
++
++
++# GPU Configuration
++GPU_NUMBER=6
+ LOWER_CASE='True'
+-BATCH_SIZE=2
+-ACCUMULATION_STEPS=4
++TRAIN_BATCH_SIZE=16
++EVAL_BATCH_SIZE=8
++ACCUMULATION_STEPS=2
+ TASK='scotus'
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/scotus.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE}  --output_dir logs/${TASK}/${MODEL_NAME}/seed_1 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 1 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# Configuration for the Tmux Session
++TIMESTAMP=$(date +%Y%m%d_%H%M%S)
++LOG_OUT="logs/out/$TASK/tmux-STVO-lexglue-scotus-$TIMESTAMP.out"
++LOG_ERR="logs/err/$TASK/tmux-STVO-lexglue-scotus-$TIMESTAMP.err"
++
++# Ensure log directories exist
++mkdir -p logs/out/$TASK logs/err/$TASK 
++mkdir -p $DATA_DIR 
++
++# Create and activate the virtual environment if it doesn't already exist
++if [ ! -d "$DATA_DIR/envs/lex-glue-env" ]; then
++    python3 -m venv $DATA_DIR/envs/lex-glue-env
++    source $DATA_DIR/envs/lex-glue-env/bin/activate
++    pip install -r ../requirements.txt
++fi
++
++source $DATA_DIR/envs/lex-glue-env/bin/activate
++
++
++# =============================================================================
++# BASELINE MODELS (Standard HuggingFace models)
++# =============================================================================
++BASELINE_MODELS=(
++    "nlpaueb/bert-base-uncased-eurlex"         # BERT-EURLEX (domain baseline)
++    "nlpaueb/bert-base-uncased-contracts"      # BERT-Contracts (domain baseline)
++    "nlpaueb/bert-base-uncased-echr"           # BERT-ECHR (domain baseline)
++    "casehold/custom-legalbert"                # Custom LegalBERT (general domain)
++    "dlicari/Italian-Legal-BERT"               # Italian LegalBERT (general domain)
++    "google-bert/bert-base-uncased"            # Google BERT (general domain)
++    "nlpaueb/legal-bert-base-uncased"          # Legal BERT (general domain)
++    "nlpaueb/legal-bert-small-uncased"         # Legal BERT (general domain)
++    "avichr/Legal-heBERT"                      # Legal heBERT (general domain)
++)
++
++# =============================================================================
++# YOUR MULTI-TASK PRE-TRAINED MODELS (from FINE_TUNED_MODELS_DIR)
++# =============================================================================
++# These are your best models from multi-task pre-training experiments
++MULTITASK_MODELS=(
++    # BERT-EURLEX variants (best performing on German StVO)
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-eurlex_m2m100_418M_clm_nsp_0.4_clu_0.2_cls_0.4"
++    # BERT-Contracts variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-contracts_m2m100_418M_clm_nsp_0.3_clu_0.0_cls_0.7"
++    # BERT-ECHR variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-echr_m2m100_418M_clm_nsp_0.3_clu_0.3_cls_0.4"
++    # Custom-LegalBERT variants
++    "$FINE_TUNED_MODELS_DIR/custom-legalbert_m2m100_418M_clm_nsp_0.4_clu_0.1_cls_0.5"
++    # Italian-Legal-BERT variants
++    "$FINE_TUNED_MODELS_DIR/Italian-Legal-BERT_m2m100_418M_clm_nsp_0.5_clu_0.4_cls_0.1"
++    # Google BERT variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased_m2m100_418M_clm_nsp_0.3_clu_0.1_cls_0.6"
++    # Legal BERT base variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-base-uncased_m2m100_418M_clm_nsp_0.2_clu_0.6_cls_0.2"
++    # Legal BERT small variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-small-uncased_m2m100_418M_clm_nsp_0.6_clu_0.3_cls_0.1"
++    # Legal heBERT variants
++    "$FINE_TUNED_MODELS_DIR/Legal-heBERT_m2m100_418M_clm_nsp_0.0_clu_0.0_cls_1.0"
++)
++
++
++# # =============================================================================
++# # AUTO-DISCOVER ALL MODELS (Optional: automatically find all models)
++# # =============================================================================
++# # Uncomment this section to automatically discover all models in the directory
++
++# echo "Auto-discovering models in: $FINE_TUNED_MODELS_DIR"
++# MULTITASK_MODELS=()
++# for MODEL_DIR in "$FINE_TUNED_MODELS_DIR"/*; do
++#     if [ -d "$MODEL_DIR" ] && [ -f "$MODEL_DIR/config.json" ]; then
++#         MULTITASK_MODELS+=("$MODEL_DIR")
++#         echo "Found model: $(basename $MODEL_DIR)"
++#     fi
++# done
++# echo "Total models found: ${#MULTITASK_MODELS[@]}"
++
++# =============================================================================
++# EVALUATION FUNCTION
++# =============================================================================
++evaluate_model() {
++    local MODEL_PATH=$1
++    local MODEL_CATEGORY=$2
++    local SEED=$3
++    
++    # Extract model name for logging
++    MODEL_NAME=$(basename "$MODEL_PATH")
++    
++    echo "=================================================="
++    echo "Evaluating: $MODEL_NAME"
++    echo "Path: $MODEL_PATH"
++    echo "Category: $MODEL_CATEGORY"
++    echo "Seed: $SEED"
++    echo "=================================================="
++    
++  
++    # Output directory
++    OUTPUT_DIR="$DATA_DIR/logs/${TASK}/${MODEL_CATEGORY}/${MODEL_NAME}/seed_${SEED}"
++    mkdir -p "$OUTPUT_DIR"
++    
++   
++
++    # Run evaluation
++    CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python ../experiments/scotus.py \
++        --model_name_or_path "${MODEL_PATH}" \
++        --do_lower_case ${LOWER_CASE} \
++        --output_dir "${OUTPUT_DIR}" \
++        --do_train \
++        --do_eval \
++        --do_pred \
++        --load_best_model_at_end \
++        --metric_for_best_model micro-f1 \
++        --greater_is_better True \
++        --eval_strategy epoch \
++        --save_strategy epoch \
++        --dataloader_num_workers 2 \
++        --save_total_limit 2 \
++        --num_train_epochs 20\
++        --learning_rate 3e-5 \
++        --dataloader_pin_memory True\
++        --cache_dir $HF_DIR\
++        --per_device_train_batch_size ${TRAIN_BATCH_SIZE} \
++        --per_device_eval_batch_size ${EVAL_BATCH_SIZE} \
++        --seed ${SEED} \
++        --fp16 \
++        --fp16_full_eval \
++        --gradient_accumulation_steps ${ACCUMULATION_STEPS} \
++        --eval_accumulation_steps ${ACCUMULATION_STEPS} >> "$LOG_OUT" 2>> "$LOG_ERR"
++
++    
++    # Check if evaluation was successful
++    if [ $? -eq 0 ]; then
++        echo "✓ Completed: $MODEL_NAME (seed $SEED)"
++        
++        # Display results if available
++        if [ -f "${OUTPUT_DIR}/eval_results.json" ]; then
++            echo "Results preview:"
++            cat "${OUTPUT_DIR}/eval_results.json"
++        fi
++    else
++        echo "✗ FAILED: $MODEL_NAME (seed $SEED)"
++    fi
++    echo ""
++}
++
++# =============================================================================
++# LIST AVAILABLE MODELS (for verification)
++# =============================================================================
++echo "========================================================================"
++echo "LexGLUE SCOTUS Evaluation Script"
++echo "========================================================================"
++echo "Task: $TASK"
++echo "GPU: $GPU_NUMBER"
++echo "Timestamp: $TIMESTAMP"
++echo "Models directory: $FINE_TUNED_MODELS_DIR"
++echo "========================================================================"
++echo ""
++
++echo "Checking available models..."
++echo ""
++echo "Baseline Models (${#BASELINE_MODELS[@]}):"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    echo "  - $MODEL"
++done
++
++echo ""
++echo "Multi-Task Models (${#MULTITASK_MODELS[@]}):"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    if [ -d "$MODEL" ]; then
++        echo "  ✓ $(basename $MODEL)"
++    else
++        echo "  ✗ $(basename $MODEL) [NOT FOUND]"
++    fi
++done
++
++echo ""
++
++# =============================================================================
++# MAIN EVALUATION LOOP
++# =============================================================================
++
++# Seeds for multiple runs (use 3 for faster evaluation, 5 for full validation)
++SEEDS=(1 2 3 4 5)  # Change to (1 2 3 4 5) for full evaluation
++
++# -----------------------------------------------------------------------------
++# 1. EVALUATE BASELINE MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 1: Evaluating Baseline Models"
++echo "======================================================================"
++echo "Models: ${#BASELINE_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#BASELINE_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "baselines" "$SEED"
++    done
++done
++
++# -----------------------------------------------------------------------------
++# 2. EVALUATE YOUR MULTI-TASK MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 2: Evaluating Multi-Task Pre-Trained Models"
++echo "======================================================================"
++echo "Models: ${#MULTITASK_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#MULTITASK_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "multitask" "$SEED"
++    done
++done
++
++# =============================================================================
++# COMPUTE STATISTICS
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Computing Statistics Across Seeds"
++echo "======================================================================"
++
++
++SUMMARY_DIR="$DATA_DIR/logs/${TASK}/summary"
++mkdir -p "$SUMMARY_DIR"
++
++echo ""
++echo "Baseline Models:"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/baselines/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "baselines"\
++            > "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        cat "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    fi
++done
++
++echo ""
++echo "Multi-Task Models:"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/multitask/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "multitask"\
++            > "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        head -n 3 "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    fi
++done
++
++# =============================================================================
++# GENERATE COMPARISON TABLE
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table"
++echo "======================================================================"
++
++# Create comparison CSV
++COMPARISON_FILE="$DATA_DIR/logs/${TASK}/comparison_table.csv"
++
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE"
++
++# Add baseline results
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        echo "$MODEL_NAME,baseline,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},standard" >> "$COMPARISON_FILE"
++    fi
++done
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        
++        # Extract config from model name
++        CONFIG=$(echo "$MODEL_NAME" | grep -oP "clm_nsp_[\d.]+_clu_[\d.]+_cls_[\d.]+" || echo "unknown")
++        
++        echo "$MODEL_NAME,multitask,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},$CONFIG" >> "$COMPARISON_FILE"
++    fi
++done
++
++echo "Comparison table saved to: $COMPARISON_FILE"
++echo ""
++cat "$COMPARISON_FILE"
++
++# =============================================================================
++# FINAL SUMMARY
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Evaluation Complete!"
++echo "======================================================================"
++echo "Task: $TASK"
++echo "Total models evaluated: $((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]}))"
++echo "Seeds per model: ${#SEEDS[@]}"
++echo "Total training runs: $(($((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]})) * ${#SEEDS[@]}))"
++echo ""
++echo "Results directories:"
++echo "  - Baselines: $DATA_DIR/logs/${TASK}/baselines/"
++echo "  - Multi-task: $DATA_DIR/logs/${TASK}/multitask/"
++echo "  - Summary: $SUMMARY_DIR"
++echo ""
++echo "Comparison table: $COMPARISON_FILE"
++echo ""
++echo "Log files:"
++echo "  - stdout: $LOG_OUT"
++echo "  - stderr: $LOG_ERR"
++echo "======================================================================"
++
++# Display top 3 performing models
++echo ""
++echo "Top 3 Performing Models (by Micro-F1):"
++echo "----------------------------------------------------------------------"
++tail -n +2 "$COMPARISON_FILE" | sort -t',' -k3 -rn | head -n 10| \
++    awk -F',' '{printf "  %d. %s: %.2f (config: %s)\n", NR, $1, $3, $6}'
++echo "======================================================================"
++
++
++
++# =============================================================================
++# GENERATE COMPARISON TABLE 2 : standard vs multi-task (best perofrming model)
++# =============================================================================
++
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table 2: Standard vs Multi-Task (Best Performing Models) for each model"
++#  from comaprison_table.csv, extract each baseline model and its best performing multi-task variant (based on micro-f1) and create a new table with the following columns: Model, Category, Micro-F1, Macro-F1, Seeds, Config
++echo "==================================================================="
++COMPARISON_FILE_BEST="$DATA_DIR/logs/${TASK}/comparison_table_best_models.csv"
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE_BEST"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    # Extract baseline results
++    BASELINE_RESULT=$(grep "^$MODEL_NAME," "$COMPARISON_FILE")
++    if [ -n "$BASELINE_RESULT" ]; then
++        echo "$BASELINE_RESULT" >> "$COMPARISON_FILE_BEST"
++        
++        # Extract multi-task variants for this model
++        MULTITASK_VARIANTS=$(grep "^${MODEL_NAME}_" "$COMPARISON_FILE" | sort -t',' -k3 -rn)
++        if [ -n "$MULTITASK_VARIANTS" ]; then
++            BEST_MULTITASK=$(echo "$MULTITASK_VARIANTS" | head -n 1)
++            echo "$BEST_MULTITASK" >> "$COMPARISON_FILE_BEST"
++        fi
++    fi
++done
++echo "Comparison table 2 saved to: $COMPARISON_FILE_BEST"
++
++
++
++
++
++
++# GPU_NUMBER=0
++# MODEL_NAME='bert-base-uncased'
++# LOWER_CASE='True'
++# BATCH_SIZE=2
++# ACCUMULATION_STEPS=4
++# TASK='scotus'
++
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/scotus.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE}  --output_dir logs/${TASK}/${MODEL_NAME}/seed_1 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 1 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/scotus.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_2 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 2 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/scotus.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_2 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 2 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/scotus.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_3 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 3 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/scotus.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_3 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 3 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/scotus.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_4 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 4 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/scotus.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_4 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 4 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/scotus.py  --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_5 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 5 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/scotus.py  --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_5 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 5 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-python statistics/compute_avg_scores.py --dataset ${TASK}
+\ No newline at end of file
++# python statistics/compute_avg_scores.py --dataset ${TASK}
+\ No newline at end of file
+diff --git a/scripts/run_unfair_tos.sh b/scripts/run_unfair_tos.sh
+old mode 100644
+new mode 100755
+index 879d3ee..3cc30b9
+--- a/scripts/run_unfair_tos.sh
++++ b/scripts/run_unfair_tos.sh
+@@ -1,18 +1,385 @@
+-GPU_NUMBER=0
+-MODEL_NAME='bert-base-uncased'
++# Paths and parameters
++ROOT_DIR="/temp/siddig"
++DATA_DIR="$ROOT_DIR/driving-license"
++OUT_DIR="$ROOT_DIR/driving-license/multitask_models"
++HF_DIR="$ROOT_DIR/driving-license/HF_models"
++FINE_TUNED_MODELS_DIR="$ROOT_DIR/driving-license/STVo_PRLM_HF_hierarchical_models_20_epochs_10_segments_transe"
++
++
++
++# GPU Configuration
++GPU_NUMBER=4
+ LOWER_CASE='True'
+-BATCH_SIZE=8
+-ACCUMULATION_STEPS=1
++TRAIN_BATCH_SIZE=64
++EVAL_BATCH_SIZE=32
++ACCUMULATION_STEPS=2
+ TASK='unfair_tos'
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/unfair_tos.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_1 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 1 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# Configuration for the Tmux Session
++TIMESTAMP=$(date +%Y%m%d_%H%M%S)
++LOG_OUT="logs/out/$TASK/tmux-STVO-lexglue-unfair_tos-$TIMESTAMP.out"
++LOG_ERR="logs/err/$TASK/tmux-STVO-lexglue-unfair_tos-$TIMESTAMP.err"
++
++# Ensure log directories exist
++mkdir -p logs/out/$TASK logs/err/$TASK 
++mkdir -p $DATA_DIR 
++
++# Create and activate the virtual environment if it doesn't already exist
++if [ ! -d "$DATA_DIR/envs/lex-glue-env" ]; then
++    python3 -m venv $DATA_DIR/envs/lex-glue-env
++    source $DATA_DIR/envs/lex-glue-env/bin/activate
++    pip install -r ../requirements.txt
++fi
++
++source $DATA_DIR/envs/lex-glue-env/bin/activate
++
++
++# =============================================================================
++# BASELINE MODELS (Standard HuggingFace models)
++# =============================================================================
++BASELINE_MODELS=(
++    "nlpaueb/bert-base-uncased-eurlex"         # BERT-EURLEX (domain baseline)
++    "nlpaueb/bert-base-uncased-contracts"      # BERT-Contracts (domain baseline)
++    "nlpaueb/bert-base-uncased-echr"           # BERT-ECHR (domain baseline)
++    "casehold/custom-legalbert"                # Custom LegalBERT (general domain)
++    "dlicari/Italian-Legal-BERT"               # Italian LegalBERT (general domain)
++    "google-bert/bert-base-uncased"            # Google BERT (general domain)
++    "nlpaueb/legal-bert-base-uncased"          # Legal BERT (general domain)
++    "nlpaueb/legal-bert-small-uncased"         # Legal BERT (general domain)
++    "avichr/Legal-heBERT"                      # Legal heBERT (general domain)
++)
++
++# =============================================================================
++# YOUR MULTI-TASK PRE-TRAINED MODELS (from FINE_TUNED_MODELS_DIR)
++# =============================================================================
++# These are your best models from multi-task pre-training experiments
++MULTITASK_MODELS=(
++    # BERT-EURLEX variants (best performing on German StVO)
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-eurlex_m2m100_418M_clm_nsp_0.4_clu_0.2_cls_0.4"
++    # BERT-Contracts variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-contracts_m2m100_418M_clm_nsp_0.3_clu_0.0_cls_0.7"
++    # BERT-ECHR variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased-echr_m2m100_418M_clm_nsp_0.3_clu_0.3_cls_0.4"
++    # Custom-LegalBERT variants
++    "$FINE_TUNED_MODELS_DIR/custom-legalbert_m2m100_418M_clm_nsp_0.4_clu_0.1_cls_0.5"
++    # Italian-Legal-BERT variants
++    "$FINE_TUNED_MODELS_DIR/Italian-Legal-BERT_m2m100_418M_clm_nsp_0.5_clu_0.4_cls_0.1"
++    # Google BERT variants
++    "$FINE_TUNED_MODELS_DIR/bert-base-uncased_m2m100_418M_clm_nsp_0.3_clu_0.1_cls_0.6"
++    # Legal BERT base variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-base-uncased_m2m100_418M_clm_nsp_0.2_clu_0.6_cls_0.2"
++    # Legal BERT small variants
++    "$FINE_TUNED_MODELS_DIR/legal-bert-small-uncased_m2m100_418M_clm_nsp_0.6_clu_0.3_cls_0.1"
++    # Legal heBERT variants
++    "$FINE_TUNED_MODELS_DIR/Legal-heBERT_m2m100_418M_clm_nsp_0.0_clu_0.0_cls_1.0"
++)
++
++# # =============================================================================
++# # AUTO-DISCOVER ALL MODELS (Optional: automatically find all models)
++# # =============================================================================
++# # Uncomment this section to automatically discover all models in the directory
++
++# echo "Auto-discovering models in: $FINE_TUNED_MODELS_DIR"
++# MULTITASK_MODELS=()
++# for MODEL_DIR in "$FINE_TUNED_MODELS_DIR"/*; do
++#     if [ -d "$MODEL_DIR" ] && [ -f "$MODEL_DIR/config.json" ]; then
++#         MULTITASK_MODELS+=("$MODEL_DIR")
++#         echo "Found model: $(basename $MODEL_DIR)"
++#     fi
++# done
++# echo "Total models found: ${#MULTITASK_MODELS[@]}"
++
++# =============================================================================
++# EVALUATION FUNCTION
++# =============================================================================
++evaluate_model() {
++    local MODEL_PATH=$1
++    local MODEL_CATEGORY=$2
++    local SEED=$3
++    
++    # Extract model name for logging
++    MODEL_NAME=$(basename "$MODEL_PATH")
++    
++    echo "=================================================="
++    echo "Evaluating: $MODEL_NAME"
++    echo "Path: $MODEL_PATH"
++    echo "Category: $MODEL_CATEGORY"
++    echo "Seed: $SEED"
++    echo "=================================================="
++    
++  
++    # Output directory
++    OUTPUT_DIR="$DATA_DIR/logs/${TASK}/${MODEL_CATEGORY}/${MODEL_NAME}/seed_${SEED}"
++    mkdir -p "$OUTPUT_DIR"
++    
++   
++
++    # Run evaluation
++    CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python ../experiments/unfair_tos.py \
++        --model_name_or_path "${MODEL_PATH}" \
++        --do_lower_case ${LOWER_CASE} \
++        --output_dir "${OUTPUT_DIR}" \
++        --do_train \
++        --do_eval \
++        --do_pred \
++        --load_best_model_at_end \
++        --metric_for_best_model micro-f1 \
++        --greater_is_better True \
++        --eval_strategy epoch \
++        --save_strategy epoch \
++        --dataloader_num_workers 2 \
++        --save_total_limit 2 \
++        --num_train_epochs 20\
++        --learning_rate 3e-5 \
++        --dataloader_pin_memory True\
++        --cache_dir $HF_DIR\
++        --per_device_train_batch_size ${TRAIN_BATCH_SIZE} \
++        --per_device_eval_batch_size ${EVAL_BATCH_SIZE} \
++        --seed ${SEED} \
++        --fp16 \
++        --fp16_full_eval \
++        --gradient_accumulation_steps ${ACCUMULATION_STEPS} \
++        --eval_accumulation_steps ${ACCUMULATION_STEPS} >> "$LOG_OUT" 2>> "$LOG_ERR"
++
++    
++    # Check if evaluation was successful
++    if [ $? -eq 0 ]; then
++        echo "✓ Completed: $MODEL_NAME (seed $SEED)"
++        
++        # Display results if available
++        if [ -f "${OUTPUT_DIR}/eval_results.json" ]; then
++            echo "Results preview:"
++            cat "${OUTPUT_DIR}/eval_results.json"
++        fi
++    else
++        echo "✗ FAILED: $MODEL_NAME (seed $SEED)"
++    fi
++    echo ""
++}
++
++# =============================================================================
++# LIST AVAILABLE MODELS (for verification)
++# =============================================================================
++echo "========================================================================"
++echo "LexGLUE UNFAIR_TOS Evaluation Script"
++echo "========================================================================"
++echo "Task: $TASK"
++echo "GPU: $GPU_NUMBER"
++echo "Timestamp: $TIMESTAMP"
++echo "Models directory: $FINE_TUNED_MODELS_DIR"
++echo "========================================================================"
++echo ""
++
++echo "Checking available models..."
++echo ""
++echo "Baseline Models (${#BASELINE_MODELS[@]}):"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    echo "  - $MODEL"
++done
++
++echo ""
++echo "Multi-Task Models (${#MULTITASK_MODELS[@]}):"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    if [ -d "$MODEL" ]; then
++        echo "  ✓ $(basename $MODEL)"
++    else
++        echo "  ✗ $(basename $MODEL) [NOT FOUND]"
++    fi
++done
++
++echo ""
++
++# =============================================================================
++# MAIN EVALUATION LOOP
++# =============================================================================
++
++# Seeds for multiple runs (use 3 for faster evaluation, 5 for full validation)
++SEEDS=(1 2 3 4 5)  # Change to (1 2 3 4 5) for full evaluation
++
++# -----------------------------------------------------------------------------
++# 1. EVALUATE BASELINE MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 1: Evaluating Baseline Models"
++echo "======================================================================"
++echo "Models: ${#BASELINE_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#BASELINE_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "baselines" "$SEED"
++    done
++done
++
++# -----------------------------------------------------------------------------
++# 2. EVALUATE YOUR MULTI-TASK MODELS
++# -----------------------------------------------------------------------------
++echo ""
++echo "======================================================================"
++echo "PHASE 2: Evaluating Multi-Task Pre-Trained Models"
++echo "======================================================================"
++echo "Models: ${#MULTITASK_MODELS[@]}"
++echo "Seeds: ${#SEEDS[@]}"
++echo "Total runs: $((${#MULTITASK_MODELS[@]} * ${#SEEDS[@]}))"
++echo "======================================================================"
++echo ""
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    for SEED in "${SEEDS[@]}"; do
++        evaluate_model "$MODEL" "multitask" "$SEED"
++    done
++done
++
++# =============================================================================
++# COMPUTE STATISTICS
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Computing Statistics Across Seeds"
++echo "======================================================================"
++
++
++SUMMARY_DIR="$DATA_DIR/logs/${TASK}/summary"
++mkdir -p "$SUMMARY_DIR"
++
++echo ""
++echo "Baseline Models:"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/baselines/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "baselines"\
++            > "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        cat "$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    fi
++done
++
++echo ""
++echo "Multi-Task Models:"
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    if [ -d "$DATA_DIR/logs/${TASK}/multitask/${MODEL_NAME}" ]; then
++        python ../statistics/compute_avg_scores.py \
++            --dataset ${TASK} \
++            --model_dir "multitask"\
++            > "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++        echo "  - $MODEL_NAME"
++        head -n 3 "$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    fi
++done
++
++# =============================================================================
++# GENERATE COMPARISON TABLE
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table"
++echo "======================================================================"
++
++# Create comparison CSV
++COMPARISON_FILE="$DATA_DIR/logs/${TASK}/comparison_table.csv"
++
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE"
++
++# Add baseline results
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/baseline_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        echo "$MODEL_NAME,baseline,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},standard" >> "$COMPARISON_FILE"
++    fi
++done
++
++for MODEL in "${MULTITASK_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    SUMMARY_FILE="$SUMMARY_DIR/multitask_${MODEL_NAME}.txt"
++    if [ -f "$SUMMARY_FILE" ]; then
++        # Extract TEST Micro-F1 (The value after the pipe '|')
++        MICRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MICRO-F1:\s*\K[\d.]+")
++        # Extract TEST Macro-F1 (The value after the pipe '|')
++        MACRO_F1=$(grep "${MODEL_NAME}" "$SUMMARY_FILE" | awk -F'|' '{print $2}' | grep -oP "MACRO-F1:\s*\K[\d.]+")
++        
++        # Extract config from model name
++        CONFIG=$(echo "$MODEL_NAME" | grep -oP "clm_nsp_[\d.]+_clu_[\d.]+_cls_[\d.]+" || echo "unknown")
++        
++        echo "$MODEL_NAME,multitask,$MICRO_F1,$MACRO_F1,${#SEEDS[@]},$CONFIG" >> "$COMPARISON_FILE"
++    fi
++done
++
++echo "Comparison table saved to: $COMPARISON_FILE"
++echo ""
++cat "$COMPARISON_FILE"
++
++# =============================================================================
++# FINAL SUMMARY
++# =============================================================================
++echo ""
++echo "======================================================================"
++echo "Evaluation Complete!"
++echo "======================================================================"
++echo "Task: $TASK"
++echo "Total models evaluated: $((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]}))"
++echo "Seeds per model: ${#SEEDS[@]}"
++echo "Total training runs: $(($((${#BASELINE_MODELS[@]} + ${#MULTITASK_MODELS[@]})) * ${#SEEDS[@]}))"
++echo ""
++echo "Results directories:"
++echo "  - Baselines: $DATA_DIR/logs/${TASK}/baselines/"
++echo "  - Multi-task: $DATA_DIR/logs/${TASK}/multitask/"
++echo "  - Summary: $SUMMARY_DIR"
++echo ""
++echo "Comparison table: $COMPARISON_FILE"
++echo ""
++echo "Log files:"
++echo "  - stdout: $LOG_OUT"
++echo "  - stderr: $LOG_ERR"
++echo "======================================================================"
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/unfair_tos.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_2 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 2 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# Display top 3 performing models
++echo ""
++echo "Top 3 Performing Models (by Micro-F1):"
++echo "----------------------------------------------------------------------"
++tail -n +2 "$COMPARISON_FILE" | sort -t',' -k3 -rn | head -n 10| \
++    awk -F',' '{printf "  %d. %s: %.2f (config: %s)\n", NR, $1, $3, $6}'
++echo "======================================================================"
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/unfair_tos.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_3 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 3 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/unfair_tos.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir logs/${TASK}/${MODEL_NAME}/seed_4 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 4 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
+ 
+-CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python experiments/unfair_tos.py --model_name_or_path ${MODEL_NAME} --do_lower_case ${LOWER_CASE} --output_dir .logs/${TASK}/${MODEL_NAME}/seed_5 --do_train --do_eval --do_pred --overwrite_output_dir --load_best_model_at_end --metric_for_best_model micro-f1 --greater_is_better True --evaluation_strategy epoch --save_strategy epoch --save_total_limit 5 --num_train_epochs 20 --learning_rate 3e-5 --per_device_train_batch_size ${BATCH_SIZE} --per_device_eval_batch_size ${BATCH_SIZE} --seed 5 --fp16 --fp16_full_eval --gradient_accumulation_steps ${ACCUMULATION_STEPS} --eval_accumulation_steps ${ACCUMULATION_STEPS}
++# =============================================================================
++# GENERATE COMPARISON TABLE 2 : standard vs multi-task (best perofrming model)
++# =============================================================================
+ 
+-python statistics/compute_avg_scores.py --dataset ${TASK}
++echo ""
++echo "======================================================================"
++echo "Generating Comparison Table 2: Standard vs Multi-Task (Best Performing Models) for each model"
++#  from comaprison_table.csv, extract each baseline model and its best performing multi-task variant (based on micro-f1) and create a new table with the following columns: Model, Category, Micro-F1, Macro-F1, Seeds, Config
++echo "==================================================================="
++COMPARISON_FILE_BEST="$DATA_DIR/logs/${TASK}/comparison_table_best_models.csv"
++echo "Model,Category,Micro-F1,Macro-F1,Seeds,Config" > "$COMPARISON_FILE_BEST"
++for MODEL in "${BASELINE_MODELS[@]}"; do
++    MODEL_NAME=$(basename "$MODEL")
++    # Extract baseline results
++    BASELINE_RESULT=$(grep "^$MODEL_NAME," "$COMPARISON_FILE")
++    if [ -n "$BASELINE_RESULT" ]; then
++        echo "$BASELINE_RESULT" >> "$COMPARISON_FILE_BEST"
++        
++        # Extract multi-task variants for this model
++        MULTITASK_VARIANTS=$(grep "^${MODEL_NAME}_" "$COMPARISON_FILE" | sort -t',' -k3 -rn)
++        if [ -n "$MULTITASK_VARIANTS" ]; then
++            BEST_MULTITASK=$(echo "$MULTITASK_VARIANTS" | head -n 1)
++            echo "$BEST_MULTITASK" >> "$COMPARISON_FILE_BEST"
++        fi
++    fi
++done
++echo "Comparison table 2 saved to: $COMPARISON_FILE_BEST"
++echo ""
++cat "$COMPARISON_FILE_BEST"
+\ No newline at end of file
+diff --git a/statistics/compute_avg_scores.py b/statistics/compute_avg_scores.py
+index 0329c6d..7317617 100644
+--- a/statistics/compute_avg_scores.py
++++ b/statistics/compute_avg_scores.py
+@@ -6,25 +6,62 @@ import numpy as np
+ import warnings
+ 
+ warnings.filterwarnings('ignore')
++ROOT_DIR="/temp/siddig/driving-license"
++
+ 
+ def main():
+-    ''' set default hyperparams in default_hyperparams.py '''
+     parser = argparse.ArgumentParser()
+ 
+-    # Required arguments
+-    parser.add_argument('--dataset',  default='scotus')
+-    parser.add_argument('--filter_outliers', default=True)
+-    parser.add_argument('--top_k', default=3)
++    # Define arguments correctly
++    parser.add_argument('--dataset', type=str, default='eurlex')
++    parser.add_argument('--model_dir', type=str, default='baselines')
++    parser.add_argument('--filter_outliers', type=bool, default=True)
++    parser.add_argument('--top_k', type=int, default=3)
++    
+     config = parser.parse_args()
+ 
+-    BASE_DIR = f'logs/{config.dataset}'
+-
+-    if os.path.exists(BASE_DIR):
+-        print(f'{BASE_DIR} exists!')
++    # Use 'config' to access the variables
++    BASE_DIR = f'{ROOT_DIR}/logs/{config.dataset}'
++    # This combines /temp/siddig/driving-license/logs/eurlex with 'baselines' or 'multitask'
++    TARGET_PATH = os.path.join(BASE_DIR, config.model_dir) 
+ 
++    if os.path.exists(TARGET_PATH):
++        print(f'Found directory: {TARGET_PATH}')
++    else:
++        print(f'ERROR: Directory not found: {TARGET_PATH}')
++    
+     score_dicts = {}
+-    MODELS = ['bert-base-uncased', 'roberta-base', 'microsoft/deberta-base', 'allenai/longformer-base-4096',
+-              'google/bigbird-roberta-base', 'nlpaueb/legal-bert-base-uncased', 'zlucia/custom-legalbert', 'roberta-large']
++
++
++    # MODELS = ['bert-base-uncased', 'roberta-base', 'microsoft/deberta-base', 'allenai/longformer-base-4096',
++    #           'google/bigbird-roberta-base', 'nlpaueb/legal-bert-base-uncased', 'zlucia/custom-legalbert', 'roberta-large']
++    
++    # Automatically find all model folders in the target directory
++    MODELS = [d for d in os.listdir(TARGET_PATH) if os.path.isdir(os.path.join(TARGET_PATH, d))]
++    print(f'Found {len(MODELS)} models in {config.model_dir}')
++    
++    # MODEL_NAMES=(
++    #     # BERT-EURLEX variants (best performing on German StVO)
++    #     "bert-base-uncased-eurlex"
++    #     "bert-base-uncased-eurlex_m2m100_418M_clm_nsp_0.4_clu_0.2_cls_0.4"
++    #     # BERT-Contracts variants
++    #     "bert-base-uncased-contracts"
++    #     "bert-base-uncased-contracts_m2m100_418M_clm_nsp_0.3_clu_0.0_cls_0.7"
++    #     # BERT-ECHR variants
++    #     "bert-base-uncased-echr"
++    #     "bert-base-uncased-echr_m2m100_418M_clm_nsp_0.3_clu_0.3_cls_0.4"
++    #     # Custom-LegalBERT variants
++    #     "custom-legalbert"
++    #     "custom-legalbert_m2m100_418M_clm_nsp_0.4_clu_0.1_cls_0.5"  
++    #     # Italian-Legal-BERT variants
++    #     "Italian-Legal-BERT"
++    #     "Italian-Legal-BERT_m2m100_418M_clm_nsp_0.5_clu_0.4_cls_0.1"
++    # )
++
++    # MODELS = list(MODEL_NAMES)
++
++   
++
+ 
+     for model in MODELS:
+         score_dict = {'dev': {'micro': [], 'macro': []},
+@@ -33,7 +70,7 @@ def main():
+         for seed in range(1, 6):
+             seed = f'seed_{seed}'
+             try:
+-                with open(os.path.join(BASE_DIR, model, seed, 'all_results.json')) as json_file:
++                with open(os.path.join(TARGET_PATH, model, seed, 'all_results.json')) as json_file:
+                     json_data = json.load(json_file)
+                     score_dict['dev']['micro'].append(float(json_data['eval_micro-f1']))
+                     score_dict['dev']['macro'].append(float(json_data['eval_macro-f1']))
