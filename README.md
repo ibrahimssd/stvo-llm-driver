@@ -5,7 +5,7 @@
 ### Enhancing Legal Reasoning in Pre-trained Language Models via Knowledge Graph-Guided Multi-Task Pre-training
 
 **Legal language models treat statutory text as flat token sequences. It isn't flat.**
-This repository injects the *structure* of German road traffic law directly into model weights — and shows it transfers across languages, jurisdictions, and legal domains.
+This repository injects the *structure* of German road traffic law directly into model weights — and shows it could be transfered across languages, jurisdictions, and legal domains.
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.6-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
