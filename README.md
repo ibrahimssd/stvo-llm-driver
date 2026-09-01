@@ -10,9 +10,6 @@ This repository injects the *structure* of German road traffic law directly into
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.6-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![Transformers](https://img.shields.io/badge/🤗%20Transformers-latest-FFD21E)](https://huggingface.co/docs/transformers)
-[![Models](https://img.shields.io/badge/encoders-9-blue)]()
-[![Runs](https://img.shields.io/badge/experimental%20runs-324-blueviolet)]()
-[![SOTA](https://img.shields.io/badge/LexGLUE-4%20new%20SOTA-success)]()
 
 </div>
 
