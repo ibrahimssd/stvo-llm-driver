@@ -143,7 +143,7 @@ The full NSP+CLU+CLS configuration wins for **7 of 9** models. CLS dominates bec
 
 ### Synthetic QA generation
 
-[`legal_qa_generation_multi_lingual.py`](legal_qa_generation_multi_lingual.py) prompts Mistral-7B-Instruct and Llama-3.1-8B to produce, for each StVO sentence, a *source-grounded correct* answer and a *plausible but contradictory* incorrect one.
+[`legal_qa_generation_multi_lingual.py`](legal_qa_generation_multi_lingual.py) prompts Llama-2-7b-chat, Mistral-7B-Instruct-v0.2 and Chocolatine-14B to produce, for each StVO sentence, a *source-grounded correct* answer and a *plausible but contradictory* incorrect one.
 
 A **six-stage validation pipeline** then filters them — structural and field constraints, rejection of non-reasoning yes/no questions, domain-terminology verification (*Vorfahrt*, right of way), lexical-overlap removal of trivial paraphrases, and placeholder detection. Only pairs scoring **Q ≥ 0.6** on a composite metric survive. Validation and analysis tooling lives in [`data/synthetic-data-eval/`](data/synthetic-data-eval/).
 
@@ -153,6 +153,57 @@ Critically, **17 % of paragraph identifiers are reserved exclusively for testing
 > *Source:* "At intersections without traffic signs or lights, vehicles coming from the right have right-of-way."
 > ✅ **Correct:** Q: "Which vehicle has priority at an unmarked intersection?" → A: "…vehicles approaching from the right have right-of-way."
 > ❌ **Incorrect:** Q: "Who must yield at an intersection without signals?" → A: "The vehicle traveling at lower speed must always yield to faster-moving traffic." *(contradicts the right-hand priority rule)*
+
+---
+
+## Resources
+
+Everything the pipeline consumes, and where it comes from. Nothing here is
+redistributed by this repository except the KG embeddings under `legal-KGE/`.
+
+### Primary source
+
+| Resource | Link |
+|:--|:--|
+| **Straßenverkehrs-Ordnung (StVO 2013)** — the statute itself, in German | [gesetze-im-internet.de](https://www.gesetze-im-internet.de/stvo_2013/BJNR036710013.html) |
+
+The parser scrapes this URL directly, pulling the ~500 referenced *Zeichen* images
+alongside the text. As an *amtliches Werk* under § 5 UrhG the statute carries no
+copyright, but it is **amended over time** — a re-scrape today yields a slightly
+different graph than the 554-node/945-edge snapshot reported here.
+
+### Derived resources — published separately
+
+| Resource | Provides | Used for |
+|:--|:--|:--|
+| [**stvo-legal-knowledge-graph-parser**](https://github.com/ibrahimssd/stvo-legal-knowledge-graph-parser) | Parsed statute, tagged tree, integrated knowledge graph, NSP/CLU datasets, triples | Stage 1 — every input below the QA corpus |
+| [**stvo-legal-qa**](https://github.com/ibrahimssd/stvo-legal-qa) | 12,554 synthetic QA pairs (10,245 train / 2,309 test), 11 generation runs with manifests, and the generation + validation + evaluation pipeline | The **CLS** objective, and the main results table |
+
+`stvo-legal-qa` carries the corpus this project trains and evaluates its
+classification head on, so the numbers in [Results](#results) are reproducible
+without rerunning generation: clone it and point `--dataset_path` at
+`data/stvo/qa_train.jsonl` / `qa_test.jsonl`. Its paragraph-disjoint split is the
+same one used here — 49 training §§, 10 held-out §§, zero overlap.
+
+### Models
+
+| Role | Model | Notes |
+|:--|:--|:--|
+| **Translation** DE→EN | [`facebook/m2m100_418M`](https://huggingface.co/facebook/m2m100_418M) | Default; source of the `m2m100_418M_translated_*` artifacts |
+| | [`Helsinki-NLP/opus-mt-de-en`](https://huggingface.co/Helsinki-NLP/opus-mt-de-en) | Alternative, for the translation ablation |
+| **QA generation** | [`mistralai/Mistral-7B-Instruct-v0.2`](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2) | Fast runs and the quality-threshold sweep |
+| | [`meta-llama/Llama-2-7b-chat-hf`](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf) | Largest share of the corpus, and the domain variants |
+| | [`jpacifico/Chocolatine-14B-Instruct-DPO-v1.2`](https://huggingface.co/jpacifico/Chocolatine-14B-Instruct-DPO-v1.2) | Balanced run |
+| **Base encoders** (9) | `nlpaueb/bert-base-uncased-{echr,eurlex,contracts}`, `nlpaueb/legal-bert-{base,small}-uncased`, `casehold/custom-legalbert`, `dlicari/Italian-Legal-BERT`, `avichr/Legal-heBERT`, `google-bert/bert-base-uncased` | The models multi-task pre-training is applied to |
+
+Gated checkpoints (Llama, Mistral) need a Hugging Face token, read from `HF_TOKEN`.
+
+### Evaluation benchmarks
+
+| Benchmark | Source |
+|:--|:--|
+| **LexGLUE** — 7 English legal tasks | [coastalcph/lex-glue](https://github.com/coastalcph/lex-glue) |
+| **Irish theory test** · **Austrian ÖAMTC** | Driving-theory question sets, under [`data/test-sets/`](data/test-sets/) |
 
 ---
 
