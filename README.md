@@ -139,6 +139,8 @@ The full NSP+CLU+CLS configuration wins for **7 of 9** models. CLS dominates bec
 | **Austrian ÖAMTC** | 1,954 questions → 963 textual → 3,852 samples | Zero-shot in-domain transfer |
 | **LexGLUE** | 7 English legal tasks | Out-of-domain legal transfer |
 
+> **Synthetic StVO QA is published separately** — the corpus, the 11 individual generation runs with their manifests, and the full generation/validation/evaluation pipeline live at [**stvo-legal-qa**](https://github.com/ibrahimssd/stvo-legal-qa), together with a dataset card documenting the record schema, the paragraph-disjoint split, and known label noise.
+
 ### Synthetic QA generation
 
 [`legal_qa_generation_multi_lingual.py`](legal_qa_generation_multi_lingual.py) prompts Mistral-7B-Instruct and Llama-3.1-8B to produce, for each StVO sentence, a *source-grounded correct* answer and a *plausible but contradictory* incorrect one.
@@ -157,7 +159,7 @@ Critically, **17 % of paragraph identifiers are reserved exclusively for testing
 ## Repository layout
 
 ```
-├── legal-parser/                 Stage 1 — legal text → knowledge graph
+├── legal-parser/                 Stage 1 — legal text → knowledge graph (published standalone)
 │   ├── main_content_extractor.py     Structured content extraction
 │   ├── table_content_extractor.py    Tables and traffic-sign figures
 │   ├── citator.py                    Cross-reference / citation resolution
@@ -213,18 +215,43 @@ bash tmux/install.sh
 
 ### KG Pipeline
 
-**1 · Parse the statute into a knowledge graph.** The pattern-based parser exploits the semi-structured hierarchy of the StVO — categories, paragraphs, sub-paragraphs, sentences, tables, sections, signs — and resolves cross-references into typed edges.
+**1 · Parse the statute into a knowledge graph — prerequisite.** This step is not
+performed in this repository. The pattern-based parser is published standalone as
+[**stvo-legal-knowledge-graph-parser**](https://github.com/ibrahimssd/stvo-legal-knowledge-graph-parser)
+(ESSV 2025), and everything below consumes its output. It exploits the semi-structured
+hierarchy of the StVO — categories, paragraphs, *Absätze*, *Sätze*, tables, sections,
+*Zeichen* — and resolves the statute's own cross-references into typed edges, using a
+predefined ontology rather than an LLM-inferred one.
 
 ```bash
-python legal-parser/main_content_extractor.py   --input data/stvo/stvo_raw.json
-python legal-parser/table_content_extractor.py  --input data/stvo/stvo_raw.json
-python legal-parser/citator.py                  --input data/stvo/stvo_structured.json
-python legal-parser/knowledge_graph_constructor.py \
-    --input  data/stvo/stvo_structured.json \
-    --output data/stvo/stvo_triples.txt
+git clone https://github.com/ibrahimssd/stvo-legal-knowledge-graph-parser.git
+cd stvo-legal-knowledge-graph-parser
+pip install -r requirements.txt
+
+bash scripts/1_extract_entities.sh     # scrape gesetze-im-internet.de, tag the tree
+bash scripts/2_translate.sh            # DE → EN, m2m100_418M (optional)
+bash scripts/3_construct_kg.sh         # build the integrated graph
 ```
 
-Translation to English (`m2m100_418M` / `opus-mt-de-en`) sits between extraction and graph construction, mirroring the `DE → EN` hop in Figure 1. Output: **554 nodes, 945 edges, 5 relations**.
+Step 2 is the `DE → EN` hop in Figure 1; `--model_name Helsinki-NLP/opus-mt-de-en`
+produces the `opus-mt-de-en_*` variants used in the translation ablation. Step 3 needs
+neither the scrape nor the translation — it builds from the parser repo's `examples/`
+in seconds. Output: **554 nodes, 945 edges, 5 relations**.
+
+Copy the resulting files into `data/stvo/`. Four of them feed this project directly,
+one per downstream consumer:
+
+| Parser output | Consumed here by | Purpose |
+|:--|:--|:--|
+| `*_graph_triples.txt` | `legal-KGE/train_legal_kge.py` | TransE training → the 500-d paragraph embeddings `eₚ` |
+| `*_graph_nsp_dataset.json` | `finetune_multi_task_STvO_mlm_clm_clu.py` | **NSP** objective — sentence pairs within/across paragraphs |
+| `*_graph_sentence_clu_dataset.json` | `finetune_multi_task_STvO_mlm_clm_clu.py` | **CLU** objective — sentence → parent paragraph |
+| `*_translated_main_content_*.json` | `legal_qa_generation_multi_lingual.py` | Source statute for synthetic QA generation (**CLS**) |
+
+The `_graph_raw.txt` node dump is additionally available for plain MLM pre-training.
+Filenames in `data/stvo/` carry the translation model as a prefix
+(`m2m100_418M_translated_…`, `opus-mt-de-en_translated_…`), which is how the
+translation ablation selects between them.
 
 **2 · Train the KG embeddings** — TransE, producing the 500-d paragraph embeddings `eₚ` used as CLU soft targets.
 
@@ -369,13 +396,14 @@ These are **research prototypes**, not legal advice. Outputs must not substitute
 @inproceedings{siddig2026stvo,
   title     = {Enhancing Legal Reasoning in Pre-trained Language Models via
                Knowledge Graph-Guided Multi-Task Pre-training},
-  author    = {Siddig, Ibrahim},
+  author    = {Siddig, Ibrahim and Georges, Munir},
   year      = {2026},
   note      = {Under review}
 }
 ```
 
-The pattern-based parser behind the knowledge graph is published separately:
+The pattern-based parser behind the knowledge graph is published separately as
+[**stvo-legal-knowledge-graph-parser**](https://github.com/ibrahimssd/stvo-legal-knowledge-graph-parser):
 
 ```bibtex
 @inproceedings{siddig2025parsing,
